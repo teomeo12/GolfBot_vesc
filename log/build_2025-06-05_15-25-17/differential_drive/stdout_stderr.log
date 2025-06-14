@@ -1,0 +1,30 @@
+running develop
+/usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+running egg_info
+creating differential_drive.egg-info
+writing differential_drive.egg-info/PKG-INFO
+writing dependency_links to differential_drive.egg-info/dependency_links.txt
+writing entry points to differential_drive.egg-info/entry_points.txt
+writing requirements to differential_drive.egg-info/requires.txt
+writing top-level names to differential_drive.egg-info/top_level.txt
+writing manifest file 'differential_drive.egg-info/SOURCES.txt'
+reading manifest file 'differential_drive.egg-info/SOURCES.txt'
+writing manifest file 'differential_drive.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/wompus/VESC_ROS2/install/differential_drive/lib/python3.10/site-packages/differential-drive.egg-link (link to .)
+Installing diff_vel_ctrl_node script to /home/wompus/VESC_ROS2/install/differential_drive/lib/differential_drive
+Installing sony_gamepad_node script to /home/wompus/VESC_ROS2/install/differential_drive/lib/differential_drive
+
+Installed /home/wompus/VESC_ROS2/build/differential_drive
+running symlink_data
+creating /home/wompus/VESC_ROS2/install/differential_drive/share/ament_index
+creating /home/wompus/VESC_ROS2/install/differential_drive/share/ament_index/resource_index
+creating /home/wompus/VESC_ROS2/install/differential_drive/share/ament_index/resource_index/packages
+symbolically linking /home/wompus/VESC_ROS2/build/differential_drive/resource/differential_drive -> /home/wompus/VESC_ROS2/install/differential_drive/share/ament_index/resource_index/packages
+symbolically linking /home/wompus/VESC_ROS2/build/differential_drive/package.xml -> /home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive
+creating /home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/launch
+symbolically linking /home/wompus/VESC_ROS2/build/differential_drive/launch/diff_drive.launch.py -> /home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/launch
+creating /home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/config
+symbolically linking /home/wompus/VESC_ROS2/build/differential_drive/config/left_vesc_config.yaml -> /home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/config
+symbolically linking /home/wompus/VESC_ROS2/build/differential_drive/config/right_vesc_config.yaml -> /home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/config

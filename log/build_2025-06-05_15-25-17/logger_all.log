@@ -1,0 +1,284 @@
+[0.733s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--symlink-install']
+[0.733s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=True, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=4, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0xffff7f4fcd60>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0xffff7f60d450>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0xffff7f60d450>>, mixin_verb=('build',))
+[1.634s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[1.635s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[1.635s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[1.635s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[1.635s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[1.636s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[1.636s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/wompus/VESC_ROS2'
+[1.636s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[1.637s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[1.637s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[1.637s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[1.637s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[1.637s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[1.638s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[1.638s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[1.638s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[1.702s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[1.702s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[1.702s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[1.702s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[1.702s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[1.703s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[1.703s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[1.704s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[1.704s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[1.704s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[1.705s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[1.705s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[1.705s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[1.705s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[1.706s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[1.706s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[1.706s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[1.706s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[1.707s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[1.707s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[1.707s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[1.707s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[1.707s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[1.708s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[1.708s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[1.708s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[1.708s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[1.708s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[1.709s] Level 1:colcon.colcon_core.package_identification:_identify(src/differential_drive) by extensions ['ignore', 'ignore_ament_install']
+[1.709s] Level 1:colcon.colcon_core.package_identification:_identify(src/differential_drive) by extension 'ignore'
+[1.709s] Level 1:colcon.colcon_core.package_identification:_identify(src/differential_drive) by extension 'ignore_ament_install'
+[1.709s] Level 1:colcon.colcon_core.package_identification:_identify(src/differential_drive) by extensions ['colcon_pkg']
+[1.710s] Level 1:colcon.colcon_core.package_identification:_identify(src/differential_drive) by extension 'colcon_pkg'
+[1.710s] Level 1:colcon.colcon_core.package_identification:_identify(src/differential_drive) by extensions ['colcon_meta']
+[1.710s] Level 1:colcon.colcon_core.package_identification:_identify(src/differential_drive) by extension 'colcon_meta'
+[1.710s] Level 1:colcon.colcon_core.package_identification:_identify(src/differential_drive) by extensions ['ros']
+[1.710s] Level 1:colcon.colcon_core.package_identification:_identify(src/differential_drive) by extension 'ros'
+[1.719s] DEBUG:colcon.colcon_core.package_identification:Package 'src/differential_drive' with type 'ros.ament_python' and name 'differential_drive'
+[1.720s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_driver) by extensions ['ignore', 'ignore_ament_install']
+[1.720s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_driver) by extension 'ignore'
+[1.721s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_driver) by extension 'ignore_ament_install'
+[1.721s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_driver) by extensions ['colcon_pkg']
+[1.721s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_driver) by extension 'colcon_pkg'
+[1.721s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_driver) by extensions ['colcon_meta']
+[1.721s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_driver) by extension 'colcon_meta'
+[1.721s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_driver) by extensions ['ros']
+[1.722s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_driver) by extension 'ros'
+[1.726s] DEBUG:colcon.colcon_core.package_identification:Package 'src/vesc_driver' with type 'ros.ament_cmake' and name 'vesc_driver'
+[1.726s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_interfaces) by extensions ['ignore', 'ignore_ament_install']
+[1.727s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_interfaces) by extension 'ignore'
+[1.727s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_interfaces) by extension 'ignore_ament_install'
+[1.727s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_interfaces) by extensions ['colcon_pkg']
+[1.727s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_interfaces) by extension 'colcon_pkg'
+[1.727s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_interfaces) by extensions ['colcon_meta']
+[1.728s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_interfaces) by extension 'colcon_meta'
+[1.728s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_interfaces) by extensions ['ros']
+[1.728s] Level 1:colcon.colcon_core.package_identification:_identify(src/vesc_interfaces) by extension 'ros'
+[1.730s] DEBUG:colcon.colcon_core.package_identification:Package 'src/vesc_interfaces' with type 'ros.ament_cmake' and name 'vesc_interfaces'
+[1.730s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[1.731s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[1.731s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[1.731s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[1.731s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[1.891s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[1.892s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[1.899s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/wompus/VESC_ROS2/install/vesc_driver' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[1.899s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/wompus/VESC_ROS2/install/vesc_interfaces' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[1.900s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/wompus/VESC_ROS2/install/differential_drive' in the environment variable AMENT_PREFIX_PATH doesn't exist
+[1.900s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/wompus/VESC_ROS2/install/vesc_driver' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[1.900s] WARNING:colcon.colcon_ros.prefix_path.catkin:The path '/home/wompus/VESC_ROS2/install/vesc_interfaces' in the environment variable CMAKE_PREFIX_PATH doesn't exist
+[1.905s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 0 installed packages in /home/wompus/VESC_ROS2/install
+[1.915s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 274 installed packages in /opt/ros/humble
+[1.922s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[2.099s] Level 5:colcon.colcon_core.verb:set package 'differential_drive' build argument 'cmake_args' from command line to 'None'
+[2.099s] Level 5:colcon.colcon_core.verb:set package 'differential_drive' build argument 'cmake_target' from command line to 'None'
+[2.099s] Level 5:colcon.colcon_core.verb:set package 'differential_drive' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[2.099s] Level 5:colcon.colcon_core.verb:set package 'differential_drive' build argument 'cmake_clean_cache' from command line to 'False'
+[2.100s] Level 5:colcon.colcon_core.verb:set package 'differential_drive' build argument 'cmake_clean_first' from command line to 'False'
+[2.100s] Level 5:colcon.colcon_core.verb:set package 'differential_drive' build argument 'cmake_force_configure' from command line to 'False'
+[2.100s] Level 5:colcon.colcon_core.verb:set package 'differential_drive' build argument 'ament_cmake_args' from command line to 'None'
+[2.100s] Level 5:colcon.colcon_core.verb:set package 'differential_drive' build argument 'catkin_cmake_args' from command line to 'None'
+[2.100s] Level 5:colcon.colcon_core.verb:set package 'differential_drive' build argument 'catkin_skip_building_tests' from command line to 'False'
+[2.100s] DEBUG:colcon.colcon_core.verb:Building package 'differential_drive' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/wompus/VESC_ROS2/build/differential_drive', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/wompus/VESC_ROS2/install/differential_drive', 'merge_install': False, 'path': '/home/wompus/VESC_ROS2/src/differential_drive', 'symlink_install': True, 'test_result_base': None}
+[2.102s] Level 5:colcon.colcon_core.verb:set package 'vesc_interfaces' build argument 'cmake_args' from command line to 'None'
+[2.102s] Level 5:colcon.colcon_core.verb:set package 'vesc_interfaces' build argument 'cmake_target' from command line to 'None'
+[2.102s] Level 5:colcon.colcon_core.verb:set package 'vesc_interfaces' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[2.102s] Level 5:colcon.colcon_core.verb:set package 'vesc_interfaces' build argument 'cmake_clean_cache' from command line to 'False'
+[2.102s] Level 5:colcon.colcon_core.verb:set package 'vesc_interfaces' build argument 'cmake_clean_first' from command line to 'False'
+[2.102s] Level 5:colcon.colcon_core.verb:set package 'vesc_interfaces' build argument 'cmake_force_configure' from command line to 'False'
+[2.102s] Level 5:colcon.colcon_core.verb:set package 'vesc_interfaces' build argument 'ament_cmake_args' from command line to 'None'
+[2.102s] Level 5:colcon.colcon_core.verb:set package 'vesc_interfaces' build argument 'catkin_cmake_args' from command line to 'None'
+[2.103s] Level 5:colcon.colcon_core.verb:set package 'vesc_interfaces' build argument 'catkin_skip_building_tests' from command line to 'False'
+[2.103s] DEBUG:colcon.colcon_core.verb:Building package 'vesc_interfaces' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/wompus/VESC_ROS2/build/vesc_interfaces', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/wompus/VESC_ROS2/install/vesc_interfaces', 'merge_install': False, 'path': '/home/wompus/VESC_ROS2/src/vesc_interfaces', 'symlink_install': True, 'test_result_base': None}
+[2.104s] Level 5:colcon.colcon_core.verb:set package 'vesc_driver' build argument 'cmake_args' from command line to 'None'
+[2.104s] Level 5:colcon.colcon_core.verb:set package 'vesc_driver' build argument 'cmake_target' from command line to 'None'
+[2.104s] Level 5:colcon.colcon_core.verb:set package 'vesc_driver' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[2.104s] Level 5:colcon.colcon_core.verb:set package 'vesc_driver' build argument 'cmake_clean_cache' from command line to 'False'
+[2.105s] Level 5:colcon.colcon_core.verb:set package 'vesc_driver' build argument 'cmake_clean_first' from command line to 'False'
+[2.105s] Level 5:colcon.colcon_core.verb:set package 'vesc_driver' build argument 'cmake_force_configure' from command line to 'False'
+[2.105s] Level 5:colcon.colcon_core.verb:set package 'vesc_driver' build argument 'ament_cmake_args' from command line to 'None'
+[2.105s] Level 5:colcon.colcon_core.verb:set package 'vesc_driver' build argument 'catkin_cmake_args' from command line to 'None'
+[2.105s] Level 5:colcon.colcon_core.verb:set package 'vesc_driver' build argument 'catkin_skip_building_tests' from command line to 'False'
+[2.105s] DEBUG:colcon.colcon_core.verb:Building package 'vesc_driver' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/wompus/VESC_ROS2/build/vesc_driver', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/wompus/VESC_ROS2/install/vesc_driver', 'merge_install': False, 'path': '/home/wompus/VESC_ROS2/src/vesc_driver', 'symlink_install': True, 'test_result_base': None}
+[2.106s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[2.109s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[2.110s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/wompus/VESC_ROS2/src/vesc_interfaces' with build type 'ament_cmake'
+[2.110s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/wompus/VESC_ROS2/src/vesc_interfaces'
+[2.127s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[2.128s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.129s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.150s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/wompus/VESC_ROS2/src/differential_drive' with build type 'ament_python'
+[2.151s] Level 1:colcon.colcon_core.shell:create_environment_hook('differential_drive', 'ament_prefix_path')
+[2.152s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/hook/ament_prefix_path.ps1'
+[2.158s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/hook/ament_prefix_path.dsv'
+[2.160s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/hook/ament_prefix_path.sh'
+[2.164s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.165s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.196s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/wompus/VESC_ROS2/build/vesc_interfaces': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/wompus/VESC_ROS2/install/differential_drive:/opt/ros/humble /usr/bin/cmake /home/wompus/VESC_ROS2/src/vesc_interfaces -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/wompus/VESC_ROS2/install/vesc_interfaces
+[3.688s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/wompus/VESC_ROS2/src/differential_drive'
+[3.689s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[3.689s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[5.695s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/wompus/VESC_ROS2/build/differential_drive': PYTHONPATH=/home/wompus/VESC_ROS2/build/differential_drive/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/wompus/VESC_ROS2/install/differential_drive/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/wompus/VESC_ROS2/build/differential_drive/build --no-deps symlink_data
+[8.428s] Level 1:colcon.colcon_core.shell:create_environment_hook('differential_drive', 'pythonpath_develop')
+[8.429s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/build/differential_drive/share/differential_drive/hook/pythonpath_develop.ps1'
+[8.432s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wompus/VESC_ROS2/build/differential_drive/share/differential_drive/hook/pythonpath_develop.dsv'
+[8.436s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/build/differential_drive/share/differential_drive/hook/pythonpath_develop.sh'
+[8.446s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/wompus/VESC_ROS2/build/differential_drive' returned '0': PYTHONPATH=/home/wompus/VESC_ROS2/build/differential_drive/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/wompus/VESC_ROS2/install/differential_drive/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/wompus/VESC_ROS2/build/differential_drive/build --no-deps symlink_data
+[8.463s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/differential_drive' for CMake module files
+[8.467s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/differential_drive' for CMake config files
+[8.472s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/differential_drive/lib'
+[8.474s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/differential_drive/bin'
+[8.475s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/differential_drive/lib/pkgconfig/differential_drive.pc'
+[8.477s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/differential_drive/lib/python3.10/site-packages'
+[8.477s] Level 1:colcon.colcon_core.shell:create_environment_hook('differential_drive', 'pythonpath')
+[8.478s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/hook/pythonpath.ps1'
+[8.481s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/hook/pythonpath.dsv'
+[8.484s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/hook/pythonpath.sh'
+[8.488s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/differential_drive/bin'
+[8.489s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(differential_drive)
+[8.491s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/package.ps1'
+[8.495s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/package.dsv'
+[8.499s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/package.sh'
+[8.505s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/package.bash'
+[8.510s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/package.zsh'
+[8.514s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/wompus/VESC_ROS2/install/differential_drive/share/colcon-core/packages/differential_drive)
+[11.729s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/wompus/VESC_ROS2/build/vesc_interfaces' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/wompus/VESC_ROS2/install/differential_drive:/opt/ros/humble /usr/bin/cmake /home/wompus/VESC_ROS2/src/vesc_interfaces -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/wompus/VESC_ROS2/install/vesc_interfaces
+[11.741s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/wompus/VESC_ROS2/build/vesc_interfaces': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/wompus/VESC_ROS2/install/differential_drive:/opt/ros/humble /usr/bin/cmake --build /home/wompus/VESC_ROS2/build/vesc_interfaces -- -j4 -l4
+[32.775s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/wompus/VESC_ROS2/build/vesc_interfaces' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/wompus/VESC_ROS2/install/differential_drive:/opt/ros/humble /usr/bin/cmake --build /home/wompus/VESC_ROS2/build/vesc_interfaces -- -j4 -l4
+[33.323s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/wompus/VESC_ROS2/build/vesc_interfaces': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/wompus/VESC_ROS2/install/differential_drive:/opt/ros/humble /usr/bin/cmake --install /home/wompus/VESC_ROS2/build/vesc_interfaces
+[36.306s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(vesc_interfaces)
+[36.307s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces' for CMake module files
+[36.309s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/wompus/VESC_ROS2/build/vesc_interfaces' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/wompus/VESC_ROS2/install/differential_drive:/opt/ros/humble /usr/bin/cmake --install /home/wompus/VESC_ROS2/build/vesc_interfaces
+[36.312s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces' for CMake config files
+[36.322s] Level 1:colcon.colcon_core.shell:create_environment_hook('vesc_interfaces', 'cmake_prefix_path')
+[36.323s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/hook/cmake_prefix_path.ps1'
+[36.325s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/hook/cmake_prefix_path.dsv'
+[36.326s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/hook/cmake_prefix_path.sh'
+[36.329s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces/lib'
+[36.330s] Level 1:colcon.colcon_core.shell:create_environment_hook('vesc_interfaces', 'ld_library_path_lib')
+[36.330s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/hook/ld_library_path_lib.ps1'
+[36.332s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/hook/ld_library_path_lib.dsv'
+[36.334s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/hook/ld_library_path_lib.sh'
+[36.335s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces/bin'
+[36.336s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces/lib/pkgconfig/vesc_interfaces.pc'
+[36.336s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces/lib/python3.10/site-packages'
+[36.337s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces/bin'
+[36.339s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/package.ps1'
+[36.341s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/package.dsv'
+[36.343s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/package.sh'
+[36.345s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/package.bash'
+[36.347s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/package.zsh'
+[36.348s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/wompus/VESC_ROS2/install/vesc_interfaces/share/colcon-core/packages/vesc_interfaces)
+[36.875s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(vesc_interfaces)
+[36.876s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces' for CMake module files
+[36.881s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces' for CMake config files
+[36.891s] Level 1:colcon.colcon_core.shell:create_environment_hook('vesc_interfaces', 'cmake_prefix_path')
+[36.892s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/hook/cmake_prefix_path.ps1'
+[36.895s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/hook/cmake_prefix_path.dsv'
+[36.897s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/hook/cmake_prefix_path.sh'
+[36.899s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces/lib'
+[36.900s] Level 1:colcon.colcon_core.shell:create_environment_hook('vesc_interfaces', 'ld_library_path_lib')
+[36.901s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/hook/ld_library_path_lib.ps1'
+[36.903s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/hook/ld_library_path_lib.dsv'
+[36.905s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/hook/ld_library_path_lib.sh'
+[36.907s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces/bin'
+[36.907s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces/lib/pkgconfig/vesc_interfaces.pc'
+[36.908s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces/lib/python3.10/site-packages'
+[36.909s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_interfaces/bin'
+[36.910s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/package.ps1'
+[36.913s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/package.dsv'
+[36.915s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/package.sh'
+[36.917s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/package.bash'
+[36.920s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_interfaces/share/vesc_interfaces/package.zsh'
+[36.922s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/wompus/VESC_ROS2/install/vesc_interfaces/share/colcon-core/packages/vesc_interfaces)
+[36.923s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/wompus/VESC_ROS2/src/vesc_driver' with build type 'ament_cmake'
+[36.924s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/wompus/VESC_ROS2/src/vesc_driver'
+[36.925s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[36.925s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[36.984s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/wompus/VESC_ROS2/build/vesc_driver': CMAKE_PREFIX_PATH=/home/wompus/VESC_ROS2/install/vesc_interfaces:/home/wompus/VESC_ROS2/install/vesc_driver:/home/wompus/VESC_ROS2/install/differential_drive:/opt/ros/humble LD_LIBRARY_PATH=/home/wompus/VESC_ROS2/install/vesc_interfaces/lib:/home/wompus/VESC_ROS2/install/vesc_driver/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake /home/wompus/VESC_ROS2/src/vesc_driver -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/wompus/VESC_ROS2/install/vesc_driver
+[45.496s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/wompus/VESC_ROS2/build/vesc_driver' returned '0': CMAKE_PREFIX_PATH=/home/wompus/VESC_ROS2/install/vesc_interfaces:/home/wompus/VESC_ROS2/install/vesc_driver:/home/wompus/VESC_ROS2/install/differential_drive:/opt/ros/humble LD_LIBRARY_PATH=/home/wompus/VESC_ROS2/install/vesc_interfaces/lib:/home/wompus/VESC_ROS2/install/vesc_driver/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake /home/wompus/VESC_ROS2/src/vesc_driver -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/wompus/VESC_ROS2/install/vesc_driver
+[45.507s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/wompus/VESC_ROS2/build/vesc_driver': CMAKE_PREFIX_PATH=/home/wompus/VESC_ROS2/install/vesc_interfaces:/home/wompus/VESC_ROS2/install/vesc_driver:/home/wompus/VESC_ROS2/install/differential_drive:/opt/ros/humble LD_LIBRARY_PATH=/home/wompus/VESC_ROS2/install/vesc_interfaces/lib:/home/wompus/VESC_ROS2/install/vesc_driver/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake --build /home/wompus/VESC_ROS2/build/vesc_driver -- -j4 -l4
+[94.304s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/wompus/VESC_ROS2/build/vesc_driver' returned '0': CMAKE_PREFIX_PATH=/home/wompus/VESC_ROS2/install/vesc_interfaces:/home/wompus/VESC_ROS2/install/vesc_driver:/home/wompus/VESC_ROS2/install/differential_drive:/opt/ros/humble LD_LIBRARY_PATH=/home/wompus/VESC_ROS2/install/vesc_interfaces/lib:/home/wompus/VESC_ROS2/install/vesc_driver/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake --build /home/wompus/VESC_ROS2/build/vesc_driver -- -j4 -l4
+[94.547s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/wompus/VESC_ROS2/build/vesc_driver': CMAKE_PREFIX_PATH=/home/wompus/VESC_ROS2/install/vesc_interfaces:/home/wompus/VESC_ROS2/install/vesc_driver:/home/wompus/VESC_ROS2/install/differential_drive:/opt/ros/humble LD_LIBRARY_PATH=/home/wompus/VESC_ROS2/install/vesc_interfaces/lib:/home/wompus/VESC_ROS2/install/vesc_driver/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake --install /home/wompus/VESC_ROS2/build/vesc_driver
+[95.769s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(vesc_driver)
+[95.777s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver' for CMake module files
+[95.779s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/wompus/VESC_ROS2/build/vesc_driver' returned '0': CMAKE_PREFIX_PATH=/home/wompus/VESC_ROS2/install/vesc_interfaces:/home/wompus/VESC_ROS2/install/vesc_driver:/home/wompus/VESC_ROS2/install/differential_drive:/opt/ros/humble LD_LIBRARY_PATH=/home/wompus/VESC_ROS2/install/vesc_interfaces/lib:/home/wompus/VESC_ROS2/install/vesc_driver/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake --install /home/wompus/VESC_ROS2/build/vesc_driver
+[95.783s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver' for CMake config files
+[95.789s] Level 1:colcon.colcon_core.shell:create_environment_hook('vesc_driver', 'cmake_prefix_path')
+[95.792s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/hook/cmake_prefix_path.ps1'
+[95.810s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/hook/cmake_prefix_path.dsv'
+[95.824s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/hook/cmake_prefix_path.sh'
+[95.832s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver/lib'
+[95.832s] Level 1:colcon.colcon_core.shell:create_environment_hook('vesc_driver', 'ld_library_path_lib')
+[95.835s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/hook/ld_library_path_lib.ps1'
+[95.838s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/hook/ld_library_path_lib.dsv'
+[95.840s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/hook/ld_library_path_lib.sh'
+[95.842s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver/bin'
+[95.842s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver/lib/pkgconfig/vesc_driver.pc'
+[95.846s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver/lib/python3.10/site-packages'
+[95.847s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver/bin'
+[95.849s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/package.ps1'
+[95.854s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/package.dsv'
+[95.858s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/package.sh'
+[95.861s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/package.bash'
+[95.864s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/package.zsh'
+[95.868s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/wompus/VESC_ROS2/install/vesc_driver/share/colcon-core/packages/vesc_driver)
+[96.097s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(vesc_driver)
+[96.099s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver' for CMake module files
+[96.104s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver' for CMake config files
+[96.109s] Level 1:colcon.colcon_core.shell:create_environment_hook('vesc_driver', 'cmake_prefix_path')
+[96.110s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/hook/cmake_prefix_path.ps1'
+[96.112s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/hook/cmake_prefix_path.dsv'
+[96.114s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/hook/cmake_prefix_path.sh'
+[96.118s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver/lib'
+[96.119s] Level 1:colcon.colcon_core.shell:create_environment_hook('vesc_driver', 'ld_library_path_lib')
+[96.120s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/hook/ld_library_path_lib.ps1'
+[96.123s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/hook/ld_library_path_lib.dsv'
+[96.125s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/hook/ld_library_path_lib.sh'
+[96.127s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver/bin'
+[96.128s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver/lib/pkgconfig/vesc_driver.pc'
+[96.129s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver/lib/python3.10/site-packages'
+[96.129s] Level 1:colcon.colcon_core.environment:checking '/home/wompus/VESC_ROS2/install/vesc_driver/bin'
+[96.131s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/package.ps1'
+[96.135s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/package.dsv'
+[96.138s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/package.sh'
+[96.140s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/package.bash'
+[96.143s] INFO:colcon.colcon_core.shell:Creating package script '/home/wompus/VESC_ROS2/install/vesc_driver/share/vesc_driver/package.zsh'
+[96.145s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/wompus/VESC_ROS2/install/vesc_driver/share/colcon-core/packages/vesc_driver)
+[96.147s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[96.150s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[96.151s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[96.152s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[96.247s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[96.247s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[96.248s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[96.396s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[96.398s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/wompus/VESC_ROS2/install/local_setup.ps1'
+[96.405s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/wompus/VESC_ROS2/install/_local_setup_util_ps1.py'
+[96.417s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/wompus/VESC_ROS2/install/setup.ps1'
+[96.430s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/wompus/VESC_ROS2/install/local_setup.sh'
+[96.437s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/wompus/VESC_ROS2/install/_local_setup_util_sh.py'
+[96.440s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/wompus/VESC_ROS2/install/setup.sh'
+[96.453s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/wompus/VESC_ROS2/install/local_setup.bash'
+[96.460s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/wompus/VESC_ROS2/install/setup.bash'
+[96.470s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/wompus/VESC_ROS2/install/local_setup.zsh'
+[96.475s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/wompus/VESC_ROS2/install/setup.zsh'

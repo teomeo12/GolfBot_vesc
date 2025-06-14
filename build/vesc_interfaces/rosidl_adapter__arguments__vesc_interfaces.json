@@ -1,0 +1,7 @@
+{
+  "package_name": "vesc_interfaces",
+  "non_idl_tuples": [
+    "/home/wompus/VESC_ROS2/src/vesc_interfaces:msg/VescState.msg",
+    "/home/wompus/VESC_ROS2/src/vesc_interfaces:msg/VescStateStamped.msg"
+  ]
+}

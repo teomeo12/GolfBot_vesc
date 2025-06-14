@@ -1,0 +1,1 @@
+/home/wompus/VESC_ROS2/build/vesc_interfaces/rosidl_cmake/rosidl_cmake-extras.cmake

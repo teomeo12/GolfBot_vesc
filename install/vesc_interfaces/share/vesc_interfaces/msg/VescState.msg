@@ -1,0 +1,1 @@
+/home/wompus/VESC_ROS2/src/vesc_interfaces/msg/VescState.msg

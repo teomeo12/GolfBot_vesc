@@ -1,0 +1,1 @@
+/home/wompus/VESC_ROS2/build/vesc_driver/ament_cmake_core/vesc_driverConfig-version.cmake

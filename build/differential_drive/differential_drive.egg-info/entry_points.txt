@@ -1,0 +1,4 @@
+[console_scripts]
+diff_vel_ctrl_node = differential_drive.velocity_control:main
+sony_gamepad_node = differential_drive.sony_gamepad:main
+

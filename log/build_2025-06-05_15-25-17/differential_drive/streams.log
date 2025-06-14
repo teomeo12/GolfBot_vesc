@@ -1,0 +1,32 @@
+[3.543s] Invoking command in '/home/wompus/VESC_ROS2/build/differential_drive': PYTHONPATH=/home/wompus/VESC_ROS2/build/differential_drive/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/wompus/VESC_ROS2/install/differential_drive/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/wompus/VESC_ROS2/build/differential_drive/build --no-deps symlink_data
+[4.907s] running develop
+[4.908s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[4.908s]   warnings.warn(
+[6.055s] running egg_info
+[6.056s] creating differential_drive.egg-info
+[6.057s] writing differential_drive.egg-info/PKG-INFO
+[6.058s] writing dependency_links to differential_drive.egg-info/dependency_links.txt
+[6.059s] writing entry points to differential_drive.egg-info/entry_points.txt
+[6.060s] writing requirements to differential_drive.egg-info/requires.txt
+[6.061s] writing top-level names to differential_drive.egg-info/top_level.txt
+[6.062s] writing manifest file 'differential_drive.egg-info/SOURCES.txt'
+[6.069s] reading manifest file 'differential_drive.egg-info/SOURCES.txt'
+[6.072s] writing manifest file 'differential_drive.egg-info/SOURCES.txt'
+[6.078s] running build_ext
+[6.078s] Creating /home/wompus/VESC_ROS2/install/differential_drive/lib/python3.10/site-packages/differential-drive.egg-link (link to .)
+[6.082s] Installing diff_vel_ctrl_node script to /home/wompus/VESC_ROS2/install/differential_drive/lib/differential_drive
+[6.083s] Installing sony_gamepad_node script to /home/wompus/VESC_ROS2/install/differential_drive/lib/differential_drive
+[6.084s] 
+[6.085s] Installed /home/wompus/VESC_ROS2/build/differential_drive
+[6.085s] running symlink_data
+[6.086s] creating /home/wompus/VESC_ROS2/install/differential_drive/share/ament_index
+[6.086s] creating /home/wompus/VESC_ROS2/install/differential_drive/share/ament_index/resource_index
+[6.087s] creating /home/wompus/VESC_ROS2/install/differential_drive/share/ament_index/resource_index/packages
+[6.087s] symbolically linking /home/wompus/VESC_ROS2/build/differential_drive/resource/differential_drive -> /home/wompus/VESC_ROS2/install/differential_drive/share/ament_index/resource_index/packages
+[6.088s] symbolically linking /home/wompus/VESC_ROS2/build/differential_drive/package.xml -> /home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive
+[6.088s] creating /home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/launch
+[6.089s] symbolically linking /home/wompus/VESC_ROS2/build/differential_drive/launch/diff_drive.launch.py -> /home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/launch
+[6.089s] creating /home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/config
+[6.090s] symbolically linking /home/wompus/VESC_ROS2/build/differential_drive/config/left_vesc_config.yaml -> /home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/config
+[6.091s] symbolically linking /home/wompus/VESC_ROS2/build/differential_drive/config/right_vesc_config.yaml -> /home/wompus/VESC_ROS2/install/differential_drive/share/differential_drive/config
+[6.294s] Invoked command in '/home/wompus/VESC_ROS2/build/differential_drive' returned '0': PYTHONPATH=/home/wompus/VESC_ROS2/build/differential_drive/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/wompus/VESC_ROS2/install/differential_drive/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/wompus/VESC_ROS2/build/differential_drive/build --no-deps symlink_data
