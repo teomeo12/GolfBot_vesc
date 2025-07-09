@@ -1,9 +1,0 @@
-setup.py
-vesc_interfaces/__init__.py
-vesc_interfaces.egg-info/PKG-INFO
-vesc_interfaces.egg-info/SOURCES.txt
-vesc_interfaces.egg-info/dependency_links.txt
-vesc_interfaces.egg-info/top_level.txt
-vesc_interfaces/msg/__init__.py
-vesc_interfaces/msg/_vesc_state.py
-vesc_interfaces/msg/_vesc_state_stamped.py

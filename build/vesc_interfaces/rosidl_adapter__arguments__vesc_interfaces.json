@@ -1,7 +1,0 @@
-{
-  "package_name": "vesc_interfaces",
-  "non_idl_tuples": [
-    "/home/teo/GolfBot_vesc/src/vesc_interfaces:msg/VescState.msg",
-    "/home/teo/GolfBot_vesc/src/vesc_interfaces:msg/VescStateStamped.msg"
-  ]
-}
