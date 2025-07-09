@@ -56,9 +56,9 @@ class LogitechGamepadNode(Node):
         # Extract linear and angular components from the joystick axes
         # Logitech F710 in XInput mode:
         # axes[1] = Left stick vertical (forward/backward)
-        # axes[2] = Right stick horizontal (left/right turning)
+        # axes[3] = Right stick horizontal (left/right turning)
         raw_linear = self.apply_deadzone(msg.axes[1])
-        raw_angular = self.apply_deadzone(msg.axes[2])
+        raw_angular = self.apply_deadzone(msg.axes[3])
         
         self.linear_velocity = raw_linear * self.lin_speeds[self.current_gear]
         self.angular_velocity = (-1) * raw_angular * self.ang_speeds[self.current_gear]  # Invert for intuitive turning
