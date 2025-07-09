@@ -1,1 +1,2 @@
-/home/wompus/VESC_ROS2/build/vesc_interfaces/rosidl_generator_py/vesc_interfaces/msg/__init__.py
+from vesc_interfaces.msg._vesc_state import VescState  # noqa: F401
+from vesc_interfaces.msg._vesc_state_stamped import VescStateStamped  # noqa: F401

@@ -7,5 +7,6 @@
 #include "vesc_interfaces/msg/detail/vesc_state_stamped__struct.hpp"
 #include "vesc_interfaces/msg/detail/vesc_state_stamped__builder.hpp"
 #include "vesc_interfaces/msg/detail/vesc_state_stamped__traits.hpp"
+#include "vesc_interfaces/msg/detail/vesc_state_stamped__type_support.hpp"
 
 #endif  // VESC_INTERFACES__MSG__VESC_STATE_STAMPED_HPP_

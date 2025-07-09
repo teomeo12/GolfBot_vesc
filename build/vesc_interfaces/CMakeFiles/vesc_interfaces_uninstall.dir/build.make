@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/wompus/VESC_ROS2/src/vesc_interfaces
+CMAKE_SOURCE_DIR = /home/teo/GolfBot_vesc/src/vesc_interfaces
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/wompus/VESC_ROS2/build/vesc_interfaces
+CMAKE_BINARY_DIR = /home/teo/GolfBot_vesc/build/vesc_interfaces
 
 # Utility rule file for vesc_interfaces_uninstall.
 
@@ -67,7 +67,7 @@ include CMakeFiles/vesc_interfaces_uninstall.dir/compiler_depend.make
 include CMakeFiles/vesc_interfaces_uninstall.dir/progress.make
 
 CMakeFiles/vesc_interfaces_uninstall:
-	/usr/bin/cmake -P /home/wompus/VESC_ROS2/build/vesc_interfaces/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
+	/usr/bin/cmake -P /home/teo/GolfBot_vesc/build/vesc_interfaces/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
 
 vesc_interfaces_uninstall: CMakeFiles/vesc_interfaces_uninstall
 vesc_interfaces_uninstall: CMakeFiles/vesc_interfaces_uninstall.dir/build.make
@@ -82,6 +82,6 @@ CMakeFiles/vesc_interfaces_uninstall.dir/clean:
 .PHONY : CMakeFiles/vesc_interfaces_uninstall.dir/clean
 
 CMakeFiles/vesc_interfaces_uninstall.dir/depend:
-	cd /home/wompus/VESC_ROS2/build/vesc_interfaces && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/wompus/VESC_ROS2/src/vesc_interfaces /home/wompus/VESC_ROS2/src/vesc_interfaces /home/wompus/VESC_ROS2/build/vesc_interfaces /home/wompus/VESC_ROS2/build/vesc_interfaces /home/wompus/VESC_ROS2/build/vesc_interfaces/CMakeFiles/vesc_interfaces_uninstall.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/teo/GolfBot_vesc/build/vesc_interfaces && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/teo/GolfBot_vesc/src/vesc_interfaces /home/teo/GolfBot_vesc/src/vesc_interfaces /home/teo/GolfBot_vesc/build/vesc_interfaces /home/teo/GolfBot_vesc/build/vesc_interfaces /home/teo/GolfBot_vesc/build/vesc_interfaces/CMakeFiles/vesc_interfaces_uninstall.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/vesc_interfaces_uninstall.dir/depend
 

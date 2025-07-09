@@ -1,10 +1,10 @@
 {
   "package_name": "vesc_interfaces",
-  "output_dir": "/home/wompus/VESC_ROS2/build/vesc_interfaces/rosidl_typesupport_introspection_cpp/vesc_interfaces",
+  "output_dir": "/home/teo/GolfBot_vesc/build/vesc_interfaces/rosidl_typesupport_introspection_cpp/vesc_interfaces",
   "template_dir": "/opt/ros/humble/share/rosidl_typesupport_introspection_cpp/resource",
   "idl_tuples": [
-    "/home/wompus/VESC_ROS2/build/vesc_interfaces/rosidl_adapter/vesc_interfaces:msg/VescState.idl",
-    "/home/wompus/VESC_ROS2/build/vesc_interfaces/rosidl_adapter/vesc_interfaces:msg/VescStateStamped.idl"
+    "/home/teo/GolfBot_vesc/build/vesc_interfaces/rosidl_adapter/vesc_interfaces:msg/VescState.idl",
+    "/home/teo/GolfBot_vesc/build/vesc_interfaces/rosidl_adapter/vesc_interfaces:msg/VescStateStamped.idl"
   ],
   "ros_interface_dependencies": [
     "std_msgs:/opt/ros/humble/share/std_msgs/msg/Bool.idl",
@@ -49,8 +49,8 @@
     "/opt/ros/humble/share/rosidl_typesupport_introspection_cpp/resource/msg__type_support.cpp.em",
     "/opt/ros/humble/share/rosidl_typesupport_introspection_cpp/resource/srv__rosidl_typesupport_introspection_cpp.hpp.em",
     "/opt/ros/humble/share/rosidl_typesupport_introspection_cpp/resource/srv__type_support.cpp.em",
-    "/home/wompus/VESC_ROS2/build/vesc_interfaces/rosidl_adapter/vesc_interfaces/msg/VescState.idl",
-    "/home/wompus/VESC_ROS2/build/vesc_interfaces/rosidl_adapter/vesc_interfaces/msg/VescStateStamped.idl",
+    "/home/teo/GolfBot_vesc/build/vesc_interfaces/rosidl_adapter/vesc_interfaces/msg/VescState.idl",
+    "/home/teo/GolfBot_vesc/build/vesc_interfaces/rosidl_adapter/vesc_interfaces/msg/VescStateStamped.idl",
     "/opt/ros/humble/share/std_msgs/msg/Bool.idl",
     "/opt/ros/humble/share/std_msgs/msg/Byte.idl",
     "/opt/ros/humble/share/std_msgs/msg/ByteMultiArray.idl",

@@ -1,1 +1,12 @@
-/home/wompus/VESC_ROS2/build/vesc_interfaces/rosidl_generator_c/vesc_interfaces/msg/vesc_state.h
+// generated from rosidl_generator_c/resource/idl.h.em
+// with input from vesc_interfaces:msg/VescState.idl
+// generated code does not contain a copyright notice
+
+#ifndef VESC_INTERFACES__MSG__VESC_STATE_H_
+#define VESC_INTERFACES__MSG__VESC_STATE_H_
+
+#include "vesc_interfaces/msg/detail/vesc_state__struct.h"
+#include "vesc_interfaces/msg/detail/vesc_state__functions.h"
+#include "vesc_interfaces/msg/detail/vesc_state__type_support.h"
+
+#endif  // VESC_INTERFACES__MSG__VESC_STATE_H_

@@ -1,2 +1,2 @@
-/home/wompus/VESC_ROS2/build/vesc_interfaces/rosidl_adapter/vesc_interfaces:msg/VescState.idl
-/home/wompus/VESC_ROS2/build/vesc_interfaces/rosidl_adapter/vesc_interfaces:msg/VescStateStamped.idl
+/home/teo/GolfBot_vesc/build/vesc_interfaces/rosidl_adapter/vesc_interfaces:msg/VescState.idl
+/home/teo/GolfBot_vesc/build/vesc_interfaces/rosidl_adapter/vesc_interfaces:msg/VescStateStamped.idl

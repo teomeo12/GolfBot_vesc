@@ -1,1 +1,0 @@
-/home/wompus/VESC_ROS2/src/differential_drive/launch/diff_drive.launch.py

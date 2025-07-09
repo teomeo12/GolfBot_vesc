@@ -1,8 +1,8 @@
-# Install script for directory: /home/wompus/VESC_ROS2/build/vesc_interfaces/vesc_interfaces__py
+# Install script for directory: /home/teo/GolfBot_vesc/build/vesc_interfaces/vesc_interfaces__py
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/wompus/VESC_ROS2/install/vesc_interfaces")
+  set(CMAKE_INSTALL_PREFIX "/home/teo/GolfBot_vesc/install/vesc_interfaces")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

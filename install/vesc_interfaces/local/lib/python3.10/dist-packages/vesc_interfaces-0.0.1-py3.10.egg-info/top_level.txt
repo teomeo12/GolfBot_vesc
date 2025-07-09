@@ -1,1 +1,1 @@
-/home/wompus/VESC_ROS2/build/vesc_interfaces/ament_cmake_python/vesc_interfaces/vesc_interfaces.egg-info/top_level.txt
+vesc_interfaces

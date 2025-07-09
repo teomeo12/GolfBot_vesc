@@ -1,1 +1,12 @@
-/home/wompus/VESC_ROS2/build/vesc_interfaces/rosidl_generator_cpp/vesc_interfaces/msg/vesc_state_stamped.hpp
+// generated from rosidl_generator_cpp/resource/idl.hpp.em
+// generated code does not contain a copyright notice
+
+#ifndef VESC_INTERFACES__MSG__VESC_STATE_STAMPED_HPP_
+#define VESC_INTERFACES__MSG__VESC_STATE_STAMPED_HPP_
+
+#include "vesc_interfaces/msg/detail/vesc_state_stamped__struct.hpp"
+#include "vesc_interfaces/msg/detail/vesc_state_stamped__builder.hpp"
+#include "vesc_interfaces/msg/detail/vesc_state_stamped__traits.hpp"
+#include "vesc_interfaces/msg/detail/vesc_state_stamped__type_support.hpp"
+
+#endif  // VESC_INTERFACES__MSG__VESC_STATE_STAMPED_HPP_
