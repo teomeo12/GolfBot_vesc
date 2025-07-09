@@ -4,6 +4,8 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
+from launch.conditions import IfCondition
+from launch.substitutions import PythonExpression
 from launch_ros.actions import Node
 
 def generate_launch_description():
@@ -18,7 +20,16 @@ def generate_launch_description():
         'config',
         'right_vesc_config.yaml'
     )
+    
+    # Declare launch argument for gamepad type
+    gamepad_type_arg = DeclareLaunchArgument(
+        'gamepad_type',
+        default_value='logitech',
+        description='Type of gamepad to use: sony or logitech'
+    )
+
     return LaunchDescription([
+        gamepad_type_arg,
         Node(
             package='vesc_driver',
             executable='vesc_driver_node',
@@ -67,5 +78,16 @@ def generate_launch_description():
             package='differential_drive',
             executable='sony_gamepad_node',
             name='sony_gamepad_node',
+            condition=IfCondition(
+                PythonExpression(["'", LaunchConfiguration('gamepad_type'), "' == 'sony'"])
+            )
+        ),
+        Node(
+            package='differential_drive',
+            executable='logitech_gamepad_node',
+            name='logitech_gamepad_node',
+            condition=IfCondition(
+                PythonExpression(["'", LaunchConfiguration('gamepad_type'), "' == 'logitech'"])
+            )
         ),
     ])
