@@ -20,6 +20,13 @@ def generate_launch_description():
         'config',
         'right_vesc_config.yaml'
     )
+    # --- NEW: Define the path to the u-blox config file ---
+    # This gets the zed_f9p_simple.yaml file from the ublox_gps package
+    ublox_config = os.path.join(
+        get_package_share_directory('ublox_gps'),
+        'config',
+        'zed_f9p_simple.yaml'
+    )
     
     # Declare launch argument for gamepad type
     gamepad_type_arg = DeclareLaunchArgument(
@@ -89,5 +96,13 @@ def generate_launch_description():
             condition=IfCondition(
                 PythonExpression(["'", LaunchConfiguration('gamepad_type'), "' == 'logitech'"])
             )
+        ),
+        #Add the u-blox GPS node to the launch list
+        Node(
+            package='ublox_gps',
+            executable='ublox_gps_node',
+            name='ublox_gps_node',
+            # Load the YAML configuration file
+            parameters=[ublox_config]
         ),
     ])
