@@ -81,9 +81,7 @@ class GPSMonitorNode(Node):
         
         # Only report significant movement
         if distance > horizontal_accuracy * 2:  # Move more than 2x the accuracy
-            self.get_logger().info(f"📏 Moved {distance:.3f}m from start (±{horizontal_accuracy:.3f}m)")
-            
-            # Publish movement status
+            # Publish movement status (no console logging to keep launch terminal clean)
             status_msg = String()
             status_msg.data = f"MOVED: {distance:.3f}m | Accuracy: ±{horizontal_accuracy:.3f}m"
             self.status_pub.publish(status_msg)
