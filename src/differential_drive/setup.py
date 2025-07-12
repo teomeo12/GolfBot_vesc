@@ -27,7 +27,8 @@ setup(
             'diff_vel_ctrl_node = differential_drive.velocity_control:main',
             'sony_gamepad_node = differential_drive.sony_gamepad:main',
             'logitech_gamepad_node = differential_drive.logitech_gamepad:main',
-            'gps_monitor_node = differential_drive.gps_monitor_node:main'
+            'gps_monitor_node = differential_drive.gps_monitor_node:main',
+            'camera_node = differential_drive.camera_node:main'
         ],
     },
 )

@@ -111,4 +111,10 @@ def generate_launch_description():
             executable='gps_monitor_node',
             name='gps_monitor_node'
         ),
+        # Camera + IMU node
+        Node(
+            package='differential_drive',
+            executable='camera_node',
+            name='camera_node'
+        ),
     ])
