@@ -35,9 +35,9 @@ class CameraNode(Node):
         self.config.enable_stream(rs.stream.depth, self.FRAME_WIDTH, self.FRAME_HEIGHT, rs.format.z16, 30)
         self.config.enable_stream(rs.stream.color, self.FRAME_WIDTH, self.FRAME_HEIGHT, rs.format.bgr8, 30)
         
-        # TODO: Enable IMU streams later (currently causing conflicts)
-        # self.config.enable_stream(rs.stream.accel, rs.format.motion_xyz32f, 250)  # 250 Hz
-        # self.config.enable_stream(rs.stream.gyro, rs.format.motion_xyz32f, 200)   # 200 Hz
+        # Enable IMU streams
+        self.config.enable_stream(rs.stream.accel, rs.format.motion_xyz32f, 250)  # 250 Hz
+        self.config.enable_stream(rs.stream.gyro, rs.format.motion_xyz32f, 200)   # 200 Hz
         
         try:
             self.get_logger().info("🎥 Starting RealSense D435i Camera...")
@@ -55,7 +55,7 @@ class CameraNode(Node):
             self.get_logger().info("📷 Camera initialized successfully!")
             self.get_logger().info(f"   📐 Horizontal FoV: {self.horizontal_fov:.2f}°")
             self.get_logger().info(f"   📐 Vertical FoV: {self.vertical_fov:.2f}°")
-            self.get_logger().info("   🧭 IMU: Disabled for now (will add later)")
+            self.get_logger().info("   🧭 IMU: Enabled (Accel: 250Hz, Gyro: 200Hz)")
             
             # Timer for camera processing
             self.timer = self.create_timer(0.1, self.process_frames)  # 10 Hz
@@ -69,8 +69,8 @@ class CameraNode(Node):
             # Get frames (same as your working script)
             frames = self.pipeline.wait_for_frames()
             
-            # TODO: Process IMU data later
-            # self.process_imu_data(frames)
+            # Process IMU data
+            self.process_imu_data(frames)
             
             # Process camera data (your existing logic)
             aligned_frames = self.align.process(frames)
