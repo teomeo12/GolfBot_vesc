@@ -1,0 +1,75 @@
+# Enhanced Stepper Motor Controller Configuration  
+# This file configures the stepper_controller_node (enhanced/configurable version)
+# For simple continuous running, use stepper_motor_simple node instead
+
+stepper_controller_node:
+  ros__parameters:
+    # Serial Communication Settings
+    serial_port: '/dev/tty_arduino'        # Arduino device path (persistent symlink)
+    baud_rate: 9600                        # Serial communication baud rate
+    connection_timeout: 5.0                # Timeout for initial connection (seconds)
+    command_timeout: 2.0                   # Timeout for command responses (seconds)
+    
+    # Gamepad Input Settings  
+    button_start: 0                        # A button (green) - Start motor
+    button_stop: 1                         # B button (red) - Stop motor
+    
+    # Stepper Motor Parameters
+    steps_per_command: 800                 # Number of steps for single movements (when using other commands)
+                                          # 800 steps = 1 full rotation with your current setup
+                                          # (200 steps/rev * 4 microsteps = 800 steps/rev)
+    continuous_steps: 999999               # Large number of steps for continuous running
+    
+    max_speed: 4000.0                     # Maximum stepper speed (steps/second)
+    acceleration: 2000.0                  # Stepper acceleration (steps/second²)
+    direction: 1                          # Motor direction: 1 = forward, -1 = reverse
+    
+    # Behavior Settings
+    auto_configure: true                  # Automatically configure Arduino on startup
+                                         # If false, Arduino will use its saved EEPROM settings
+    
+    # Advanced Settings (usually don't need to change these)
+    min_command_interval: 0.5            # Minimum time between commands (seconds) - prevents button bouncing
+
+# Notes:
+# 1. Steps Calculation:
+#    - Standard stepper: 200 steps/revolution  
+#    - With microstepping (MS1=0, MS2=1, MS3=0): 4x microstepping
+#    - Total: 200 * 4 = 800 steps per full revolution
+#    - Half revolution: 400 steps
+#    - Quarter revolution: 200 steps
+#
+# 2. Speed Guidelines:
+#    - Low speed: 1000-2000 steps/sec (smooth, high torque)
+#    - Medium speed: 2000-4000 steps/sec (good balance)  
+#    - High speed: 4000-8000 steps/sec (fast, may lose torque)
+#
+# 3. Acceleration Guidelines:
+#    - Low accel: 500-1000 steps/sec² (smooth start/stop)
+#    - Medium accel: 1000-3000 steps/sec² (good balance)
+#    - High accel: 3000+ steps/sec² (quick start/stop, may vibrate)
+#
+# 4. Button Mapping (Logitech F710 in XInput mode):
+#    - Button 0: A button (green) - START motor continuously
+#    - Button 1: B button (red) - STOP motor
+#    - Button 2: X button (blue)
+#    - Button 3: Y button (yellow)
+#    - Button 4: LB (Left Bumper)
+#    - Button 5: RB (Right Bumper)
+#
+# 5. Runtime Configuration:
+#    You can modify these parameters without recompiling by:
+#    - Editing this file and restarting the node, OR
+#    - Using ROS2 parameter commands, OR  
+#    - Using the Arduino's serial command interface directly
+#
+# 6. Arduino Commands (for manual control):
+#    Connect to /dev/tty_arduino at 9600 baud and send:
+#    - R: Run stepper with current settings
+#    - S: Stop stepper immediately
+#    - C:steps:speed:accel:dir: Configure (e.g., C:1600:4000:2000:1)
+#    - P: Print current configuration
+#    - STATUS: Get current status
+#    - SAVE: Save settings to Arduino EEPROM
+#    - LOAD: Load settings from Arduino EEPROM  
+#    - RESET: Reset to factory defaults 

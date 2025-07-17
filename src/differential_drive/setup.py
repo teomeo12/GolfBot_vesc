@@ -28,7 +28,9 @@ setup(
             'sony_gamepad_node = differential_drive.sony_gamepad:main',
             'logitech_gamepad_node = differential_drive.logitech_gamepad:main',
             'gps_monitor_node = differential_drive.gps_monitor_node:main',
-            'camera_node = differential_drive.camera_node:main'
+            'camera_node = differential_drive.camera_node:main',
+            'stepper_controller_node = differential_drive.stepper_controller_node:main',
+            'stepper_motor_simple = differential_drive.stepper_motor_simple:main'
         ],
     },
 )

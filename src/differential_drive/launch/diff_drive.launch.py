@@ -117,4 +117,15 @@ def generate_launch_description():
             executable='camera_node',
             name='camera_node'
         ),
+        # Stepper motor controller node
+        Node(
+            package='differential_drive',
+            executable='stepper_controller_node',
+            name='stepper_controller_node',
+            parameters=[os.path.join(
+                get_package_share_directory('differential_drive'),
+                'config',
+                'stepper_config.yaml'
+            )]
+        ),
     ])
