@@ -1,0 +1,10 @@
+/**:
+  ros__parameters:
+    port: "/dev/tty_arduino"
+    baud_rate: 115200
+    max_speed: 800.0
+    acceleration: 400.0
+    steps: 200
+    direction: 1
+    continuous: false
+    imu_frame_id: "imu_link" 

@@ -245,20 +245,23 @@ class StepperControllerNode(Node):
         return self.send_command('R', expect_response=True)
 
     def start_continuous(self) -> bool:
-        """Send continuous run command to stepper motor"""
+        """Send continuous run command to stepper motor (fire and forget)"""
         if not self.connection_active:
             self.get_logger().error('Cannot start continuous - Arduino not connected')
             return False
 
-        return self.send_command('RCON', expect_response=True)
+        # Fire and forget: send command without waiting for a response
+        # This makes the system more resilient to noise-related communication drops
+        return self.send_command('RCON', expect_response=False)
 
     def stop_stepper(self) -> bool:
-        """Send stop command to stepper motor"""
+        """Send stop command to stepper motor (fire and forget)"""
         if not self.connection_active:
             self.get_logger().error('Cannot stop stepper - Arduino not connected')
             return False
 
-        return self.send_command('S', expect_response=True)
+        # Fire and forget: send command without waiting for a response
+        return self.send_command('S', expect_response=False)
 
     def get_arduino_status(self) -> bool:
         """Request status from Arduino"""

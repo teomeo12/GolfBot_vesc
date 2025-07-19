@@ -14,6 +14,8 @@ setup(
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
+        (os.path.join('share', package_name, 'arduino_sketches'), glob('arduino_sketches/*.ino')),
+        (os.path.join('share', package_name), glob('1600s_aug_100ep.pt')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -24,13 +26,15 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'camera_node = differential_drive.camera_node:main',
             'diff_vel_ctrl_node = differential_drive.velocity_control:main',
             'sony_gamepad_node = differential_drive.sony_gamepad:main',
             'logitech_gamepad_node = differential_drive.logitech_gamepad:main',
             'gps_monitor_node = differential_drive.gps_monitor_node:main',
-            'camera_node = differential_drive.camera_node:main',
+            'stepper_imu_node = differential_drive.stepper_imu_node:main',
             'stepper_controller_node = differential_drive.stepper_controller_node:main',
-            'stepper_motor_simple = differential_drive.stepper_motor_simple:main'
+            'stepper_motor_simple = differential_drive.stepper_motor_simple:main',
+            'divot_detector = differential_drive.divot_detection_intel:main',
         ],
     },
 )

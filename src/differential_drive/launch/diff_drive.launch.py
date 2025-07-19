@@ -111,21 +111,49 @@ def generate_launch_description():
             executable='gps_monitor_node',
             name='gps_monitor_node'
         ),
-        # Camera + IMU node
+        
+        # Original Camera Node - This provides the image stream
         Node(
             package='differential_drive',
-            executable='camera_node',
+            executable='camera_node', # Make sure this executable is in your setup.py
             name='camera_node'
         ),
+
+        # Camera Vision node (for images and future YOLO)
+        # Node(
+        #     package='differential_drive',
+        #     executable='camera_vision_node',
+        #     name='camera_vision_node'
+        # ),
+        # # Camera IMU node (for orientation data)
+        # Node(
+        #     package='differential_drive',
+        #     executable='camera_imu_node',
+        #     name='camera_imu_node'
+        # ),
         # Stepper motor controller node
+        # Node(
+        #     package='differential_drive',
+        #     executable='stepper_controller_node',
+        #     name='stepper_controller_node',
+        #     parameters=[os.path.join(get_package_share_directory('differential_drive'), 'config', 'stepper_config.yaml')],
+        #     output='screen'
+        # ),
+        
+        # New unified Stepper + IMU node
         Node(
             package='differential_drive',
-            executable='stepper_controller_node',
-            name='stepper_controller_node',
-            parameters=[os.path.join(
-                get_package_share_directory('differential_drive'),
-                'config',
-                'stepper_config.yaml'
-            )]
+            executable='stepper_imu_node',
+            name='stepper_imu_node',
+            parameters=[os.path.join(get_package_share_directory('differential_drive'), 'config', 'stepper_imu_config.yaml')],
+            output='screen'
+        ),
+
+        # YOLO Divot Detector Node
+        Node(
+            package='differential_drive',
+            executable='divot_detector',
+            name='divot_detector',
+            output='screen'
         ),
     ])
