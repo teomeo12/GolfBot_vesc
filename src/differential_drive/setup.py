@@ -23,7 +23,7 @@ setup(
     maintainer_email='jamespetri28@gmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
+    # tests_require=['pytest'], # This is deprecated and handled by package.xml
     entry_points={
         'console_scripts': [
             'camera_node = differential_drive.camera_node:main',
