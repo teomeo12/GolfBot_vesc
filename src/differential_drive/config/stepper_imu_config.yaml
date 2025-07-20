@@ -2,9 +2,9 @@
   ros__parameters:
     port: "/dev/tty_arduino"
     baud_rate: 115200
-    max_speed: 800.0
-    acceleration: 400.0
-    steps: 200
+    max_speed: 4000       # Set to the known good speed
+    acceleration: 4000  # Set to the known good acceleration
+    steps: 800              # Number of steps for non-continuous mode
     direction: 1
-    continuous: false
+    continuous: true
     imu_frame_id: "imu_link" 

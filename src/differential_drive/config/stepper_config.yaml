@@ -6,7 +6,7 @@ stepper_controller_node:
   ros__parameters:
     # Serial Communication Settings
     serial_port: '/dev/tty_arduino'        # Arduino device path (persistent symlink)
-    baud_rate: 9600                        # Serial communication baud rate
+    baud_rate: 9600                      # Serial communication baud rate (FIXED to match Arduino)
     connection_timeout: 5.0                # Timeout for initial connection (seconds)
     command_timeout: 2.0                   # Timeout for command responses (seconds)
     

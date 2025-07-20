@@ -32,8 +32,6 @@ setup(
             'logitech_gamepad_node = differential_drive.logitech_gamepad:main',
             'gps_monitor_node = differential_drive.gps_monitor_node:main',
             'stepper_imu_node = differential_drive.stepper_imu_node:main',
-            'stepper_controller_node = differential_drive.stepper_controller_node:main',
-            'stepper_motor_simple = differential_drive.stepper_motor_simple:main',
             'divot_detector = differential_drive.divot_detection_intel:main',
         ],
     },

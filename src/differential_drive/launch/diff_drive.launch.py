@@ -119,19 +119,13 @@ def generate_launch_description():
             name='camera_node'
         ),
 
-        # Camera Vision node (for images and future YOLO)
-        # Node(
-        #     package='differential_drive',
-        #     executable='camera_vision_node',
-        #     name='camera_vision_node'
-        # ),
-        # # Camera IMU node (for orientation data)
-        # Node(
-        #     package='differential_drive',
-        #     executable='camera_imu_node',
-        #     name='camera_imu_node'
-        # ),
-        # Stepper motor controller node
+        
+        # -----------------------------------------------------------------
+        # --- STEPPER NODE SELECTION ---
+        # --- Make sure only ONE of the following is uncommented! ---
+        # -----------------------------------------------------------------
+
+        # Option 1: Original enhanced Stepper Controller (Legacy - Do not use with IMU sketch)
         # Node(
         #     package='differential_drive',
         #     executable='stepper_controller_node',
@@ -140,7 +134,7 @@ def generate_launch_description():
         #     output='screen'
         # ),
         
-        # New unified Stepper + IMU node
+        # Option 2: New unified Stepper + IMU node (CORRECT ONE for stepper_controller_with_imu.ino)
         Node(
             package='differential_drive',
             executable='stepper_imu_node',

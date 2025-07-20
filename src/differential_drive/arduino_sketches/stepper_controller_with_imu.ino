@@ -9,7 +9,7 @@
  * Stepper Driver:
  * - STEP -> D2
  * - DIR  -> D3
- * - EN   -> D4
+ * - EN   -> D8  
  * 
  * BNO055:
  * - SDA -> A4
@@ -27,7 +27,7 @@
 // Pin Definitions
 const int stepPin = 2;
 const int dirPin = 3;
-const int enablePin = 4;
+const int enablePin = 8;  // FIXED: Enable pin is 8, not 4!
 
 // Create instances
 AccelStepper stepper(AccelStepper::DRIVER, stepPin, dirPin);
@@ -47,8 +47,10 @@ StepperConfig config = {
     .acceleration = 400,  // default acceleration
     .steps = 200,        // default steps (1 revolution for most steppers)
     .direction = 1,      // default direction
-    .continuous = false   // default to non-continuous
+    .continuous = true   // Set default to true for joystick control
 };
+
+bool motorRunning = false; // Add state variable to track if motor is running
 
 // IMU data struct
 struct ImuData {
@@ -65,7 +67,7 @@ ImuData imuData;
 
 // Timing control
 unsigned long lastImuUpdate = 0;
-const int IMU_UPDATE_INTERVAL = 50;  // 20Hz IMU updates
+const int IMU_UPDATE_INTERVAL = 100; // Update IMU at 10Hz to leave more time for motor control
 
 void setup() {
     Serial.begin(115200);
@@ -79,8 +81,8 @@ void setup() {
     
     // Initialize IMU
     if (!bno.begin()) {
-        Serial.println("No BNO055 detected!");
-        while (1);
+        Serial.println("WARNING: No BNO055 detected! Continuing without IMU.");
+        // while (1); // CRITICAL FIX: Commented out to prevent halting
     }
     
     bno.setExtCrystalUse(true);
@@ -89,20 +91,21 @@ void setup() {
     Serial.println("Commands:");
     Serial.println("  R - Run stepper with current settings");
     Serial.println("  S - Stop stepper");
-    Serial.println("  C:steps:speed:accel:dir - Configure stepper");
-    Serial.println("  E:0/1 - Enable/Disable stepper");
-    Serial.println("  I - Request IMU data");
+    Serial.println("  C:steps:speed:accel:dir:continuous - Configure stepper");
+    // 'E' command removed from help text
 }
 
 void loop() {
-    // ALWAYS call stepper.run(). It's the heart of the AccelStepper library.
-    // It will check if the motor needs to move and step it if it does.
-    stepper.run();
+    // This is the most important part.
+    // It decides whether to use run() for steps or runSpeed() for continuous motion.
+    if (motorRunning) {
+        stepper.run(); // This will handle both modes based on how it was started
+    }
     
     // Update and send IMU data periodically
     if (millis() - lastImuUpdate >= IMU_UPDATE_INTERVAL) {
         updateImuData();
-        sendImuData(); // <-- ADDED THIS LINE
+        sendImuData();
         lastImuUpdate = millis();
     }
     
@@ -120,10 +123,7 @@ void loop() {
             case 'C':
                 parseConfig();
                 break;
-            case 'E':
-                handleEnable();
-                break;
-            // The 'I' case is no longer needed as data streams automatically
+            // 'E' case removed
         }
     }
 }
@@ -183,34 +183,27 @@ void sendImuData() {
 }
 
 void runStepper() {
-    Serial.println("CMD: R received by Arduino!");
+    Serial.println("CMD: R received by Arduino! Starting motor.");
     stepper.enableOutputs(); // Explicitly enable the motor
+    
     if (config.continuous) {
-        stepper.move(99999999L * config.direction);  // Very large number for continuous motion
+        // For continuous motion, set a very high target position
+        stepper.move(99999999L * config.direction); 
     } else {
+        // For specific steps, move by that amount
         stepper.move(config.steps * config.direction);
     }
-    Serial.println("OK");
+    motorRunning = true; // Set our state flag
+    Serial.println("OK - Motor command issued.");
 }
 
 void stopStepper() {
-    Serial.println("CMD: S received by Arduino!");
-    stepper.stop();
-    stepper.setCurrentPosition(0);
-    stepper.disableOutputs(); // Disable motor when stopped to save power and reduce heat
-    Serial.println("OK");
-}
-
-void handleEnable() {
-    while (!Serial.available()) {}  // Wait for parameter
-    char state = Serial.read();
-    if (state == '1') {
-        stepper.enableOutputs();
-        Serial.println("Stepper Enabled");
-    } else if (state == '0') {
-        stepper.disableOutputs();
-        Serial.println("Stepper Disabled");
-    }
+    Serial.println("CMD: S received by Arduino! Stopping motor.");
+    stepper.stop(); // Stop motor movement
+    stepper.setCurrentPosition(0); // Reset position
+    stepper.disableOutputs(); // Disable motor to save power and reduce heat
+    motorRunning = false; // Set our state flag
+    Serial.println("OK - Motor stopped.");
 }
 
 void parseConfig() {
@@ -224,31 +217,28 @@ void parseConfig() {
         if (data.charAt(i) == ':') {
             String value = data.substring(lastIndex, i);
             switch (idx) {
-                case 0:
-                    newConfig.steps = value.toInt();
-                    break;
-                case 1:
-                    newConfig.maxSpeed = value.toFloat();
-                    break;
-                case 2:
-                    newConfig.acceleration = value.toFloat();
-                    break;
-                case 3:
-                    newConfig.direction = value.toInt();
-                    break;
-                case 4:
-                    newConfig.continuous = (value.toInt() == 1);
-                    break;
+                case 0: newConfig.steps = value.toInt(); break;
+                case 1: newConfig.maxSpeed = value.toFloat(); break;
+                case 2: newConfig.acceleration = value.toFloat(); break;
+                case 3: newConfig.direction = value.toInt(); break;
+                case 4: newConfig.continuous = (value.toInt() == 1); break;
             }
             lastIndex = i + 1;
             idx++;
         }
     }
     
+    // Process the last value (continuous flag)
+    String value = data.substring(lastIndex);
+    if (idx == 4) {
+      newConfig.continuous = (value.toInt() == 1);
+    }
+    
     // Apply the new configuration
     config = newConfig;
     applyStepperConfig();
-    Serial.println("OK");
+    Serial.print("OK - Configured with continuous mode: ");
+    Serial.println(config.continuous ? "true" : "false");
 }
 
 void applyStepperConfig() {

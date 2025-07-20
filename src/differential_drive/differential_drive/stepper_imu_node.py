@@ -50,7 +50,7 @@ class StepperImuNode(Node):
             time.sleep(2)  # Wait for Arduino to reset
             self.get_logger().info(f"🔌 Connected to Arduino on {port}")
             
-            # Configure stepper with initial parameters
+            # Re-enabled: This sends the parameters from the YAML file to the Arduino.
             self.configure_stepper()
             
         except serial.SerialException as e:
@@ -76,10 +76,10 @@ class StepperImuNode(Node):
             direction = self.get_parameter('direction').value
             continuous = 1 if self.get_parameter('continuous').value else 0
             
+            # This command format MUST match the Arduino's parseConfig() function
             cmd = f"C:{steps}:{speed}:{accel}:{direction}:{continuous}"
             self.send_command(cmd)
-            # No need to wait for "OK" with continuous streaming
-            self.get_logger().info("✅ Stepper configuration sent.")
+            self.get_logger().info(f"✅ Stepper configuration sent: {cmd}")
                 
         except Exception as e:
             self.get_logger().error(f"❌ Failed to configure stepper: {str(e)}")
