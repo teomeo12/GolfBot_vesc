@@ -33,6 +33,7 @@ setup(
             'gps_monitor_node = differential_drive.gps_monitor_node:main',
             'stepper_imu_node = differential_drive.stepper_imu_node:main',
             'divot_detector = differential_drive.divot_detection_intel:main',
+            'align_and_repair_node = differential_drive.align_and_repair_node:main',
         ],
     },
 )

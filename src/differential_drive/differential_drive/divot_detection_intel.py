@@ -8,11 +8,18 @@ import supervision as sv
 from ultralytics import YOLO
 from ament_index_python.packages import get_package_share_directory
 import os
+import numpy as np # Import numpy
 
 class DivotDetectorNode(Node):
     def __init__(self):
         super().__init__('divot_detector_node')
         self.bridge = CvBridge()
+        self.latest_depth_image = None # Add storage for depth image
+
+        # --- NEW: Camera Intrinsics (for D435i) ---
+        self.camera_fx = 615.0  # Focal length X
+        self.camera_cx = 320.0  # Principal point X (for 640 width)
+        # ---
 
         # --- Model Initialization ---
         package_path = get_package_share_directory('differential_drive')
@@ -36,6 +43,14 @@ class DivotDetectorNode(Node):
             '/camera/color/image_raw',  # Subscribing to the existing camera topic
             self.image_callback,
             10)
+        
+        # --- NEW: Subscriber for depth image ---
+        self.depth_subscriber = self.create_subscription(
+            Image,
+            '/camera/depth/image_raw',
+            self.depth_callback,
+            10)
+
         self.annotated_image_publisher = self.create_publisher(
             Image,
             '/camera/divot_detection/image_raw', # Publishing the result
@@ -48,6 +63,13 @@ class DivotDetectorNode(Node):
             10)
             
         self.get_logger().info("Divot Detector Node is running and waiting for images...")
+
+    def depth_callback(self, msg: Image):
+        """Store the latest depth image."""
+        try:
+            self.latest_depth_image = self.bridge.imgmsg_to_cv2(msg, "16UC1")
+        except Exception as e:
+            self.get_logger().error(f"Failed to convert depth image: {e}")
 
     def image_callback(self, msg: Image):
         try:
@@ -62,15 +84,41 @@ class DivotDetectorNode(Node):
         detections = sv.Detections.from_ultralytics(results)
 
         # --- Publish Detection Details ---
-        if detections and detections.class_id is not None and detections.confidence is not None:
+        # Only process detections if they exist and have masks
+        if detections and detections.mask is not None:
             details_msg = String()
             details_list = []
+            
+            # Find the class ID for 'divot' to perform specific calculations
+            class_names = self.model.names
+            divot_class_id = -1
+            try:
+                divot_class_id = [k for k, v in class_names.items() if v == 'divot'][0]
+            except IndexError:
+                self.get_logger().warn("Model does not contain 'divot' class. Cannot calculate center.", throttle_duration_sec=5)
+
             for i in range(len(detections.class_id)):
-                class_name = self.model.names[detections.class_id[i]]
+                class_id = detections.class_id[i]
+                class_name = class_names[class_id]
                 confidence = detections.confidence[i]
-                details_list.append(f"Detection: {class_name}, Confidence: {confidence:.2f}")
-            details_msg.data = "; ".join(details_list)
-            self.details_publisher.publish(details_msg)
+
+                # --- NEW: Calculate Mask Center for 'divot' class ---
+                if class_id == divot_class_id:
+                    # Get the boolean mask for the current divot
+                    mask = detections.mask[i]
+                    
+                    # Calculate center coordinates from the mask
+                    y_coords, x_coords = np.where(mask)
+                    if len(x_coords) > 0 and len(y_coords) > 0:
+                        center_x = int(np.mean(x_coords))
+                        center_y = int(np.mean(y_coords))
+                        
+                        # Create the new, detailed string format
+                        details_list.append(f"class:{class_name},confidence:{confidence:.2f},center_x:{center_x},center_y:{center_y}")
+
+            if details_list:
+                details_msg.data = ";".join(details_list)
+                self.details_publisher.publish(details_msg)
 
         # Annotate the frame with detections
         annotated_frame = self.mask_annotator.annotate(
@@ -85,6 +133,61 @@ class DivotDetectorNode(Node):
             scene=annotated_frame,
             detections=detections
         )
+
+        # --- NEW: Visualize the calculated center point for divots ---
+        if detections and detections.mask is not None:
+            # First, draw the frame center crosshairs for reference
+            frame_height, frame_width, _ = annotated_frame.shape
+            frame_center_x = frame_width // 2
+            frame_center_y = frame_height // 2
+            cv2.line(annotated_frame, (0, frame_center_y), (frame_width, frame_center_y), (0, 255, 0), 1)
+            cv2.line(annotated_frame, (frame_center_x, 0), (frame_center_x, frame_height), (0, 255, 0), 1)
+            cv2.circle(annotated_frame, (frame_center_x, frame_center_y), 3, (255, 0, 255), -1) # Magenta dot for center
+
+            # Re-iterate through detections to draw the center point on the annotated frame
+            class_names = self.model.names
+            try:
+                divot_class_id = [k for k, v in class_names.items() if v == 'divot'][0]
+                for i in range(len(detections.class_id)):
+                    if detections.class_id[i] == divot_class_id:
+                        mask = detections.mask[i]
+                        y_coords, x_coords = np.where(mask)
+                        if len(x_coords) > 0 and len(y_coords) > 0:
+                            center_x = int(np.mean(x_coords))
+                            center_y = int(np.mean(y_coords))
+                            
+                            # Draw a red circle at the calculated center
+                            cv2.circle(annotated_frame, (center_x, center_y), 5, (0, 0, 255), -1) # -1 fills the circle
+                            
+                            # Draw a line from the frame center to the divot center
+                            cv2.line(annotated_frame, (frame_center_x, frame_center_y), (center_x, center_y), (0, 255, 0), 2)
+                            
+                            # --- NEW: Calculate and display real-world distance ---
+                            if self.latest_depth_image is not None:
+                                # Get depth at the center of the divot
+                                depth_mm = self.latest_depth_image[center_y, center_x]
+                                if depth_mm > 0:
+                                    # Get bounding box for text positioning
+                                    box = detections.xyxy[i]
+                                    x1, y1 = int(box[0]), int(box[1])
+
+                                    # Calculate and display depth distance
+                                    depth_cm = depth_mm / 10.0
+                                    distance_text = f"Dist: {depth_cm:.1f} cm"
+                                    cv2.putText(annotated_frame, distance_text, (x1, y1 - 30), 
+                                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+                                    
+                                    # Calculate and display horizontal offset
+                                    depth_m = depth_mm / 1000.0
+                                    offset_m = ((center_x - self.camera_cx) * depth_m) / self.camera_fx
+                                    offset_cm = offset_m * 100
+                                    offset_text = f"Offset: {offset_cm:+.1f} cm" # '+' shows sign
+                                    cv2.putText(annotated_frame, offset_text, (x1, y1 - 10), 
+                                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+
+            except IndexError:
+                pass # 'divot' class not in model, do nothing.
+        # --- End Visualization ---
 
         try:
             # Convert annotated frame back to ROS Image message and publish

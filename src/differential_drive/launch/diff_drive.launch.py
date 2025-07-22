@@ -150,4 +150,12 @@ def generate_launch_description():
             name='divot_detector',
             output='screen'
         ),
+
+        # Autonomous Alignment and Repair Node
+        Node(
+            package='differential_drive',
+            executable='align_and_repair_node',
+            name='align_and_repair_node',
+            output='screen'
+        ),
     ])

@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Bool
 
 class LogitechGamepadNode(Node):
     def __init__(self):
@@ -22,9 +23,12 @@ class LogitechGamepadNode(Node):
         # Track button states to handle bouncing
         self.prev_lb_state = False  # LB button (button 4)
         self.prev_rb_state = False  # RB button (button 5)
+        self.prev_y_state = False   # Y button (button 3)
+        self.prev_x_state = False   # X button (button 2)
 
-        # Create a publisher for the cmd_vel topic
+        # Create publishers
         self.cmd_vel_pub_ = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.autonomous_mode_pub_ = self.create_publisher(Bool, '/is_autonomous_mode', 10)
 
         # Store the linear and angular velocities from the joystick
         self.linear_velocity = 0.0
@@ -39,6 +43,8 @@ class LogitechGamepadNode(Node):
         self.get_logger().info('  Right Stick (Left/Right): Turn left/right')
         self.get_logger().info('  LB Button: Decrease gear')
         self.get_logger().info('  RB Button: Increase gear')
+        self.get_logger().info('  Y Button: Enable autonomous mode')
+        self.get_logger().info('  X Button: Disable autonomous mode')
         self.get_logger().info(f'  Current gear: {self.current_gear} (Speed: {self.lin_speeds[self.current_gear]})')
 
     def apply_deadzone(self, value):
@@ -82,6 +88,28 @@ class LogitechGamepadNode(Node):
 
         # Update previous RB button state
         self.prev_rb_state = rb_pressed
+
+        # Check Y button (button 3) for autonomous mode activation
+        y_pressed = msg.buttons[3] == 1
+        if y_pressed and not self.prev_y_state:
+            autonomous_msg = Bool()
+            autonomous_msg.data = True
+            self.autonomous_mode_pub_.publish(autonomous_msg)
+            self.get_logger().info('🤖 Y BUTTON: Autonomous mode ACTIVATED')
+
+        # Update previous Y button state
+        self.prev_y_state = y_pressed
+
+        # Check X button (button 2) for autonomous mode deactivation
+        x_pressed = msg.buttons[2] == 1
+        if x_pressed and not self.prev_x_state:
+            autonomous_msg = Bool()
+            autonomous_msg.data = False
+            self.autonomous_mode_pub_.publish(autonomous_msg)
+            self.get_logger().info('🛑 X BUTTON: Autonomous mode DEACTIVATED')
+
+        # Update previous X button state
+        self.prev_x_state = x_pressed
 
         # Create a Twist message
         twist_msg = Twist()

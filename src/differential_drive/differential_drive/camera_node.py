@@ -28,7 +28,7 @@ class CameraNode(Node):
         # Configure camera streams
         self.config.enable_stream(rs.stream.depth, self.FRAME_WIDTH, self.FRAME_HEIGHT, rs.format.z16, 30)
         self.config.enable_stream(rs.stream.color, self.FRAME_WIDTH, self.FRAME_HEIGHT, rs.format.bgr8, 30)
-
+        
         try:
             self.get_logger().info("🎥 Starting RealSense D435i Camera...")
             self.profile = self.pipeline.start(self.config)
@@ -37,7 +37,7 @@ class CameraNode(Node):
             
             # Timer for frame processing
             self.timer = self.create_timer(1/30.0, self.process_frames)  # ~30 Hz
-
+            
         except Exception as e:
             self.get_logger().error(f"❌ Failed to initialize camera: {e}")
             
@@ -47,7 +47,7 @@ class CameraNode(Node):
             frames = self.pipeline.wait_for_frames(timeout_ms=1000)
             if not frames:
                 return
-
+            
             # Align frames
             aligned_frames = self.align.process(frames)
             depth_frame = aligned_frames.get_depth_frame()
@@ -65,7 +65,7 @@ class CameraNode(Node):
             
         except Exception as e:
             self.get_logger().error(f"Error processing frames: {e}")
-
+        
     def publish_images(self, color_image, depth_image):
         """Publish camera images as ROS topics"""
         try:

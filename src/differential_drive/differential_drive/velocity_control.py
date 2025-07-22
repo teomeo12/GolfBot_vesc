@@ -26,7 +26,7 @@ class DifferentialDrive(Node):
         # Create a subscriber for velocity commands (linear and angular)
         self.cmd_vel_sub_ = self.create_subscription(
             Twist,
-            'cmd_vel',
+            '/cmd_vel',
             self.cmd_vel_callback,
             10)
 

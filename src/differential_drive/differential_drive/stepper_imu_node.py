@@ -30,8 +30,9 @@ class StepperImuNode(Node):
         self.imu_pub = self.create_publisher(Imu, 'imu/data', 10)
         self.status_pub = self.create_publisher(String, 'stepper/status', 10)
         
-        # Create Joy subscriber
+        # Create subscribers
         self.joy_subscriber = self.create_subscription(Joy, 'joy', self.joy_callback, 10)
+        self.dispense_subscriber = self.create_subscription(String, '/dispense_sand', self.dispense_callback, 10)
         
         # Button state tracking
         self.stepper_running = False
@@ -167,6 +168,21 @@ class StepperImuNode(Node):
 
         self.prev_start_state = start_pressed
         self.prev_stop_state = stop_pressed
+
+    def dispense_callback(self, msg: String):
+        """Handle autonomous dispensing commands"""
+        command = msg.data.upper().strip()
+        
+        if command == 'R' and not self.stepper_running:
+            self.get_logger().info('🤖 AUTONOMOUS: Starting stepper motor')
+            self.send_command('R')
+            self.stepper_running = True
+        elif command == 'S' and self.stepper_running:
+            self.get_logger().info('🤖 AUTONOMOUS: Stopping stepper motor')
+            self.send_command('S')
+            self.stepper_running = False
+        else:
+            self.get_logger().warn(f'⚠️  Invalid or redundant dispense command: {command}')
 
     def send_command(self, command: str):
         if self.serial_connection:
