@@ -41,7 +41,7 @@ class AlignAndRepairNode(Node):
         self.dispenser_offset = 0.90  # Dispenser is 90cm behind camera
         
         # Control parameters
-        self.turn_speed = 100.0   # A fixed speed for turning
+        self.turn_speed = 300.0   # A fixed speed for turning
         self.drive_speed = 150.0  # A fixed speed for driving forward
         
         # Detection data
@@ -82,9 +82,11 @@ class AlignAndRepairNode(Node):
         """Handle autonomous mode activation/deactivation"""
         if msg.data and not self.autonomous_mode:
             self.autonomous_mode = True
+            self.get_logger().info('ENTERING AUTONOMOUS MODE: Starting sequence.')
             self.state = AlignmentState.TURNING
         elif not msg.data and self.autonomous_mode:
             self.autonomous_mode = False
+            self.get_logger().info('EXITING AUTONOMOUS MODE: Robot stopped.')
             self.stop_robot()
             self.reset_sequence()
             
@@ -134,11 +136,15 @@ class AlignAndRepairNode(Node):
         cam_z = depth
         
         # Transform to robot base_link frame
-        # Assuming camera is pointing forward and mounted at front of robot
-        world_x = cam_z  # Forward distance from camera
-        world_y = -cam_x  # Lateral offset (camera x points right, robot y points left)
+        # In the robot's coordinate system (base_link):
+        # - The X-axis points forward.
+        # - The Y-axis points to the left.
+        # - The Z-axis points up.
+        # The camera's Z-axis (depth) corresponds to the robot's X-axis (forward).
+        forward_dist = cam_z
+        lateral_offset = -cam_x
         
-        return {'x': world_x, 'y': world_y}
+        return {'forward_dist': forward_dist, 'lateral_offset': lateral_offset}
         
     def control_loop(self):
         """Main control loop called at 10 Hz"""
@@ -156,6 +162,10 @@ class AlignAndRepairNode(Node):
             
     def handle_turning(self):
         """Turn robot until divot is horizontally centered"""
+        if not hasattr(self, 'turning_logged'):
+            self.get_logger().info('STATE: TURNING - Aligning with divot.')
+            self.turning_logged = True
+
         if self.latest_detection_info is None:
             self.stop_robot()
             return
@@ -163,20 +173,26 @@ class AlignAndRepairNode(Node):
         pixel_error = self.latest_detection_info['center_x'] - self.camera_cx
         
         if abs(pixel_error) < self.center_threshold:
+            self.get_logger().info('Alignment complete.')
             self.stop_robot()
             self.state = AlignmentState.WAITING
             self.wait_start_time = time.time()
             return
 
         twist = Twist()
-        twist.angular.z = -self.turn_speed if pixel_error > 0 else self.turn_speed
+        twist.angular.z = self.turn_speed if pixel_error > 0 else -self.turn_speed
         self.cmd_vel_pub.publish(twist)
         
     def handle_waiting(self):
         """Wait 5 seconds then lock target position"""
+        if not hasattr(self, 'waiting_logged'):
+            self.get_logger().info('STATE: WAITING - Stabilizing for 5 seconds.')
+            self.waiting_logged = True
+
         elapsed = time.time() - self.wait_start_time
         
         if elapsed >= 5.0:
+            self.get_logger().info('Wait complete. Attempting to lock target...')
             if self.latest_detection_info is not None:
                 divot_pos = self.get_divot_world_position(
                     self.latest_detection_info['center_x'], 
@@ -185,22 +201,58 @@ class AlignAndRepairNode(Node):
                 if divot_pos is not None:
                     self.locked_target_position = divot_pos
                     self.target_locked = True
+                    self.get_logger().info(f"TARGET LOCKED: Position (forward_dist={divot_pos['forward_dist']:.2f}m, lateral_offset={divot_pos['lateral_offset']:.2f}m)")
                     self.state = AlignmentState.DRIVING
+                else:
+                    self.get_logger().error('LOCK FAILED: Could not get valid world position (invalid depth?). Resetting.')
+                    self.reset_sequence() # Reset if we can't get a position
+            else:
+                self.get_logger().error('LOCK FAILED: No divot detected after wait. Resetting.')
+                self.reset_sequence() # Reset if no detection
         
     def handle_driving(self):
-        """Drive to locked position accounting for dispenser offset"""
-        if not self.target_locked:
-            self.stop_robot()
-            return
+        """Drive to locked position accounting for dispenser offset. This is an open-loop, distance-based controller."""
+        
+        # On first entry, calculate the total distance we need to travel.
+        if not hasattr(self, 'distance_to_drive_total'):
+            self.get_logger().info('STATE: DRIVING - Calculating travel distance.')
+            
+            if not self.target_locked:
+                self.get_logger().error("DRIVE FAILED: Target not locked. Resetting.")
+                self.stop_robot()
+                self.reset_sequence()
+                return
 
-        distance_to_drive = self.locked_target_position['x'] - self.dispenser_offset
+            # The total distance is the divot's forward distance PLUS the dispenser's offset.
+            self.distance_to_drive_total = self.locked_target_position['forward_dist'] + self.dispenser_offset
+            self.distance_driven = 0.0 # Reset our driven distance tracker
+            
+            # This is the assumed speed (m/s) when drive_speed = 150.0.
+            # You may need to calibrate this value for accuracy.
+            self.assumed_speed_m_per_s = 0.3 
 
-        if distance_to_drive <= 0.05:
+            self.get_logger().info(f"Required travel distance: {self.distance_to_drive_total:.2f}m")
+            if self.distance_to_drive_total < 0.05:
+                self.get_logger().info("Already at target, skipping drive.")
+                self.state = AlignmentState.DISPENSING
+                self.dispense_start_time = time.time()
+                delattr(self, 'distance_to_drive_total')
+                return
+
+        # Estimate distance covered in the last time slice (0.1s) and accumulate it.
+        # This is an open-loop estimation.
+        self.distance_driven += self.assumed_speed_m_per_s * 0.1 # 0.1 is the control_timer period
+
+        if self.distance_driven >= self.distance_to_drive_total:
+            self.get_logger().info(f"Drive complete. (Estimated distance driven: {self.distance_driven:.2f}m)")
             self.stop_robot()
             self.state = AlignmentState.DISPENSING
             self.dispense_start_time = time.time()
+            # Clear the state for the next run
+            delattr(self, 'distance_to_drive_total')
             return
-            
+        
+        # If still driving, send command
         twist = Twist()
         twist.linear.x = -self.drive_speed
         twist.angular.z = 0.0
@@ -208,6 +260,10 @@ class AlignAndRepairNode(Node):
 
     def handle_dispensing(self):
         """Start dispensing at target position"""
+        if not hasattr(self, 'dispensing_logged'):
+            self.get_logger().info('STATE: DISPENSING - Releasing sand.')
+            self.dispensing_logged = True
+
         elapsed = time.time() - self.dispense_start_time
         
         if elapsed < 0.5:
@@ -228,6 +284,7 @@ class AlignAndRepairNode(Node):
                 self.dispense_stopped = True
                 
         else:
+            self.get_logger().info('Dispense complete. Sequence finished.')
             autonomous_msg = Bool()
             autonomous_msg.data = False
             self.autonomous_mode_pub.publish(autonomous_msg)
@@ -247,6 +304,12 @@ class AlignAndRepairNode(Node):
         self.target_locked = False
         self.locked_target_position = None
         self.wait_start_time = None
+
+        # Reset logging flags
+        if hasattr(self, 'turning_logged'): delattr(self, 'turning_logged')
+        if hasattr(self, 'waiting_logged'): delattr(self, 'waiting_logged')
+        if hasattr(self, 'driving_logged'): delattr(self, 'driving_logged')
+        if hasattr(self, 'dispensing_logged'): delattr(self, 'dispensing_logged')
         
         if hasattr(self, 'dispense_started'):
             delattr(self, 'dispense_started')

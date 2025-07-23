@@ -18,7 +18,9 @@ class DivotDetectorNode(Node):
 
         # --- NEW: Camera Intrinsics (for D435i) ---
         self.camera_fx = 615.0  # Focal length X
+        self.camera_fy = 615.0  # Focal length Y
         self.camera_cx = 320.0  # Principal point X (for 640 width)
+        self.camera_cy = 240.0  # Principal point Y (for 480 height)
         # ---
 
         # --- Model Initialization ---
@@ -159,8 +161,9 @@ class DivotDetectorNode(Node):
                             # Draw a red circle at the calculated center
                             cv2.circle(annotated_frame, (center_x, center_y), 5, (0, 0, 255), -1) # -1 fills the circle
                             
-                            # Draw a line from the frame center to the divot center
-                            cv2.line(annotated_frame, (frame_center_x, frame_center_y), (center_x, center_y), (0, 255, 0), 2)
+                            # Draw horizontal and vertical lines for offset visualization
+                            cv2.line(annotated_frame, (frame_center_x, center_y), (center_x, center_y), (0, 255, 0), 1) # Horizontal
+                            cv2.line(annotated_frame, (center_x, frame_center_y), (center_x, center_y), (0, 255, 0), 1) # Vertical
                             
                             # --- NEW: Calculate and display real-world distance ---
                             if self.latest_depth_image is not None:
@@ -174,16 +177,35 @@ class DivotDetectorNode(Node):
                                     # Calculate and display depth distance
                                     depth_cm = depth_mm / 10.0
                                     distance_text = f"Dist: {depth_cm:.1f} cm"
-                                    cv2.putText(annotated_frame, distance_text, (x1, y1 - 30), 
+                                    cv2.putText(annotated_frame, distance_text, (x1, y1 - 50), 
                                                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
                                     
                                     # Calculate and display horizontal offset
                                     depth_m = depth_mm / 1000.0
-                                    offset_m = ((center_x - self.camera_cx) * depth_m) / self.camera_fx
-                                    offset_cm = offset_m * 100
-                                    offset_text = f"Offset: {offset_cm:+.1f} cm" # '+' shows sign
-                                    cv2.putText(annotated_frame, offset_text, (x1, y1 - 10), 
+                                    h_offset_m = ((center_x - self.camera_cx) * depth_m) / self.camera_fx
+                                    h_offset_cm = h_offset_m * 100
+                                    h_offset_text = f"H-Offset: {h_offset_cm:+.1f} cm"
+                                    cv2.putText(annotated_frame, h_offset_text, (x1, y1 - 30), 
                                                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+
+                                    # Calculate and display vertical offset
+                                    v_offset_m = ((center_y - self.camera_cy) * depth_m) / self.camera_fy
+                                    v_offset_cm = v_offset_m * 100
+                                    v_offset_text = f"V-Offset: {v_offset_cm:+.1f} cm"
+                                    cv2.putText(annotated_frame, v_offset_text, (x1, y1 - 10), 
+                                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+                                    
+                                    # Display the full driving distance calculation for clarity
+                                    total_drive_dist = depth_m + 0.90
+                                    drive_dist_text = f"Drive Dist: {depth_m:.2f}m + 0.90m = {total_drive_dist:.2f}m"
+                                    
+                                    # Position text at the bottom of the bounding box
+                                    text_size, _ = cv2.getTextSize(drive_dist_text, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
+                                    text_x = x1
+                                    text_y = int(box[3]) + 20 # y2 coordinate + padding
+                                    
+                                    cv2.putText(annotated_frame, drive_dist_text, (text_x, text_y), 
+                                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2) # Cyan color
 
             except IndexError:
                 pass # 'divot' class not in model, do nothing.
