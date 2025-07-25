@@ -15,9 +15,10 @@ from enum import Enum
 class AlignmentState(Enum):
     IDLE = 1
     TURNING = 2
-    WAITING = 3
-    DRIVING = 4
-    DISPENSING = 5
+    ADJUSTING_DISTANCE = 3
+    WAITING = 4
+    DRIVING = 5
+    DISPENSING = 6
 
 class AlignAndRepairNode(Node):
     def __init__(self):
@@ -35,14 +36,16 @@ class AlignAndRepairNode(Node):
         self.camera_fy = 615.0  # Focal length Y
         self.camera_cx = 320.0  # Principal point X
         self.camera_cy = 240.0  # Principal point Y
-        self.center_threshold = 10  # Pixels from center to consider aligned
+        self.center_threshold = 50  # Pixels from center to consider aligned
         
         # Physical measurements (in meters)
         self.dispenser_offset = 0.90  # Dispenser is 90cm behind camera
         
-        # Control parameters
-        self.turn_speed = 300.0   # A fixed speed for turning
-        self.drive_speed = 150.0  # A fixed speed for driving forward
+        # --- Simple Fixed Speed Control Parameters ---
+        # Based on manual mode data: angular ~82, linear speeds that work
+        self.turn_speed = 100.0           # Fixed angular speed for turning
+        self.drive_speed = 80.0          # Fixed linear speed for alignment
+        self.final_drive_speed = 80.0    # Fixed speed for final positioning drive
         
         # Detection data
         self.latest_detection_info = None
@@ -153,6 +156,8 @@ class AlignAndRepairNode(Node):
             
         if self.state == AlignmentState.TURNING:
             self.handle_turning()
+        elif self.state == AlignmentState.ADJUSTING_DISTANCE:
+            self.handle_adjusting_distance()
         elif self.state == AlignmentState.WAITING:
             self.handle_waiting()
         elif self.state == AlignmentState.DRIVING:
@@ -173,14 +178,39 @@ class AlignAndRepairNode(Node):
         pixel_error = self.latest_detection_info['center_x'] - self.camera_cx
         
         if abs(pixel_error) < self.center_threshold:
-            self.get_logger().info('Alignment complete.')
+            self.get_logger().info('Horizontal alignment complete.')
+            self.stop_robot()
+            self.state = AlignmentState.ADJUSTING_DISTANCE
+            return
+
+        twist = Twist()
+        # To turn right (positive pixel_error), we need a negative angular.z
+        twist.angular.z = -self.turn_speed if pixel_error > 0 else self.turn_speed
+        self.cmd_vel_pub.publish(twist)
+
+    def handle_adjusting_distance(self):
+        """Drive robot forward/backward until divot is vertically centered."""
+        if not hasattr(self, 'adjusting_logged'):
+            self.get_logger().info('STATE: ADJUSTING_DISTANCE - Aligning vertically.')
+            self.adjusting_logged = True
+
+        if self.latest_detection_info is None:
+            self.stop_robot()
+            return
+
+        pixel_error_y = self.latest_detection_info['center_y'] - self.camera_cy
+
+        if abs(pixel_error_y) < self.center_threshold:
+            self.get_logger().info('Vertical alignment complete.')
             self.stop_robot()
             self.state = AlignmentState.WAITING
             self.wait_start_time = time.time()
             return
 
         twist = Twist()
-        twist.angular.z = self.turn_speed if pixel_error > 0 else -self.turn_speed
+        # If divot is below center (positive error), move forward (-speed).
+        # If divot is above center (negative error), move backward (+speed).
+        twist.linear.x = -self.drive_speed if pixel_error_y > 0 else self.drive_speed
         self.cmd_vel_pub.publish(twist)
         
     def handle_waiting(self):
@@ -227,9 +257,9 @@ class AlignAndRepairNode(Node):
             self.distance_to_drive_total = self.locked_target_position['forward_dist'] + self.dispenser_offset
             self.distance_driven = 0.0 # Reset our driven distance tracker
             
-            # This is the assumed speed (m/s) when drive_speed = 150.0.
+            # Assumed speed (m/s) for the final, fixed-speed drive.
             # You may need to calibrate this value for accuracy.
-            self.assumed_speed_m_per_s = 0.3 
+            self.assumed_speed_m_per_s = 0.25 
 
             self.get_logger().info(f"Required travel distance: {self.distance_to_drive_total:.2f}m")
             if self.distance_to_drive_total < 0.05:
@@ -252,9 +282,9 @@ class AlignAndRepairNode(Node):
             delattr(self, 'distance_to_drive_total')
             return
         
-        # If still driving, send command
+        # If still driving, send command to move forward
         twist = Twist()
-        twist.linear.x = -self.drive_speed
+        twist.linear.x = self.final_drive_speed
         twist.angular.z = 0.0
         self.cmd_vel_pub.publish(twist)
 
@@ -307,6 +337,7 @@ class AlignAndRepairNode(Node):
 
         # Reset logging flags
         if hasattr(self, 'turning_logged'): delattr(self, 'turning_logged')
+        if hasattr(self, 'adjusting_logged'): delattr(self, 'adjusting_logged')
         if hasattr(self, 'waiting_logged'): delattr(self, 'waiting_logged')
         if hasattr(self, 'driving_logged'): delattr(self, 'driving_logged')
         if hasattr(self, 'dispensing_logged'): delattr(self, 'dispensing_logged')
