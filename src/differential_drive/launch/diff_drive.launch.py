@@ -168,4 +168,12 @@ def generate_launch_description():
             name='odometry_node',
             output='screen'
         ),
+
+        # Path Follower Node
+        Node(
+            package='differential_drive',
+            executable='path_follower_node',
+            name='path_follower_node',
+            output='screen'
+        ),
     ])

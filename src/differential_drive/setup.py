@@ -36,6 +36,7 @@ setup(
             'divot_detector = differential_drive.divot_detection_intel:main',
             'align_and_repair_node = differential_drive.align_and_repair_node:main',
             'odometry_node = differential_drive.odometry_node:main',
+            'path_follower_node = differential_drive.path_follower_node:main',
         ],
     },
 )
