@@ -37,6 +37,7 @@ setup(
             'align_and_repair_node = differential_drive.align_and_repair_node:main',
             'odometry_node = differential_drive.odometry_node:main',
             'path_follower_node = differential_drive.path_follower_node:main',
+            'golfbot_gui_node = differential_drive.golfbot_gui_node:main',
         ],
     },
 )

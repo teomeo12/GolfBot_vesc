@@ -176,4 +176,12 @@ def generate_launch_description():
             name='path_follower_node',
             output='screen'
         ),
+
+        # GolfBot GUI Node
+        Node(
+            package='differential_drive',
+            executable='golfbot_gui_node',
+            name='golfbot_gui_node',
+            output='screen'
+        ),
     ])

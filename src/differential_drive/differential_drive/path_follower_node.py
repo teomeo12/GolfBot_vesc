@@ -26,8 +26,8 @@ class PathFollowerNode(Node):
         self.current_waypoint_index = 0
         
         # --- Parameters ---
-        self.button_start_square = 6  # B6
-        self.button_start_mower = 7   # B7
+        self.button_start_square = 15 # B15
+        self.button_start_mower = 14  # B14
         self.turn_kp = 1.0            # Proportional gain for turning
         self.drive_speed = 0.2        # meters/sec
         self.turn_speed_max = 1.0     # rad/sec
@@ -41,16 +41,23 @@ class PathFollowerNode(Node):
         
         self.control_timer = self.create_timer(0.05, self.control_loop) # 20 Hz
         
-        self.get_logger().info("Path Follower Node Ready. Press B6 for square, B7 for mower.")
+        self.get_logger().info("Path Follower Node Ready. Press B15 for square, B14 for mower.")
+        self.prev_button_state = False
 
     def joy_callback(self, msg: Joy):
         if self.state == PathState.IDLE:
-            if len(msg.buttons) > self.button_start_square and msg.buttons[self.button_start_square] == 1:
-                self.get_logger().info("B6 pressed. Starting 1m square path.")
+            # Add state to prevent re-triggering while holding button
+            start_square_pressed = len(msg.buttons) > self.button_start_square and msg.buttons[self.button_start_square] == 1
+            start_mower_pressed = len(msg.buttons) > self.button_start_mower and msg.buttons[self.button_start_mower] == 1
+
+            if start_square_pressed and not self.prev_button_state:
+                self.get_logger().info("B15 pressed. Starting 1m square path.")
                 self.generate_square_path()
-            elif len(msg.buttons) > self.button_start_mower and msg.buttons[self.button_start_mower] == 1:
-                self.get_logger().info("B7 pressed. Starting mower search path.")
+            elif start_mower_pressed and not self.prev_button_state:
+                self.get_logger().info("B14 pressed. Starting mower search path.")
                 self.generate_mower_path()
+            
+            self.prev_button_state = start_square_pressed or start_mower_pressed
 
     def odom_callback(self, msg: Odometry):
         self.current_pose = msg.pose.pose
