@@ -2,7 +2,7 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, String
 from sensor_msgs.msg import Image, NavSatFix
 from nav_msgs.msg import Odometry
 from cv_bridge import CvBridge
@@ -27,11 +27,12 @@ class GolfBotGUI(Node):
         self.gps_data = None
         self.odom_data = None
         self.autonomous_mode = False
+        self.detection_data = None
         
-        # Subscribers
+        # Subscribers  
         self.image_sub = self.create_subscription(
             Image,
-            '/camera/color/image_raw',
+            '/camera/divot_detection/image_raw',
             self.image_callback,
             10)
             
@@ -51,6 +52,12 @@ class GolfBotGUI(Node):
             Bool,
             '/is_autonomous_mode',
             self.autonomous_mode_callback,
+            10)
+            
+        self.detection_sub = self.create_subscription(
+            String,
+            '/camera/divot_detection/details',
+            self.detection_callback,
             10)
         
         # Publishers
@@ -130,6 +137,19 @@ class GolfBotGUI(Node):
         self.odom_theta_label = ttk.Label(odom_frame, text="Heading: --")
         self.odom_theta_label.pack(anchor='w')
         
+        # Detection Data
+        detection_frame = ttk.LabelFrame(control_frame, text="Divot Detection", padding="10")
+        detection_frame.pack(fill='x', pady=(0, 10))
+        
+        self.detection_status_label = ttk.Label(detection_frame, text="Status: No detection")
+        self.detection_status_label.pack(anchor='w')
+        
+        self.detection_confidence_label = ttk.Label(detection_frame, text="Confidence: --")
+        self.detection_confidence_label.pack(anchor='w')
+        
+        self.detection_center_label = ttk.Label(detection_frame, text="Center: --")
+        self.detection_center_label.pack(anchor='w')
+        
         # System Status
         status_frame = ttk.LabelFrame(control_frame, text="System Status", padding="10")
         status_frame.pack(fill='x')
@@ -167,6 +187,32 @@ class GolfBotGUI(Node):
     def autonomous_mode_callback(self, msg):
         """Handle autonomous mode status updates"""
         self.autonomous_mode = msg.data
+    
+    def detection_callback(self, msg):
+        """Handle divot detection data"""
+        if not msg.data:
+            self.detection_data = None
+            return
+            
+        # Parse detection data (same format as align_and_repair_node)
+        all_detections = msg.data.split(';')
+        for detection_str in all_detections:
+            parts = detection_str.split(',')
+            if len(parts) < 4: 
+                continue
+
+            detection_info = {}
+            for part in parts:
+                key, value = part.split(':', 1)
+                detection_info[key.strip()] = value.strip()
+            
+            if detection_info.get('class') == 'divot' and float(detection_info.get('confidence', 0)) > 0.5:
+                detection_info['confidence'] = float(detection_info['confidence'])
+                detection_info['center_x'] = int(detection_info['center_x'])
+                detection_info['center_y'] = int(detection_info['center_y'])
+                
+                self.detection_data = detection_info
+                break
     
     def toggle_autonomous_mode(self):
         """Toggle autonomous mode on/off"""
@@ -226,6 +272,18 @@ class GolfBotGUI(Node):
                 self.odom_conn_label.config(text="Odometry: Connected", foreground="green")
             else:
                 self.odom_conn_label.config(text="Odometry: Disconnected", foreground="red")
+            
+            # Update detection data
+            if self.detection_data is not None:
+                self.detection_status_label.config(text="Status: Divot detected", foreground="green")
+                self.detection_confidence_label.config(text=f"Confidence: {self.detection_data['confidence']:.2f}")
+                center_x = self.detection_data['center_x']
+                center_y = self.detection_data['center_y']
+                self.detection_center_label.config(text=f"Center: ({center_x}, {center_y})")
+            else:
+                self.detection_status_label.config(text="Status: No detection", foreground="red")
+                self.detection_confidence_label.config(text="Confidence: --")
+                self.detection_center_label.config(text="Center: --")
                 
         except Exception as e:
             self.get_logger().error(f'GUI update error: {str(e)}')

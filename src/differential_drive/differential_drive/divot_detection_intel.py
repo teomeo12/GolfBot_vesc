@@ -218,8 +218,8 @@ class DivotDetectorNode(Node):
             self.annotated_image_publisher.publish(annotated_msg)
             
             # --- Display the annotated frame for testing ---
-            cv2.imshow("Divot Detection", annotated_frame)
-            cv2.waitKey(1)
+            # cv2.imshow("Divot Detection", annotated_frame)
+            # cv2.waitKey(1)
             
         except Exception as e:
             self.get_logger().error(f"Could not publish or display annotated image: {e}")

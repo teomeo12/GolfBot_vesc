@@ -26,11 +26,14 @@ class PathFollowerNode(Node):
         self.current_waypoint_index = 0
         
         # --- Parameters ---
-        self.button_start_square = 15 # B15
-        self.button_start_mower = 14  # B14
+        # Using D-pad (CORRECTED for flipped axes): 
+        # Axis 6: +1 = LEFT (mower), -1 = RIGHT (square) 
+        # Axis 7: +1 = UP (cancel), -1 = DOWN (unused for now)
+        self.dpad_horizontal = 6  # Left/Right axis
+        self.dpad_vertical = 7    # Up/Down axis
         self.turn_kp = 1.0            # Proportional gain for turning
-        self.drive_speed = 0.2        # meters/sec
-        self.turn_speed_max = 1.0     # rad/sec
+        self.drive_speed = 35.0       # Similar to align_and_repair speeds
+        self.turn_speed_max = 50.0    # Similar to align_and_repair speeds
         self.arrival_threshold = 0.1  # 10cm
         self.angle_threshold = 0.1    # ~6 degrees in radians
         
@@ -41,23 +44,62 @@ class PathFollowerNode(Node):
         
         self.control_timer = self.create_timer(0.05, self.control_loop) # 20 Hz
         
-        self.get_logger().info("Path Follower Node Ready. Press B15 for square, B14 for mower.")
-        self.prev_button_state = False
+        self.get_logger().info("Path Follower Node Ready.")
+        self.get_logger().info("D-pad: LEFT=Start Mower, RIGHT=Stop Mower, UP=Start Square, DOWN=Stop Square")
+        self.prev_dpad_horizontal = 0.0
+        self.prev_dpad_vertical = 0.0
 
     def joy_callback(self, msg: Joy):
-        if self.state == PathState.IDLE:
-            # Add state to prevent re-triggering while holding button
-            start_square_pressed = len(msg.buttons) > self.button_start_square and msg.buttons[self.button_start_square] == 1
-            start_mower_pressed = len(msg.buttons) > self.button_start_mower and msg.buttons[self.button_start_mower] == 1
-
-            if start_square_pressed and not self.prev_button_state:
-                self.get_logger().info("B15 pressed. Starting 1m square path.")
-                self.generate_square_path()
-            elif start_mower_pressed and not self.prev_button_state:
-                self.get_logger().info("B14 pressed. Starting mower search path.")
-                self.generate_mower_path()
+        # Make sure we have enough axes
+        if len(msg.axes) <= max(self.dpad_horizontal, self.dpad_vertical):
+            return
             
-            self.prev_button_state = start_square_pressed or start_mower_pressed
+        current_horizontal = msg.axes[self.dpad_horizontal]  # Axis 6
+        current_vertical = msg.axes[self.dpad_vertical]      # Axis 7
+        
+        # --- HORIZONTAL CONTROLS (Mower) - CORRECTED AXES ---
+        # D-pad LEFT pressed (start mower) - NOW +1 due to flipped axis
+        if current_horizontal > 0.5 and abs(self.prev_dpad_horizontal) < 0.5:
+            if self.state == PathState.IDLE:
+                self.get_logger().info("🟩 D-pad LEFT pressed. Starting mower search pattern.")
+                self.generate_mower_path()
+            else:
+                self.get_logger().info("D-pad LEFT pressed, but already running a path.")
+        
+        # D-pad RIGHT pressed (stop mower) - NOW -1 due to flipped axis
+        elif current_horizontal < -0.5 and abs(self.prev_dpad_horizontal) < 0.5:
+            if self.state != PathState.IDLE:
+                self.get_logger().info("🛑 D-pad RIGHT pressed. STOPPING mower search pattern.")
+                self.stop_robot()
+                self.state = PathState.IDLE
+                self.waypoints = []
+                self.current_waypoint_index = 0
+            else:
+                self.get_logger().info("D-pad RIGHT pressed, but already in IDLE mode.")
+        
+        # --- VERTICAL CONTROLS (Square/Waypoint) - CORRECTED AXES ---
+        # D-pad UP pressed (start square waypoint) - NOW +1 due to flipped axis
+        if current_vertical > 0.5 and abs(self.prev_dpad_vertical) < 0.5:
+            if self.state == PathState.IDLE:
+                self.get_logger().info("🟦 D-pad UP pressed. Starting square waypoint pattern.")
+                self.generate_square_path()
+            else:
+                self.get_logger().info("D-pad UP pressed, but already running a path.")
+        
+        # D-pad DOWN pressed (stop waypoint) - NOW -1 due to flipped axis
+        elif current_vertical < -0.5 and abs(self.prev_dpad_vertical) < 0.5:
+            if self.state != PathState.IDLE:
+                self.get_logger().info("🛑 D-pad DOWN pressed. STOPPING waypoint pattern.")
+                self.stop_robot()
+                self.state = PathState.IDLE
+                self.waypoints = []
+                self.current_waypoint_index = 0
+            else:
+                self.get_logger().info("D-pad DOWN pressed, but already in IDLE mode.")
+        
+        # Store previous states
+        self.prev_dpad_horizontal = current_horizontal
+        self.prev_dpad_vertical = current_vertical
 
     def odom_callback(self, msg: Odometry):
         self.current_pose = msg.pose.pose
