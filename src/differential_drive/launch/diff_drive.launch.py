@@ -119,7 +119,7 @@ def generate_launch_description():
             package='differential_drive',
             executable='camera_node', # Make sure this executable is in your setup.py
             name='camera_node'
-        ),
+    ),
 
         
         # -----------------------------------------------------------------
@@ -158,6 +158,14 @@ def generate_launch_description():
             package='differential_drive',
             executable='align_and_repair_node',
             name='align_and_repair_node',
+            output='screen'
+        ),
+
+        # Odometry Publisher Node
+        Node(
+            package='differential_drive',
+            executable='odometry_node',
+            name='odometry_node',
             output='screen'
         ),
     ])

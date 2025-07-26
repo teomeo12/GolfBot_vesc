@@ -26,14 +26,16 @@ setup(
     # tests_require=['pytest'], # This is deprecated and handled by package.xml
     entry_points={
         'console_scripts': [
-            'camera_node = differential_drive.camera_node:main',
             'diff_vel_ctrl_node = differential_drive.velocity_control:main',
             'sony_gamepad_node = differential_drive.sony_gamepad:main',
             'logitech_gamepad_node = differential_drive.logitech_gamepad:main',
             'gps_monitor_node = differential_drive.gps_monitor_node:main',
+            'camera_node = differential_drive.camera_node:main',
+            'stepper_controller_node = old_stepper_nodes.stepper_controller_node:main',
             'stepper_imu_node = differential_drive.stepper_imu_node:main',
             'divot_detector = differential_drive.divot_detection_intel:main',
             'align_and_repair_node = differential_drive.align_and_repair_node:main',
+            'odometry_node = differential_drive.odometry_node:main',
         ],
     },
 )

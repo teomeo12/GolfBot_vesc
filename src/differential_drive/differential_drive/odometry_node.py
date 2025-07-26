@@ -115,10 +115,30 @@ class OdometryNode(Node):
         odom_msg.pose.pose.orientation.z = math.sin(self.theta / 2.0)
         odom_msg.pose.pose.orientation.w = math.cos(self.theta / 2.0)
         
+        # Populate covariance matrices. We are confident in our x, y, and yaw
+        # position, but not in other values. We reflect that here.
+        # A larger number means less confidence.
+        odom_msg.pose.covariance = [
+            0.1, 0.0, 0.0, 0.0, 0.0, 0.0,  # X
+            0.0, 0.1, 0.0, 0.0, 0.0, 0.0,  # Y
+            0.0, 0.0, 999.9, 0.0, 0.0, 0.0, # Z
+            0.0, 0.0, 0.0, 999.9, 0.0, 0.0, # Roll
+            0.0, 0.0, 0.0, 0.0, 999.9, 0.0, # Pitch
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.1    # Yaw
+        ]
+        
         # We don't have velocity data directly, so we leave it as zero.
         # A more advanced node would calculate this from the time delta.
         odom_msg.twist.twist.linear.x = 0.0 
         odom_msg.twist.twist.angular.z = 0.0
+        odom_msg.twist.covariance = [
+            999.9, 0.0, 0.0, 0.0, 0.0, 0.0, # LinX
+            0.0, 999.9, 0.0, 0.0, 0.0, 0.0, # LinY
+            0.0, 0.0, 999.9, 0.0, 0.0, 0.0, # LinZ
+            0.0, 0.0, 0.0, 999.9, 0.0, 0.0, # AngX
+            0.0, 0.0, 0.0, 0.0, 999.9, 0.0, # AngY
+            0.0, 0.0, 0.0, 0.0, 0.0, 999.9  # AngZ
+        ]
         
         self.odom_pub.publish(odom_msg)
 
