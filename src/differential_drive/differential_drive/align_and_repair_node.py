@@ -42,10 +42,9 @@ class AlignAndRepairNode(Node):
         self.dispenser_offset = 0.90  # Dispenser is 90cm behind camera
         
         # --- Simple Fixed Speed Control Parameters ---
-        # Based on manual mode data: angular ~82, linear speeds that work
-        self.turn_speed = 100.0           # Fixed angular speed for turning
-        self.drive_speed = 80.0          # Fixed linear speed for alignment
-        self.final_drive_speed = 80.0    # Fixed speed for final positioning drive
+        self.turn_speed = 75.0          # Produces ~120 ERPM for turning
+        self.drive_speed = 35.0          # Produces ~145 ERPM for fine alignment
+        self.final_drive_speed = 35.0   # Produces ~242 ERPM for the final drive
         
         # Detection data
         self.latest_detection_info = None
@@ -76,8 +75,8 @@ class AlignAndRepairNode(Node):
         self.dispense_pub = self.create_publisher(String, '/dispense_sand', 10)
         self.autonomous_mode_pub = self.create_publisher(Bool, '/is_autonomous_mode', 10)
         
-        # Control timer (10 Hz)
-        self.control_timer = self.create_timer(0.1, self.control_loop)
+        # Control timer (50 Hz for smoother control)
+        self.control_timer = self.create_timer(0.02, self.control_loop)
         
         self.get_logger().info('Align and Repair Node Ready')
         

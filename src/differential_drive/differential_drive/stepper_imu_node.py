@@ -131,9 +131,28 @@ class StepperImuNode(Node):
             msg.angular_velocity.y = float(parts[7])
             msg.angular_velocity.z = float(parts[8])
             
-            msg.orientation_covariance = [-1.0] * 9
-            msg.angular_velocity_covariance = [-1.0] * 9
-            msg.linear_acceleration_covariance = [-1.0] * 9
+            # --- Assumed Covariance ---
+            # The BNO055 does not provide covariance data directly.
+            # We provide a small, fixed covariance value to indicate that the
+            # data is reasonably trustworthy. A value of 0.0 means "unknown",
+            # and -1.0 means "invalid".
+            assumed_covariance = 0.01 
+            
+            msg.orientation_covariance = [
+                assumed_covariance, 0.0, 0.0,
+                0.0, assumed_covariance, 0.0,
+                0.0, 0.0, assumed_covariance
+            ]
+            msg.angular_velocity_covariance = [
+                assumed_covariance, 0.0, 0.0,
+                0.0, assumed_covariance, 0.0,
+                0.0, 0.0, assumed_covariance
+            ]
+            msg.linear_acceleration_covariance = [
+                assumed_covariance, 0.0, 0.0,
+                0.0, assumed_covariance, 0.0,
+                0.0, 0.0, assumed_covariance
+            ]
             
             self.imu_pub.publish(msg)
             

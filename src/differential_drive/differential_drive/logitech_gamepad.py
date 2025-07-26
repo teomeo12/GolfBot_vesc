@@ -45,7 +45,7 @@ class LogitechGamepadNode(Node):
         self.get_logger().info('  RB Button: Increase gear')
         self.get_logger().info('  Y Button: Enable autonomous mode')
         self.get_logger().info('  X Button: Disable autonomous mode')
-        self.get_logger().info(f'  Current gear: {self.current_gear} (Speed: {self.lin_speeds[self.current_gear]})')
+        self.get_logger().info(f'  Current gear: {self.current_gear} (Linear Speed: {self.lin_speeds[self.current_gear]}) (Angular Speed: {self.ang_speeds[self.current_gear]})')
 
     def apply_deadzone(self, value):
         """Apply deadzone to joystick input to prevent drift"""

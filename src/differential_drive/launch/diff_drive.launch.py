@@ -43,6 +43,7 @@ def generate_launch_description():
             name='left_vesc_driver_node',
             parameters=[left_vesc_config],
             remappings=[
+                ('sensors/core', 'left_vesc/sensors/core'),
                 ('sensors/servo_position_command', 'left_vesc/sensors/servo_position_command'),
                 ('commands/motor/duty_cycle', 'left_vesc/commands/motor/duty_cycle'),
                 ('commands/motor/current', 'left_vesc/commands/motor/current'),
@@ -58,6 +59,7 @@ def generate_launch_description():
             name='right_vesc_driver_node',
             parameters=[right_vesc_config],
             remappings=[
+                ('sensors/core', 'right_vesc/sensors/core'),
                 ('sensors/servo_position_command', 'right_vesc/sensors/servo_position_command'),
                 ('commands/motor/duty_cycle', 'right_vesc/commands/motor/duty_cycle'),
                 ('commands/motor/current', 'right_vesc/commands/motor/current'),
