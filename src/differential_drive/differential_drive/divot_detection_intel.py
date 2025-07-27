@@ -72,6 +72,12 @@ class DivotDetectorNode(Node):
             String,
             '/camera/divot_detection/details',
             10)
+        
+        # Publisher for area and volume metrics
+        self.metrics_publisher = self.create_publisher(
+            String,
+            '/camera/divot_detection/metrics',
+            10)
             
         self.get_logger().info("Divot Detector Node is running and waiting for images...")
 
@@ -206,6 +212,11 @@ class DivotDetectorNode(Node):
 
                                     # --- NEW: Volume Calculation ---
                                     volume_cm3 = total_area_cm2 * self.HARDCODED_DIVOT_DEPTH_CM
+
+                                    # --- NEW: Publish area and volume metrics ---
+                                    metrics_msg = String()
+                                    metrics_msg.data = f"area:{total_area_cm2:.1f},volume:{volume_cm3:.1f},bbox_area:{bbox_area_cm2:.1f},width:{width_cm:.1f},height:{height_cm:.1f}"
+                                    self.metrics_publisher.publish(metrics_msg)
 
                                     # Display all calculated information, with adjusted positions for the new Volume text
                                     dim_text = f"Dims: {width_cm:.1f}x{height_cm:.1f} cm"

@@ -28,6 +28,7 @@ class GolfBotGUI(Node):
         self.odom_data = None
         self.autonomous_mode = False
         self.detection_data = None
+        self.metrics_data = None
         
         # Subscribers  
         self.image_sub = self.create_subscription(
@@ -58,6 +59,12 @@ class GolfBotGUI(Node):
             String,
             '/camera/divot_detection/details',
             self.detection_callback,
+            10)
+            
+        self.metrics_sub = self.create_subscription(
+            String,
+            '/camera/divot_detection/metrics',
+            self.metrics_callback,
             10)
         
         # Publishers
@@ -150,6 +157,15 @@ class GolfBotGUI(Node):
         self.detection_center_label = ttk.Label(detection_frame, text="Center: --")
         self.detection_center_label.pack(anchor='w')
         
+        self.detection_area_label = ttk.Label(detection_frame, text="Area: --")
+        self.detection_area_label.pack(anchor='w')
+        
+        self.detection_volume_label = ttk.Label(detection_frame, text="Volume: --")
+        self.detection_volume_label.pack(anchor='w')
+        
+        self.detection_dimensions_label = ttk.Label(detection_frame, text="Dimensions: --")
+        self.detection_dimensions_label.pack(anchor='w')
+        
         # System Status
         status_frame = ttk.LabelFrame(control_frame, text="System Status", padding="10")
         status_frame.pack(fill='x')
@@ -213,6 +229,29 @@ class GolfBotGUI(Node):
                 
                 self.detection_data = detection_info
                 break
+    
+    def metrics_callback(self, msg):
+        """Handle divot metrics data (area, volume, etc.)"""
+        if not msg.data:
+            self.metrics_data = None
+            return
+            
+        # Parse metrics data: "area:123.4,volume:234.5,bbox_area:345.6,width:12.3,height:23.4"
+        parts = msg.data.split(',')
+        if len(parts) < 5:
+            return
+            
+        metrics_info = {}
+        for part in parts:
+            if ':' not in part:
+                continue
+            key, value = part.split(':', 1)
+            try:
+                metrics_info[key.strip()] = float(value.strip())
+            except ValueError:
+                continue
+        
+        self.metrics_data = metrics_info
     
     def toggle_autonomous_mode(self):
         """Toggle autonomous mode on/off"""
@@ -284,6 +323,21 @@ class GolfBotGUI(Node):
                 self.detection_status_label.config(text="Status: No detection", foreground="red")
                 self.detection_confidence_label.config(text="Confidence: --")
                 self.detection_center_label.config(text="Center: --")
+            
+            # Update metrics data
+            if self.metrics_data is not None:
+                area = self.metrics_data.get('area', 0)
+                volume = self.metrics_data.get('volume', 0)
+                width = self.metrics_data.get('width', 0)
+                height = self.metrics_data.get('height', 0)
+                
+                self.detection_area_label.config(text=f"Area: {area:.1f} cm²")
+                self.detection_volume_label.config(text=f"Volume: {volume:.1f} cm³")
+                self.detection_dimensions_label.config(text=f"Dimensions: {width:.1f}×{height:.1f} cm")
+            else:
+                self.detection_area_label.config(text="Area: --")
+                self.detection_volume_label.config(text="Volume: --")
+                self.detection_dimensions_label.config(text="Dimensions: --")
                 
         except Exception as e:
             self.get_logger().error(f'GUI update error: {str(e)}')
