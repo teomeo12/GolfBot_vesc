@@ -22,6 +22,15 @@ class DivotDetectorNode(Node):
         self.camera_cx = 320.0  # Principal point X (for 640 width)
         self.camera_cy = 240.0  # Principal point Y (for 480 height)
         # ---
+        # --- NEW: Area Calculation Parameters ---
+        # NOTE: This factor was adjusted from 0.52 to 0.93 to match ground truth.
+        # The original value produced dimensions of ~5x6.2cm for a real 9x11cm object.
+        # Correction factor: (9/5 + 11/6.2)/2 = 1.785. New factor: 0.52 * 1.785 ~= 0.93
+        self.CALIBRATION_FACTOR = 0.93
+        self.AREA_CALIBRATION_FACTOR = self.CALIBRATION_FACTOR ** 2
+        self.GROUND_RING_WIDTH = 15
+        self.HARDCODED_DIVOT_DEPTH_CM = 2.0 # Hardcoded depth for volume calculation
+        # ---
 
         # --- Model Initialization ---
         package_path = get_package_share_directory('differential_drive')
@@ -167,13 +176,53 @@ class DivotDetectorNode(Node):
                             
                             # --- NEW: Calculate and display real-world distance ---
                             if self.latest_depth_image is not None:
-                                # Get depth at the center of the divot
-                                depth_mm = self.latest_depth_image[center_y, center_x]
-                                if depth_mm > 0:
-                                    # Get bounding box for text positioning
-                                    box = detections.xyxy[i]
-                                    x1, y1 = int(box[0]), int(box[1])
+                                # Get bounding box for text positioning
+                                box = detections.xyxy[i]
+                                x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
 
+                                # --- AREA CALCULATION LOGIC (from live script) ---
+                                divot_mask_uint8 = mask.astype(np.uint8) * 255
+                                ring_kernel = np.ones((self.GROUND_RING_WIDTH, self.GROUND_RING_WIDTH), np.uint8)
+                                dilated_mask = cv2.dilate(divot_mask_uint8, ring_kernel, iterations=1)
+                                ground_ring_mask = cv2.bitwise_and(dilated_mask, cv2.bitwise_not(divot_mask_uint8))
+                                ground_depths = self.latest_depth_image[ground_ring_mask == 255]
+                                ground_depths_mm = ground_depths[ground_depths > 0]
+
+                                ground_level_mm = 0
+                                if ground_depths_mm.size > 0:
+                                    ground_level_mm = np.mean(ground_depths_mm)
+
+                                    # Perform and display area calculations only if we have a valid ground level
+                                    contour_pixel_area = np.sum(mask)
+                                    pixel_area_m2 = ((ground_level_mm / 1000) / self.camera_fx) * ((ground_level_mm / 1000) / self.camera_fy)
+                                    pixel_area_cm2 = pixel_area_m2 * 10000
+                                    total_area_cm2 = (contour_pixel_area * pixel_area_cm2) * self.AREA_CALIBRATION_FACTOR
+                                    
+                                    pixel_width = x2 - x1
+                                    pixel_height = y2 - y1
+                                    width_cm = (pixel_width * (ground_level_mm / 1000) / self.camera_fx) * 100 * self.CALIBRATION_FACTOR
+                                    height_cm = (pixel_height * (ground_level_mm / 1000) / self.camera_fy) * 100 * self.CALIBRATION_FACTOR
+                                    bbox_area_cm2 = width_cm * height_cm
+
+                                    # --- NEW: Volume Calculation ---
+                                    volume_cm3 = total_area_cm2 * self.HARDCODED_DIVOT_DEPTH_CM
+
+                                    # Display all calculated information, with adjusted positions for the new Volume text
+                                    dim_text = f"Dims: {width_cm:.1f}x{height_cm:.1f} cm"
+                                    cv2.putText(annotated_frame, dim_text, (x1, y1 - 130), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
+                                    bbox_area_text = f"Bbox Area: {bbox_area_cm2:.1f} cm^2"
+                                    cv2.putText(annotated_frame, bbox_area_text, (x1, y1 - 110), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
+                                    area_text = f"Area: {total_area_cm2:.1f} cm^2"
+                                    cv2.putText(annotated_frame, area_text, (x1, y1 - 90), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
+                                    volume_text = f"Volume: {volume_cm3:.1f} cm^3"
+                                    cv2.putText(annotated_frame, volume_text, (x1, y1 - 70), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
+
+                                # Get depth at the center of the divot, using ground level as a fallback
+                                depth_mm = self.latest_depth_image[center_y, center_x]
+                                if depth_mm == 0 and ground_level_mm > 0:
+                                    depth_mm = ground_level_mm
+
+                                if depth_mm > 0:
                                     # Calculate and display depth distance
                                     depth_cm = depth_mm / 10.0
                                     distance_text = f"Dist: {depth_cm:.1f} cm"
@@ -202,7 +251,7 @@ class DivotDetectorNode(Node):
                                     # Position text at the bottom of the bounding box
                                     text_size, _ = cv2.getTextSize(drive_dist_text, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
                                     text_x = x1
-                                    text_y = int(box[3]) + 20 # y2 coordinate + padding
+                                    text_y = y2 + 20 # y2 coordinate + padding
                                     
                                     cv2.putText(annotated_frame, drive_dist_text, (text_x, text_y), 
                                                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2) # Cyan color
