@@ -1,0 +1,86 @@
+\documentclass[oneside]{muthesis}
+
+
+
+%--------------------------------------------%
+%% Metadata %%
+%--------------------------------------------%
+
+\ThesisTitle{GolfBot}
+\ThesisAuthor{Teodor Donchev}
+% \ThesisOrcid{000000-000X}
+\ThesisDegree{Doctor of Philosophy}
+\ThesisDate{August 2025}
+% \ThesisResubmissionDate{Sep 2025}
+\ThesisUniversity{Maynooth University}
+\ThesisFaculty{Faculty of Science and Engineering}
+\ThesisDepartment{Electronic Engineering Department}
+
+% \ThesisJointInstitution{}
+\DepartmentHead{Prof. Gerard Lacey}
+\ThesisSupervisor{Prof. Gerard Lacey}
+
+
+
+\begin{document}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.5\linewidth]{figures/MU_Logo.png}
+    \end{figure}
+    \maketitle
+    
+    %--------------------------------------------%
+    %% Front matter %%
+    %--------------------------------------------%
+    \frontmatter
+    
+    \include{frontmatter/abstract}
+    
+    
+    \include{frontmatter/declaration}
+    % \include{frontmatter/preface}
+    % \include{frontmatter/dedication}
+    \include{frontmatter/acknowledgements}
+    
+    \tableofcontents
+    \listoffigures     
+    \listoftables
+  
+    % \include{frontmatter/copyright}
+    
+    
+    %%% Acronyms and Glossaries %%%
+    \PrintAcronym{frontmatter/acronyms}  
+    % \PrintGlossary{frontmatter/glossaries} 
+    
+    %%% Print Nomenclatures %%%
+    \PrintNomenclature{frontmatter/nomenclature}
+    
+    
+    
+    %--------------------------------------------%
+    %% Load chapters %%
+    %--------------------------------------------%
+    \mainmatter
+    \include{chapters/01_Introduction}
+    
+    \include{chapters/02_Lit_review}
+    \include{chapters/03_Design}
+    \include{chapters/04_Implementation}
+    \include{chapters/05_Validation}
+    \include{chapters/06_Future_work}
+    \include{chapters/07_Conclusion}
+    
+    %--------------------------------------------%
+    %% Appendices %%
+    %--------------------------------------------%
+    \appendix
+    \include{appendix/additional_data}
+    
+    %--------------------------------------------%
+    %% Bibliography %%
+    %--------------------------------------------%
+    \bibliography{bibliography/refs}  % load bib file
+    
+
+\end{document}
