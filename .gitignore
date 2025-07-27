@@ -54,3 +54,25 @@ Thumbs.db
 *.tmp
 *.bak
 *.orig 
+
+# LaTeX generated files
+*.aux
+*.bbl
+*.blg
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.acn
+*.glo
+*.ist
+*.nlo
+*.synctex.gz
+*.fdb_latexmk
+*.xdv
+*.dvi
+*.nav
+*.snm
+*.vrb 
