@@ -1,0 +1,168 @@
+\glsdefs@newdocentry{dof}%
+{%
+name={\acronymfont {\glsentryshort {dof}}},%
+sort={DoF},%
+type={acronym},%
+first={DoF},%
+firstplural={DoFs},%
+text={DoF},%
+plural={DoFs},%
+description={Degree(s) of Freedom},%
+descriptionplural={Degree(s) of Freedom},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Degree(s) of Freedom},%
+longplural={Degree(s) of Freedoms},%
+short={DoF},%
+shortplural={DoFs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{rtk}%
+{%
+name={\acronymfont {\glsentryshort {rtk}}},%
+sort={RTK},%
+type={acronym},%
+first={RTK},%
+firstplural={RTKs},%
+text={RTK},%
+plural={RTKs},%
+description={Real-Time Kinematic},%
+descriptionplural={Real-Time Kinematic},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Real-Time Kinematic},%
+longplural={Real-Time Kinematics},%
+short={RTK},%
+shortplural={RTKs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{ros}%
+{%
+name={\acronymfont {\glsentryshort {ros}}},%
+sort={ROS},%
+type={acronym},%
+first={ROS},%
+firstplural={ROSs},%
+text={ROS},%
+plural={ROSs},%
+description={Robot Operating System},%
+descriptionplural={Robot Operating System},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Robot Operating System},%
+longplural={Robot Operating Systems},%
+short={ROS},%
+shortplural={ROSs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{gui}%
+{%
+name={\acronymfont {\glsentryshort {gui}}},%
+sort={GUI},%
+type={acronym},%
+first={GUI},%
+firstplural={GUIs},%
+text={GUI},%
+plural={GUIs},%
+description={Graphical User Interface},%
+descriptionplural={Graphical User Interface},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Graphical User Interface},%
+longplural={Graphical User Interfaces},%
+short={GUI},%
+shortplural={GUIs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{yolo}%
+{%
+name={\acronymfont {\glsentryshort {yolo}}},%
+sort={YOLO},%
+type={acronym},%
+first={YOLO},%
+firstplural={YOLOs},%
+text={YOLO},%
+plural={YOLOs},%
+description={You Only Look Once},%
+descriptionplural={You Only Look Once},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={You Only Look Once},%
+longplural={You Only Look Onces},%
+short={YOLO},%
+shortplural={YOLOs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{yolov11-se}%
+{%
+name={\acronymfont {\glsentryshort {yolov11-se}}},%
+sort={YOLOv11-Seg},%
+type={acronym},%
+first={YOLOv11-Seg},%
+firstplural={YOLOv11-Segs},%
+text={YOLOv11-Seg},%
+plural={YOLOv11-Segs},%
+description={You Only Look Once v11-Seg},%
+descriptionplural={You Only Look Once v11-Seg},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={You Only Look Once v11-Seg},%
+longplural={You Only Look Once v11-Segs},%
+short={YOLOv11-Seg},%
+shortplural={YOLOv11-Segs},%
+counter={page},%
+parent={},%
+%
+}%
+

@@ -1,5 +1,6 @@
 \documentclass[oneside]{muthesis}
 
+\usepackage{lmodern} % Added to ensure scalable fonts and resolve font expansion errors
 
 
 %--------------------------------------------%
@@ -82,5 +83,6 @@
     %--------------------------------------------%
     \bibliography{bibliography/refs}  % load bib file
     
-
+    % \microtypesetup{expansion=false} % Removed this line as it didn't resolve the font error
+  
 \end{document}
