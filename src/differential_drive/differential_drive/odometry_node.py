@@ -14,28 +14,29 @@ class OdometryNode(Node):
     def __init__(self):
         super().__init__('odometry_node')
 
-        # --- Parameters ---
-        self.declare_parameter('wheel_base', 0.58)  # Distance between wheels in meters
-        self.declare_parameter('wheel_radius', 0.0825) # Wheel radius in meters (0.165 / 2.0)
-        self.declare_parameter('vesc_pole_pairs', 7) # Number of pole pairs in your motor
-        self.declare_parameter('vesc_erpm_to_rpm', 0.0) # Calculated later
-        
+        # --- Parameters based on direct measurement ---
+        self.declare_parameter('wheel_base', 0.57) # Measured distance between wheel ground contacts
+        self.declare_parameter('meters_per_unit', 0.0059444) # 0.535 meters / 90 VESC units
+
         self.wheel_base = self.get_parameter('wheel_base').get_parameter_value().double_value
-        self.wheel_radius = self.get_parameter('wheel_radius').get_parameter_value().double_value
-        self.vesc_pole_pairs = self.get_parameter('vesc_pole_pairs').get_parameter_value().integer_value
-        
-        # VESC tachometer measures electrical rotations. We need to convert to mechanical wheel rotations.
-        # The VESC's 'tachometer_abs' seems to be 3 * pole_pairs * mechanical_revolutions.
-        self.counts_per_revolution = 3 * self.vesc_pole_pairs 
-        self.distance_per_count = (2 * math.pi * self.wheel_radius) / self.counts_per_revolution
+        self.meters_per_unit = self.get_parameter('meters_per_unit').get_parameter_value().double_value
 
         # --- State Variables ---
         self.x = 0.0
         self.y = 0.0
         self.theta = 0.0
 
-        self.last_left_counts = None
-        self.last_right_counts = None
+        # Positional counts (for direction)
+        self.last_left_pos_counts = None
+        self.last_right_pos_counts = None
+        self.current_left_pos_counts = None
+        self.current_right_pos_counts = None
+
+        # Distance counts (for magnitude, always increasing)
+        self.last_left_dist_counts = None
+        self.last_right_dist_counts = None
+        self.current_left_dist_counts = None
+        self.current_right_dist_counts = None
         
         # --- ROS2 Publishers and Subscribers ---
         qos_profile = QoSProfile(depth=10)
@@ -56,40 +57,50 @@ class OdometryNode(Node):
         # Timer for processing data and publishing odometry
         self.timer = self.create_timer(0.02, self.publish_odometry) # 50 Hz
 
-        self.current_left_counts = None
-        self.current_right_counts = None
-
         self.get_logger().info('Odometry Node Ready.')
 
     def left_vesc_callback(self, msg):
-        # We use displacement here, as it appears to be the most reliable tachometer value
-        self.current_left_counts = msg.state.displacement
-        if self.last_left_counts is None:
-            self.last_left_counts = self.current_left_counts
+        self.current_left_pos_counts = msg.state.displacement
+        self.current_left_dist_counts = msg.state.distance_traveled
+        if self.last_left_pos_counts is None:
+            self.last_left_pos_counts = self.current_left_pos_counts
+            self.last_left_dist_counts = self.current_left_dist_counts
 
     def right_vesc_callback(self, msg):
-        self.current_right_counts = msg.state.displacement
-        if self.last_right_counts is None:
-            self.last_right_counts = self.current_right_counts
+        self.current_right_pos_counts = msg.state.displacement
+        self.current_right_dist_counts = msg.state.distance_traveled
+        if self.last_right_pos_counts is None:
+            self.last_right_pos_counts = self.current_right_pos_counts
+            self.last_right_dist_counts = self.current_right_dist_counts
 
     def publish_odometry(self):
         # Ensure we have received at least one message from each VESC
-        if self.current_left_counts is None or self.current_right_counts is None:
+        if (self.current_left_dist_counts is None or 
+            self.current_right_dist_counts is None):
             return
 
         current_time = self.get_clock().now().to_msg()
         
-        # Calculate distance traveled by each wheel
-        delta_left_counts = self.current_left_counts - self.last_left_counts
-        delta_right_counts = self.current_right_counts - self.last_right_counts
+        # --- Calculate true signed distance for each wheel ---
         
-        # The VESC encoder counts seem to be inverted on one side. This is a common issue.
-        # We assume the right wheel's encoder is the one that needs to be flipped.
-        dist_left = delta_left_counts * self.distance_per_count
-        dist_right = -delta_right_counts * self.distance_per_count
+        # Left Wheel
+        delta_left_pos = self.current_left_pos_counts - self.last_left_pos_counts
+        delta_left_dist = self.current_left_dist_counts - self.last_left_dist_counts
+        direction_left = math.copysign(1, delta_left_pos) if delta_left_pos != 0 else 0.0
+        dist_left = direction_left * delta_left_dist * self.meters_per_unit
+        
+        # Right Wheel
+        delta_right_pos = self.current_right_pos_counts - self.last_right_pos_counts
+        delta_right_dist = self.current_right_dist_counts - self.last_right_dist_counts
+        direction_right = math.copysign(1, delta_right_pos) if delta_right_pos != 0 else 0.0
+        # The -1.0 factor is crucial to correct for the inverted mounting/reporting of the right wheel VESC.
+        dist_right = -1.0 * direction_right * delta_right_dist * self.meters_per_unit
 
-        self.last_left_counts = self.current_left_counts
-        self.last_right_counts = self.current_right_counts
+        # Update last known counts for the next cycle
+        self.last_left_pos_counts = self.current_left_pos_counts
+        self.last_right_pos_counts = self.current_right_pos_counts
+        self.last_left_dist_counts = self.current_left_dist_counts
+        self.last_right_dist_counts = self.current_right_dist_counts
 
         # --- Differential Drive Kinematics ---
         delta_s = (dist_right + dist_left) / 2.0
