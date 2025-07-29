@@ -111,7 +111,16 @@ def generate_launch_description():
         Node(
             package='differential_drive',
             executable='gps_monitor_node',
-            name='gps_monitor_node'
+            name='gps_monitor_node',
+            output='screen'
+        ),
+        
+        # --- NEW: Launch the Odometry Test Node ---
+        Node(
+            package='differential_drive',
+            executable='odometry_test_node',
+            name='odometry_test_node',
+            output='screen'
         ),
         
         # Original Camera Node - This provides the image stream

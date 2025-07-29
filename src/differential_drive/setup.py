@@ -26,18 +26,17 @@ setup(
     # tests_require=['pytest'], # This is deprecated and handled by package.xml
     entry_points={
         'console_scripts': [
-            'diff_vel_ctrl_node = differential_drive.velocity_control:main',
-            'sony_gamepad_node = differential_drive.sony_gamepad:main',
-            'logitech_gamepad_node = differential_drive.logitech_gamepad:main',
-            'gps_monitor_node = differential_drive.gps_monitor_node:main',
-            'camera_node = differential_drive.camera_node:main',
-            'stepper_controller_node = old_stepper_nodes.stepper_controller_node:main',
-            'stepper_imu_node = differential_drive.stepper_imu_node:main',
-            'divot_detector = differential_drive.divot_detection_intel:main',
-            'align_and_repair_node = differential_drive.align_and_repair_node:main',
+            'divot_detector_node = differential_drive.divot_detection_intel:main',
             'odometry_node = differential_drive.odometry_node:main',
+            'velocity_control_node = differential_drive.velocity_control:main',
             'path_follower_node = differential_drive.path_follower_node:main',
+            'align_and_repair_node = differential_drive.align_and_repair_node:main',
+            'stepper_imu_node = differential_drive.stepper_imu_node:main',
             'golfbot_gui_node = differential_drive.golfbot_gui_node:main',
+            'gps_monitor_node = differential_drive.gps_monitor_node:main',
+            'odometry_test_node = differential_drive.odometry_test_node:main',
+            'logitech_gamepad_node = differential_drive.logitech_gamepad:main',
+            'sony_gamepad_node = differential_drive.sony_gamepad:main',
         ],
     },
 )
