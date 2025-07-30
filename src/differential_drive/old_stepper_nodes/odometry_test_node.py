@@ -15,7 +15,7 @@ class OdometryTestNode(Node):
         self.target_distance = 1.0  # meters
         # NOTE: This speed is a raw ERPM value sent to the VESC, not m/s.
         # This matches the method used in the align_and_repair_node.
-        self.move_speed = 500.0  # ERPM
+        self.move_speed = 55.0  # ERPM
 
         # --- State Variables ---
         self.state = 'IDLE'  # IDLE, MOVING, DONE
@@ -29,7 +29,7 @@ class OdometryTestNode(Node):
         self.joy_sub = self.create_subscription(Joy, '/joy', self.joy_callback, 10)
         
         # A timer to control the movement logic
-        self.timer = self.create_timer(0.02, self.control_loop)
+        self.timer = self.create_timer(0.05, self.control_loop)
 
         self.get_logger().info('Odometry Test Node Ready.')
         self.get_logger().info('Press the "A" button on your gamepad to start the 1-meter test.')

@@ -8,6 +8,9 @@ from geometry_msgs.msg import Twist
 import math
 import time
 from enum import Enum
+from std_msgs.msg import String # Import String message type
+from nav_msgs.msg import Path
+from geometry_msgs.msg import PoseStamped
 
 class PathState(Enum):
     IDLE = 1
@@ -31,9 +34,10 @@ class PathFollowerNode(Node):
         # Axis 7: +1 = UP (cancel), -1 = DOWN (unused for now)
         self.dpad_horizontal = 6  # Left/Right axis
         self.dpad_vertical = 7    # Up/Down axis
-        self.turn_kp = 1.0            # Proportional gain for turning
-        self.drive_speed = 35.0       # Similar to align_and_repair speeds
-        self.turn_speed_max = 50.0    # Similar to align_and_repair speeds
+        
+        # NOTE: Speeds are direct ERPM commands, to be consistent with align_and_repair_node
+        self.drive_speed = 75.0      # A moderate driving speed in ERPM
+        self.turn_speed =70.0        # A turning speed in ERPM
         self.arrival_threshold = 0.1  # 10cm
         self.angle_threshold = 0.1    # ~6 degrees in radians
         
@@ -41,6 +45,9 @@ class PathFollowerNode(Node):
         self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
         self.joy_sub = self.create_subscription(Joy, '/joy', self.joy_callback, 10)
         self.odom_sub = self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
+        # --- NEW: Subscriber for external path commands ---
+        self.path_sub = self.create_subscription(String, '/path', self.path_callback, 10)
+        self.plan_pub = self.create_publisher(Path, '/plan', 10) # For RViz visualization
         
         self.control_timer = self.create_timer(0.05, self.control_loop) # 20 Hz
         
@@ -74,6 +81,8 @@ class PathFollowerNode(Node):
                 self.state = PathState.IDLE
                 self.waypoints = []
                 self.current_waypoint_index = 0
+                # Also clear the visualized path
+                self.publish_plan()
             else:
                 self.get_logger().info("D-pad RIGHT pressed, but already in IDLE mode.")
         
@@ -94,12 +103,65 @@ class PathFollowerNode(Node):
                 self.state = PathState.IDLE
                 self.waypoints = []
                 self.current_waypoint_index = 0
+                # Also clear the visualized path
+                self.publish_plan()
             else:
                 self.get_logger().info("D-pad DOWN pressed, but already in IDLE mode.")
         
         # Store previous states
         self.prev_dpad_horizontal = current_horizontal
         self.prev_dpad_vertical = current_vertical
+
+    def path_callback(self, msg: String):
+        """Receives a path command from an external publisher."""
+        self.get_logger().info(f'Received new external path command: "{msg.data}"')
+        
+        if self.state != PathState.IDLE:
+            self.get_logger().warn("Cannot start new path, a path is already in progress. Please stop the current path first.")
+            return
+            
+        try:
+            # Parse the path string, e.g., "x1,y1;x2,y2;..."
+            waypoint_strings = msg.data.split(';')
+            parsed_waypoints = []
+            
+            # --- Get robot's current position and orientation to make the path relative ---
+            if self.current_pose is None:
+                self.get_logger().error("Cannot process path, odometry not available yet.")
+                return
+                
+            start_x = self.current_pose.position.x
+            start_y = self.current_pose.position.y
+            start_yaw = self.quat_to_yaw(self.current_pose.orientation)
+            
+            self.get_logger().info(f"Path is relative to start pose: X={start_x:.2f}, Y={start_y:.2f}, Yaw={math.degrees(start_yaw):.1f} deg")
+
+            for wp_str in waypoint_strings:
+                parts = wp_str.split(',')
+                if len(parts) == 2:
+                    relative_x = float(parts[0])
+                    relative_y = float(parts[1])
+                    
+                    # Rotate the relative waypoint by the robot's starting yaw
+                    rotated_x = relative_x * math.cos(start_yaw) - relative_y * math.sin(start_yaw)
+                    rotated_y = relative_x * math.sin(start_yaw) + relative_y * math.cos(start_yaw)
+                    
+                    # Add the rotated, relative waypoint to the robot's starting position to get the absolute waypoint in the odom frame
+                    absolute_x = start_x + rotated_x
+                    absolute_y = start_y + rotated_y
+                    
+                    parsed_waypoints.append((absolute_x, absolute_y))
+            
+            if not parsed_waypoints:
+                self.get_logger().error("Path message received, but no valid waypoints could be parsed.")
+                return
+
+            self.waypoints = parsed_waypoints
+            self.get_logger().info(f"Successfully parsed {len(self.waypoints)} waypoints from external command.")
+            self.start_path()
+
+        except Exception as e:
+            self.get_logger().error(f"Failed to parse path string: {e}")
 
     def odom_callback(self, msg: Odometry):
         self.current_pose = msg.pose.pose
@@ -111,6 +173,8 @@ class PathFollowerNode(Node):
             
         start_x = self.current_pose.position.x
         start_y = self.current_pose.position.y
+        # NOTE: This D-Pad generated path will be aligned with the odom frame, not the robot's current heading.
+        # This is different from the externally received path.
         
         self.waypoints = [
             (start_x + 1.0, start_y),
@@ -141,6 +205,23 @@ class PathFollowerNode(Node):
         self.current_waypoint_index = 0
         self.state = PathState.TURNING_TO_WAYPOINT
         self.get_logger().info(f"Path started. First waypoint: {self.waypoints[0]}")
+        self.publish_plan() # Publish the path for RViz
+
+    def publish_plan(self):
+        """Publishes the current list of waypoints as a Path message for RViz."""
+        plan_msg = Path()
+        plan_msg.header.stamp = self.get_clock().now().to_msg()
+        plan_msg.header.frame_id = 'odom'  # The path is in the odom frame
+
+        for waypoint in self.waypoints:
+            pose = PoseStamped()
+            pose.header.stamp = plan_msg.header.stamp
+            pose.header.frame_id = 'odom'
+            pose.pose.position.x = waypoint[0]
+            pose.pose.position.y = waypoint[1]
+            plan_msg.poses.append(pose)
+            
+        self.plan_pub.publish(plan_msg)
 
     def control_loop(self):
         if self.state == PathState.IDLE or self.current_pose is None:
@@ -191,14 +272,15 @@ class PathFollowerNode(Node):
     def turn_robot(self, angle_error):
         twist = Twist()
         twist.linear.x = 0.0
-        turn_speed = self.turn_kp * angle_error
-        twist.angular.z = max(-self.turn_speed_max, min(self.turn_speed_max, turn_speed))
+        # Use a fixed turning speed (ERPM) and use the sign of the angle_error to set the direction.
+        # This is consistent with other control nodes in the project and provides a strong, reliable turn.
+        twist.angular.z = math.copysign(self.turn_speed, angle_error)
         self.cmd_vel_pub.publish(twist)
 
     def drive_robot(self):
         twist = Twist()
         twist.linear.x = self.drive_speed
-        twist.angular.z = 0.0
+        twist.angular.z = 0.0 # Make sure we are not turning while driving straight
         self.cmd_vel_pub.publish(twist)
 
     def stop_robot(self):
