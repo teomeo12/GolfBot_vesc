@@ -15,8 +15,8 @@ class OdometryTestNodeEnhanced(Node):
 
         # --- Parameters ---
         # Using the same reliable ERPM values from the path follower
-        self.drive_speed = 180.0
-        self.turn_speed = 70.0
+        self.drive_speed = 500.0
+        self.turn_speed = 550.0
         self.is_running_sequence = False
 
         # --- Publishers and Subscribers ---
@@ -28,7 +28,7 @@ class OdometryTestNodeEnhanced(Node):
         self.lock = threading.Lock()
 
         self.get_logger().info("--- Enhanced Odometry Test Node Ready ---")
-        self.get_logger().info('--> Press "A" button to start the simple square sequence.')
+        self.get_logger().info('--> Press "A" button to start the complete square sequence (0.5m x 0.5m).')
 
     def odom_callback(self, msg: Odometry):
         with self.lock:
@@ -63,27 +63,59 @@ class OdometryTestNodeEnhanced(Node):
         self.get_logger().info("Step 1: Driving forward 0.5m...")
         self.drive_distance(0.5)
         
-        # Step 2: Stop and wait
+        # Step 2: Turn right 90 degrees
         self.stop_robot()
-        self.get_logger().info("Pausing for 1 second...")
-        time.sleep(1.0)
-        
-        # Step 3: Turn right 90 degrees
         self.get_logger().info("Step 2: Turning right 90 degrees...")
+        time.sleep(0.5)
         self.turn_angle(-90.0) # Negative for right turn
 
-        # Step 4: Stop and wait
+        # Step 3: Drive forward 50cm
         self.stop_robot()
-        self.get_logger().info("Pausing for 1 second...")
-        time.sleep(1.0)
-
-        # Step 5: Drive forward 50cm
         self.get_logger().info("Step 3: Driving forward 0.5m...")
+        time.sleep(0.5)
         self.drive_distance(0.5)
 
-        # Final stop
-        self.get_logger().info("--- Sequence Complete ---")
+        # Step 4: Turn right 90 degrees
         self.stop_robot()
+        self.get_logger().info("Step 4: Turning right 90 degrees...")
+        time.sleep(0.5)
+        self.turn_angle(-90.0)
+
+        # Step 5: Drive forward 50cm
+        self.stop_robot()
+        self.get_logger().info("Step 5: Driving forward 0.5m...")
+        time.sleep(0.5)
+        self.drive_distance(0.5)
+
+        # Step 6: Turn right 90 degrees (back to start orientation)
+        self.stop_robot()
+        self.get_logger().info("Step 6: Final turn right 90 degrees...")
+        time.sleep(0.5)
+        self.turn_angle(-90.0)
+
+        # Step 7: Drive forward 50cm (back to start position)
+        self.stop_robot()
+        self.get_logger().info("Step 7: Driving to start position...")
+        time.sleep(0.5)
+        self.drive_distance(0.5)
+
+        # Step 8: Final turn to original orientation
+        self.stop_robot()
+        self.get_logger().info("Step 8: Final turn to original orientation...")
+        time.sleep(0.5)
+        self.turn_angle(-90.0)
+
+        # Final stop - ensure robot is completely stopped
+        self.get_logger().info("--- SQUARE COMPLETE! Back at start position ---")
+        self.stop_robot()
+        time.sleep(0.5)  # Additional stop time
+        
+        # Send multiple stop commands to ensure robot stops completely
+        for _ in range(5):
+            self.stop_robot()
+            time.sleep(0.1)
+            
+        self.get_logger().info("Robot fully stopped. Press A button to run the square sequence again.")
         self.is_running_sequence = False
 
     def drive_distance(self, distance):
@@ -96,7 +128,7 @@ class OdometryTestNodeEnhanced(Node):
         
         while distance_traveled < distance and self.is_running_sequence:
             self.cmd_vel_pub.publish(twist_msg)
-            time.sleep(0.05) # Loop at 20Hz
+            time.sleep(0.02) # Loop at 20Hz
             with self.lock:
                 current_pose = self.current_pose
             distance_traveled = math.sqrt(

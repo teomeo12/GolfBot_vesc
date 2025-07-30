@@ -16,8 +16,8 @@ class LogitechGamepadNode(Node):
             10)
 
         # Single speed setting (no gears needed)
-        self.lin_speed = 400  # Linear speed setting
-        self.ang_speed = 400  # Angular speed setting
+        self.lin_speed = 450  # Linear speed setting
+        self.ang_speed = 450  # Angular speed setting
 
         # Track button states to handle bouncing
         self.prev_y_state = False   # Y button (button 3)
