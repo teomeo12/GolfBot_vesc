@@ -15,11 +15,14 @@ class LogitechGamepadNode(Node):
             self.joy_callback,
             10)
 
-        # Single speed setting (no gears needed)
-        self.lin_speed = 400  # Linear speed setting
-        self.ang_speed = 400  # Angular speed setting
+        # Gear settings
+        self.lin_speeds = [100, 150, 200]  # Linear speed settings
+        self.ang_speeds = [300, 400, 500]  # Angular speed settings
+        self.current_gear = 0
 
         # Track button states to handle bouncing
+        self.prev_lb_state = False  # LB button (button 4)
+        self.prev_rb_state = False  # RB button (button 5)
         self.prev_y_state = False   # Y button (button 3)
         self.prev_x_state = False   # X button (button 2)
 
@@ -34,13 +37,15 @@ class LogitechGamepadNode(Node):
         # Deadzone for stick inputs to prevent drift
         self.deadzone = 0.1
 
-        self.get_logger().info('Logitech F710 Gamepad Node Started (Single Speed)')
+        self.get_logger().info('Logitech F710 Gamepad Node Started')
         self.get_logger().info('Controls:')
         self.get_logger().info('  Left Stick (Up/Down): Forward/Backward movement')
         self.get_logger().info('  Right Stick (Left/Right): Turn left/right')
+        self.get_logger().info('  LB Button: Decrease gear')
+        self.get_logger().info('  RB Button: Increase gear')
         self.get_logger().info('  Y Button: Enable autonomous mode')
         self.get_logger().info('  X Button: Disable autonomous mode')
-        self.get_logger().info(f'  Speed Settings - Linear: {self.lin_speed}, Angular: {self.ang_speed}')
+        self.get_logger().info(f'  Current gear: {self.current_gear} (Linear Speed: {self.lin_speeds[self.current_gear]}) (Angular Speed: {self.ang_speeds[self.current_gear]})')
 
     def apply_deadzone(self, value):
         """Apply deadzone to joystick input to prevent drift"""
@@ -50,18 +55,39 @@ class LogitechGamepadNode(Node):
 
     def joy_callback(self, msg):
         # Check if we have enough axes and buttons
-        if len(msg.axes) < 4 or len(msg.buttons) < 6:
+        if len(msg.axes) < 3 or len(msg.buttons) < 6:
             self.get_logger().warn('Insufficient axes or buttons from joystick')
             return
 
-        # Fix the axis assignments - they were backwards!
-        # axes[1] = Left stick vertical (forward/backward) - CORRECT BEHAVIOR
-        # axes[3] = Right stick horizontal (left/right turning) - CORRECT BEHAVIOR  
-        raw_linear = self.apply_deadzone(msg.axes[1])   # Changed back to axes[1] for forward/backward
-        raw_angular = self.apply_deadzone(msg.axes[3])  # Changed back to axes[3] for left/right
+        # Extract linear and angular components from the joystick axes
+        # Logitech F710 in XInput mode:
+        # axes[1] = Left stick vertical (forward/backward)
+        # axes[3] = Right stick horizontal (left/right turning)
+        raw_linear = self.apply_deadzone(msg.axes[1])
+        raw_angular = self.apply_deadzone(msg.axes[3])
         
-        self.linear_velocity = raw_linear * self.lin_speed
-        self.angular_velocity = (-1) * raw_angular * self.ang_speed  # Invert for intuitive turning
+        self.linear_velocity = raw_linear * self.lin_speeds[self.current_gear]
+        self.angular_velocity = (-1) * raw_angular * self.ang_speeds[self.current_gear]  # Invert for intuitive turning
+
+        # Check LB button (button 4) for decreasing gear
+        lb_pressed = msg.buttons[4] == 1
+        if lb_pressed and not self.prev_lb_state:
+            if self.current_gear > 0:
+                self.current_gear -= 1
+                self.get_logger().info(f'Gear decreased to: {self.current_gear} (Speed: {self.lin_speeds[self.current_gear]})')
+
+        # Update previous LB button state
+        self.prev_lb_state = lb_pressed
+
+        # Check RB button (button 5) for increasing gear
+        rb_pressed = msg.buttons[5] == 1
+        if rb_pressed and not self.prev_rb_state:
+            if self.current_gear < len(self.lin_speeds) - 1:
+                self.current_gear += 1
+                self.get_logger().info(f'Gear increased to: {self.current_gear} (Speed: {self.lin_speeds[self.current_gear]})')
+
+        # Update previous RB button state
+        self.prev_rb_state = rb_pressed
 
         # Check Y button (button 3) for autonomous mode activation
         y_pressed = msg.buttons[3] == 1
@@ -71,6 +97,7 @@ class LogitechGamepadNode(Node):
             self.autonomous_mode_pub_.publish(autonomous_msg)
             self.get_logger().info('🤖 Y BUTTON: Autonomous mode ACTIVATED')
 
+        # Update previous Y button state
         self.prev_y_state = y_pressed
 
         # Check X button (button 2) for autonomous mode deactivation
@@ -81,13 +108,20 @@ class LogitechGamepadNode(Node):
             self.autonomous_mode_pub_.publish(autonomous_msg)
             self.get_logger().info('🛑 X BUTTON: Autonomous mode DEACTIVATED')
 
+        # Update previous X button state
         self.prev_x_state = x_pressed
 
         # Create a Twist message
         twist_msg = Twist()
         twist_msg.linear.x = self.linear_velocity
         twist_msg.angular.z = self.angular_velocity
+
+        # Publish the Twist message to /cmd_vel
         self.cmd_vel_pub_.publish(twist_msg)
+
+        # Log current velocities (optional, can be commented out to reduce spam)
+        # if abs(self.linear_velocity) > 0 or abs(self.angular_velocity) > 0:
+        #     self.get_logger().info(f'Linear: {self.linear_velocity:.1f}, Angular: {self.angular_velocity:.1f}')
 
 def main(args=None):
     rclpy.init(args=args)

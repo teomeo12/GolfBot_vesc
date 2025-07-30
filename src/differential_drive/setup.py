@@ -29,6 +29,7 @@ setup(
             'divot_detector_node = differential_drive.divot_detection_intel:main',
             'odometry_node = differential_drive.odometry_node:main',
             'velocity_control_node = differential_drive.velocity_control:main',
+            #'velocity_control_node = differential_drive.velocity_control_old:main',
             'path_follower_node = differential_drive.path_follower_node:main',
             'align_and_repair_node = differential_drive.align_and_repair_node:main',
             'stepper_imu_node = differential_drive.stepper_imu_node:main',
@@ -36,7 +37,13 @@ setup(
             'gps_monitor_node = differential_drive.gps_monitor_node:main',
             'odometry_test_node = differential_drive.odometry_test_node:main',
             'logitech_gamepad_node = differential_drive.logitech_gamepad:main',
+            #'logitech_gamepad_node = differential_drive.logitech_gamepad_old:main',
             'sony_gamepad_node = differential_drive.sony_gamepad:main',
+            'camera_node = differential_drive.camera_node:main',
+            # Aliases for launch file compatibility
+            'divot_detector = differential_drive.divot_detection_intel:main',
+            'square_test_publisher = differential_drive.square_test_publisher:main',
+            'odometry_test_node_enhanced = differential_drive.odometry_test_node_enhanced:main',
         ],
     },
 )

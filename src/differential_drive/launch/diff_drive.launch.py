@@ -35,6 +35,16 @@ def generate_launch_description():
         description='Type of gamepad to use: sony or logitech'
     )
 
+    # --- RViz Configuration ---
+    # rviz_config_file = os.path.join(get_package_share_directory('differential_drive'), 'config', 'path_following.rviz')
+    # rviz_node = Node(
+    #     package='rviz2',
+    #     executable='rviz2',
+    #     name='rviz2',
+    #     arguments=['-d', rviz_config_file],
+    #     output='screen'
+    # )
+
     return LaunchDescription([
         gamepad_type_arg,
         Node(
@@ -69,11 +79,14 @@ def generate_launch_description():
                 ('commands/servo/position', 'right_vesc/commands/servo/position'),
             ]
         ),
+        # Velocity Control Node
         Node(
             package='differential_drive',
-            executable='diff_vel_ctrl_node',
-            name='differential_drive_node',
+            executable='velocity_control_node',
+            name='differential_drive_node', # This name is often used by other tools like teleop
+            output='screen',
             parameters=[
+                {"wheel_base": 0.57},
                 {'left_vel_topic': 'left_vesc/commands/motor/speed'},
                 {'right_vel_topic': 'right_vesc/commands/motor/speed'}
             ]
@@ -115,14 +128,20 @@ def generate_launch_description():
             output='screen'
         ),
         
-        # --- NEW: Launch the Odometry Test Node ---
+        # # --- NEW: Launch the Odometry Test Node ---
+        # Node(
+        #     package='differential_drive',
+        #     executable='odometry_test_node_enhanced',
+        #     name='odometry_test_node_enhanced',
+        #     output='screen'
+        # ),
+        # #--- OLD: Launch the Odometry Test Node ---
         Node(
             package='differential_drive',
             executable='odometry_test_node',
             name='odometry_test_node',
             output='screen'
         ),
-        
         # Original Camera Node - This provides the image stream
         Node(
             package='differential_drive',
@@ -193,4 +212,7 @@ def generate_launch_description():
             name='golfbot_gui_node',
             output='screen'
         ),
+
+        # Add RViz to the launch description
+        # rviz_node
     ])
