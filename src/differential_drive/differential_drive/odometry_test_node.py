@@ -75,7 +75,8 @@ class OdometryTestNode(Node):
                 # Target distance reached
                 self.stop_robot()
                 self.get_logger().info(f'Test complete. Total distance traveled: {distance_traveled:.3f} meters.')
-                self.state = 'DONE'
+                self.get_logger().info('Press A button to run another test.')
+                self.state = 'IDLE'  # Reset to IDLE to allow another test
 
     def stop_robot(self):
         """Publishes a zero-velocity Twist message to stop the robot."""

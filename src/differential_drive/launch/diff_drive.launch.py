@@ -129,19 +129,20 @@ def generate_launch_description():
         ),
         
         # # --- NEW: Launch the Odometry Test Node ---
-        # Node(
-        #     package='differential_drive',
-        #     executable='odometry_test_node_enhanced',
-        #     name='odometry_test_node_enhanced',
-        #     output='screen'
-        # ),
-        # #--- OLD: Launch the Odometry Test Node ---
         Node(
             package='differential_drive',
-            executable='odometry_test_node',
-            name='odometry_test_node',
+            executable='odometry_test_node_square',
+            name='odometry_test_node_square',
             output='screen'
-        ),
+         ),
+        # #--- OLD: Launch the Odometry Test Node ---
+        # Node(
+        #     package='differential_drive',
+        #     executable='odometry_test_node',
+        #     name='odometry_test_node',
+        #     output='screen'
+        # ),
+
         # Original Camera Node - This provides the image stream
         Node(
             package='differential_drive',

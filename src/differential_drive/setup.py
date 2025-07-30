@@ -43,7 +43,7 @@ setup(
             # Aliases for launch file compatibility
             'divot_detector = differential_drive.divot_detection_intel:main',
             'square_test_publisher = differential_drive.square_test_publisher:main',
-            'odometry_test_node_enhanced = differential_drive.odometry_test_node_enhanced:main',
+            'odometry_test_node_enhanced = differential_drive.odometry_test_node_square:main',
         ],
     },
 )
