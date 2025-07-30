@@ -127,9 +127,12 @@ class StepperImuNode(Node):
             msg.linear_acceleration.x = float(parts[3])
             msg.linear_acceleration.y = float(parts[4])
             msg.linear_acceleration.z = float(parts[5])
-            msg.angular_velocity.x = float(parts[6])
-            msg.angular_velocity.y = float(parts[7])
-            msg.angular_velocity.z = float(parts[8])
+            
+            # Convert angular velocity from deg/s (from BNO055) to rad/s (ROS standard)
+            DEG_TO_RAD = math.pi / 180.0
+            msg.angular_velocity.x = float(parts[6]) * DEG_TO_RAD
+            msg.angular_velocity.y = float(parts[7]) * DEG_TO_RAD
+            msg.angular_velocity.z = float(parts[8]) * DEG_TO_RAD
             
             # --- Assumed Covariance ---
             # The BNO055 does not provide covariance data directly.
