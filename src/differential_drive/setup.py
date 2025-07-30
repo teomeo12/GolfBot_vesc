@@ -15,7 +15,7 @@ setup(
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
         (os.path.join('share', package_name, 'arduino_sketches'), glob('arduino_sketches/*.ino')),
-        (os.path.join('share', package_name), glob('1600s_aug_100ep.pt')),
+        (os.path.join('share', package_name), glob('*.pt')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -43,7 +43,8 @@ setup(
             # Aliases for launch file compatibility
             'divot_detector = differential_drive.divot_detection_intel:main',
             'square_test_publisher = differential_drive.square_test_publisher:main',
-            'odometry_test_node_enhanced = differential_drive.odometry_test_node_square:main',
+            'odometry_test_node_square = differential_drive.odometry_test_node_square:main',
+            'odometry_test_node_mower = differential_drive.odometry_test_node_mower:main',
         ],
     },
 )
