@@ -20,6 +20,7 @@ class AlignmentState(Enum):
     WAITING = 4
     DRIVING = 5
     DISPENSING = 6
+    FINAL_DRIVE = 7  # Drive 10cm past divot after dispensing
 
 class AlignAndRepairNode(Node):
     def __init__(self):
@@ -37,34 +38,39 @@ class AlignAndRepairNode(Node):
         
         # --- Odometry Data ---
         self.current_pose = None
-        self.target_destination = None # The (x, y) coordinate we want to drive to
+        self.drive_start_x = None  # Simple: just track X position like odometry_test_node
+        self.drive_distance = 0.85  # Fixed 85cm drive distance (matches dispenser_offset)
+        self.final_drive_distance = 0.10  # Additional 10cm after dispensing
         
         # Camera parameters (RealSense D435i defaults)
         self.camera_fx = 615.0  # Focal length X
         self.camera_fy = 615.0  # Focal length Y
         self.camera_cx = 320.0  # Principal point X
         self.camera_cy = 240.0  # Principal point Y
-        self.center_threshold = 10  # Pixels from center to consider aligned
+        self.alignment_threshold_cm = 3  # Real-world distance threshold for alignment (cm) - increased for testing
         
         # Physical measurements (in meters)
         self.dispenser_offset = 0.90  # Dispenser is 90cm behind camera
         
-        # --- Proportional Control Parameters for smooth alignment ---
-        # NOTE: The key to preventing oscillation is a low minimum speed.
-        # The robot should be able to make very small, gentle adjustments.
+        # --- Two-Speed Alignment Control Parameters ---
+        # Coarse positioning speeds (when offset > 5cm)
+        self.coarse_turn_speed = 550.0   # Fast turning speed for large corrections
+        self.coarse_drive_speed = 550.0  # Fast driving speed for large corrections
         
-        # Turning Control (Angular)
-        self.turn_kp = 0.09             # A gentle gain to prevent aggressive reactions.
-        self.min_turn_speed = 35.0      # A low minimum speed for fine-grained adjustments.
-        self.max_turn_speed = 55.0      # Maximum speed to prevent runaway turning.
+        # Fine positioning speeds (when 1.5cm < offset <= 5cm)  
+        self.fine_turn_speed = 450.0     # Gentle turning speed for fine alignment
+        self.fine_drive_speed = 450.0    # Gentle driving speed for fine alignment
+        
+        # Speed transition threshold
+        self.speed_transition_threshold_cm = 5.0  # Switch from coarse to fine at 5cm
 
-        # Alignment Driving Control (Linear)
-        self.drive_kp = 0.09             # Proportional gain for forward/backward alignment.
-        self.min_drive_speed = 25.0     # A low minimum speed for fine-grained adjustments.
-        self.max_drive_speed = 30.0     # Maximum speed for fine alignment.
-
+        # --- Driving State Parameters ---
+        self.drive_speed_max = 750.0     # Fast speed for initial drive phase
+        self.drive_speed_min = 700.0     # Slow speed when approaching target
+        self.drive_slowdown_distance = 0.10  # Start slowing down 10cm before target (0.80m - 0.10m = 0.70m)
+        
         # --- Final Drive Parameters ---
-        self.final_drive_speed = 38.0   # A fixed speed for the final long drive.
+        self.final_drive_speed = 750.0   # Speed that definitely works in auto mode
         
         # Detection data
         self.latest_detection_info = None
@@ -101,8 +107,8 @@ class AlignAndRepairNode(Node):
         self.dispense_pub = self.create_publisher(String, '/dispense_sand', 10)
         self.autonomous_mode_pub = self.create_publisher(Bool, '/is_autonomous_mode', 10)
         
-        # Control timer (50 Hz for smoother control)
-        self.control_timer = self.create_timer(0.02, self.control_loop)
+        # Control timer (20 Hz to reduce command flooding)
+        self.control_timer = self.create_timer(0.05, self.control_loop)
         
         self.get_logger().info('Align and Repair Node Ready')
         
@@ -193,45 +199,76 @@ class AlignAndRepairNode(Node):
             self.handle_driving()
         elif self.state == AlignmentState.DISPENSING:
             self.handle_dispensing()
+        elif self.state == AlignmentState.FINAL_DRIVE:
+            self.handle_final_drive()
             
     def handle_aligning(self):
-        """A unified controller to handle both turning and distance adjustment simultaneously."""
+        """A unified controller using real-world distance thresholds instead of pixels."""
         if not hasattr(self, 'aligning_logged'):
-            self.get_logger().info('STATE: ALIGNING - Simultaneously turning and adjusting distance.')
+            self.get_logger().info('STATE: ALIGNING - Using 1.5cm real-world distance threshold.')
             self.aligning_logged = True
 
-        if self.latest_detection_info is None:
+        if self.latest_detection_info is None or self.latest_depth_image is None:
             self.stop_robot()
             return
 
-        pixel_error_x = self.latest_detection_info['center_x'] - self.camera_cx
-        pixel_error_y = self.latest_detection_info['center_y'] - self.camera_cy
+        center_x = self.latest_detection_info['center_x']
+        center_y = self.latest_detection_info['center_y']
+        
+        # Get depth at divot center
+        depth_mm = self.latest_depth_image[center_y, center_x]
+        if depth_mm == 0 or depth_mm > 5000:  # Invalid depth
+            self.get_logger().warn(f'Invalid depth reading: {depth_mm}mm at pixel ({center_x}, {center_y})')
+            self.stop_robot()
+            return
+            
+        depth_m = depth_mm / 1000.0
+        
+        # Calculate real-world offsets in cm
+        h_offset_m = ((center_x - self.camera_cx) * depth_m) / self.camera_fx
+        v_offset_m = ((center_y - self.camera_cy) * depth_m) / self.camera_fy
+        h_offset_cm = abs(h_offset_m * 100)
+        v_offset_cm = abs(v_offset_m * 100)
 
-        # Check if both errors are within the threshold
-        if abs(pixel_error_x) < self.center_threshold and abs(pixel_error_y) < self.center_threshold:
-            self.get_logger().info('Full alignment complete.')
+        # DEBUG: Always log alignment status
+        self.get_logger().info(f'ALIGNMENT CHECK: H={h_offset_cm:.1f}cm, V={v_offset_cm:.1f}cm, Depth={depth_m:.2f}m, Threshold={self.alignment_threshold_cm}cm')
+
+        # Check if both offsets are within the real-world threshold
+        if h_offset_cm < self.alignment_threshold_cm and v_offset_cm < self.alignment_threshold_cm:
+            self.get_logger().info(f'*** ALIGNMENT COMPLETE! *** H-offset: {h_offset_cm:.1f}cm, V-offset: {v_offset_cm:.1f}cm')
             self.stop_robot()
             self.state = AlignmentState.WAITING
             self.wait_start_time = time.time()
             return
 
-        # --- Calculate Angular (Turning) Speed ---
-        turn_speed = self.turn_kp * pixel_error_x
-        if 0 < abs(turn_speed) < self.min_turn_speed:
-            turn_speed = self.min_turn_speed if turn_speed > 0 else -self.min_turn_speed
-        turn_speed = max(-self.max_turn_speed, min(self.max_turn_speed, turn_speed))
+        # Calculate pixel errors for control (same as before)
+        pixel_error_x = center_x - self.camera_cx
+        pixel_error_y = center_y - self.camera_cy
 
-        # --- Calculate Linear (Driving) Speed ---
-        drive_speed = self.drive_kp * pixel_error_y
-        if 0 < abs(drive_speed) < self.min_drive_speed:
-            drive_speed = self.min_drive_speed if drive_speed > 0 else -self.min_drive_speed
-        drive_speed = max(-self.max_drive_speed, min(self.max_drive_speed, drive_speed))
+        # --- Two-speed turning control ---
+        if h_offset_cm < self.alignment_threshold_cm:
+            turn_speed = 0.0  # Stop turning when within threshold
+        elif h_offset_cm > self.speed_transition_threshold_cm:  # Coarse positioning 
+            turn_speed = self.coarse_turn_speed if pixel_error_x > 0 else -self.coarse_turn_speed
+        else:  # Fine positioning
+            turn_speed = self.fine_turn_speed if pixel_error_x > 0 else -self.fine_turn_speed
+
+        # --- Two-speed driving control ---  
+        if v_offset_cm < self.alignment_threshold_cm:
+            drive_speed = 0.0  # Stop driving when within threshold
+        elif v_offset_cm > self.speed_transition_threshold_cm:  # Coarse positioning
+            drive_speed = self.coarse_drive_speed if pixel_error_y > 0 else -self.coarse_drive_speed  
+        else:  # Fine positioning
+            drive_speed = self.fine_drive_speed if pixel_error_y > 0 else -self.fine_drive_speed
 
         # --- Create and Publish Combined Command ---
         twist = Twist()
         twist.angular.z = -turn_speed # To turn right (positive pixel_error_x), we need a negative angular.z
         twist.linear.x = -drive_speed # If divot is below center (positive pixel_error_y), move forward (-speed).
         self.cmd_vel_pub.publish(twist)
+        
+        # Log current alignment status
+        self.get_logger().info(f'Aligning: H-offset={h_offset_cm:.1f}cm, V-offset={v_offset_cm:.1f}cm (target: <{self.alignment_threshold_cm}cm)', throttle_duration_sec=1.0)
 
     def start_pause(self, next_state, pause_secs=None):
         """Initiates a pause for the requested duration."""
@@ -252,65 +289,61 @@ class AlignAndRepairNode(Node):
                 self.wait_start_time = time.time()
         
     def handle_waiting(self):
-        """Final wait before calculating the fixed 90cm drive."""
+        """Final wait before starting simple 90cm drive."""
         elapsed = time.time() - self.wait_start_time
         
         if elapsed >= 5.0:
-            self.get_logger().info('Wait complete. Calculating target destination...')
+            self.get_logger().info('Wait complete. Starting simple 90cm drive...')
             if self.current_pose is not None:
-                # --- Calculate absolute target coordinate ---
-                current_x = self.current_pose.position.x
-                current_y = self.current_pose.position.y
-                current_theta = self.quat_to_yaw(self.current_pose.orientation)
-
-                # The distance to drive is a fixed 90cm, straight ahead.
-                drive_dist = self.dispenser_offset
-                
-                # Calculate the target coordinate in the odom frame
-                target_x = current_x + drive_dist * math.cos(current_theta)
-                target_y = current_y + drive_dist * math.sin(current_theta)
-                self.target_destination = Point(x=target_x, y=target_y, z=0.0)
-                
+                # Simple approach: just record starting X position
+                self.drive_start_x = self.current_pose.position.x
                 self.target_locked = True
-                self.get_logger().info(f"TARGET LOCKED: Driving a fixed {drive_dist:.2f}m to ({target_x:.2f}, {target_y:.2f})")
+                self.get_logger().info(f"DRIVE STARTED: From X={self.drive_start_x:.3f}, target distance={self.drive_distance:.2f}m")
                 self.state = AlignmentState.DRIVING
             else:
-                self.get_logger().error('LOCK FAILED: No odometry data. Resetting.')
+                self.get_logger().error('DRIVE FAILED: No odometry data. Resetting.')
                 self.reset_sequence()
         
     def handle_driving(self):
-        """Drive to a specific coordinate using odometry."""
-        if not self.target_locked or self.current_pose is None or self.target_destination is None:
+        """Simple drive using distance tracking like odometry_test_node."""
+        if not self.target_locked or self.current_pose is None or self.drive_start_x is None:
             self.get_logger().error("DRIVE FAILED: State is not ready for driving. Resetting.")
             self.stop_robot()
             self.reset_sequence()
             return
             
         current_x = self.current_pose.position.x
-        current_y = self.current_pose.position.y
-        target_x = self.target_destination.x
-        target_y = self.target_destination.y
+        distance_traveled = abs(current_x - self.drive_start_x)
         
-        distance_to_target = math.sqrt((target_x - current_x)**2 + (target_y - current_y)**2)
-        
-        # Check if we have arrived
-        if distance_to_target < 0.05: # 5cm arrival threshold
-            self.get_logger().info(f"Drive complete. Arrived at target ({target_x:.2f}, {target_y:.2f}).")
+        # Check if we've driven the target distance
+        if distance_traveled >= self.drive_distance:
+            self.get_logger().info(f"Drive complete. Traveled {distance_traveled:.3f}m (target: {self.drive_distance:.2f}m)")
             self.stop_robot()
             self.state = AlignmentState.DISPENSING
             self.dispense_start_time = time.time()
             return
         
-        # If still driving, send command to move forward
+        # Calculate remaining distance to target
+        remaining_distance = self.drive_distance - distance_traveled
+        
+        # Choose speed based on remaining distance
+        if remaining_distance > self.drive_slowdown_distance:
+            # Use fast speed when far from target
+            drive_speed = self.drive_speed_max
+        else:
+            # Use slow speed when approaching target (within 10cm)
+            drive_speed = self.drive_speed_min
+            
+        # Continue driving forward
         twist = Twist()
-        twist.linear.x = self.final_drive_speed
+        twist.linear.x = drive_speed
         twist.angular.z = 0.0
         self.cmd_vel_pub.publish(twist)
 
     def handle_dispensing(self):
-        """Start dispensing at target position"""
+        """Start dispensing at target position for 10 seconds"""
         if not hasattr(self, 'dispensing_logged'):
-            self.get_logger().info('STATE: DISPENSING - Releasing sand.')
+            self.get_logger().info('STATE: DISPENSING - Releasing sand for 10 seconds.')
             self.dispensing_logged = True
 
         elapsed = time.time() - self.dispense_start_time
@@ -321,23 +354,64 @@ class AlignAndRepairNode(Node):
                 dispense_msg.data = 'R'
                 self.dispense_pub.publish(dispense_msg)
                 self.dispense_started = True
+                self.get_logger().info('Dispensing started.')
                 
-        elif elapsed < 3.0:
-            pass
+        elif elapsed < 5.0:  # Dispense for 10 seconds
+            pass  # Keep dispensing
             
-        elif elapsed < 3.5:
+        elif elapsed < 5.5:  # Stop dispensing
             if not hasattr(self, 'dispense_stopped'):
                 dispense_msg = String()
                 dispense_msg.data = 'S'
                 self.dispense_pub.publish(dispense_msg)
                 self.dispense_stopped = True
+                self.get_logger().info('Dispensing stopped. Starting final 10cm drive.')
                 
         else:
-            self.get_logger().info('Dispense complete. Sequence finished.')
-            autonomous_msg = Bool()
-            autonomous_msg.data = False
-            self.autonomous_mode_pub.publish(autonomous_msg)
-            self.reset_sequence()
+            # Start final drive phase
+            if self.current_pose is not None:
+                self.drive_start_x = self.current_pose.position.x
+                self.get_logger().info(f'FINAL DRIVE: Starting 10cm drive from X={self.drive_start_x:.3f}')
+                self.state = AlignmentState.FINAL_DRIVE
+            else:
+                self.get_logger().error('FINAL DRIVE FAILED: No odometry data. Finishing sequence.')
+                self.finish_sequence()
+                
+    def handle_final_drive(self):
+        """Drive additional 10cm past the divot after dispensing."""
+        if not hasattr(self, 'final_drive_logged'):
+            self.get_logger().info('STATE: FINAL DRIVE - Driving 10cm past divot.')
+            self.final_drive_logged = True
+            
+        if self.current_pose is None or self.drive_start_x is None:
+            self.get_logger().error("FINAL DRIVE FAILED: No odometry data. Finishing sequence.")
+            self.finish_sequence()
+            return
+            
+        current_x = self.current_pose.position.x
+        distance_traveled = abs(current_x - self.drive_start_x)
+        
+        # Check if we've driven the additional 10cm
+        if distance_traveled >= self.final_drive_distance:
+            self.get_logger().info(f"Final drive complete. Traveled {distance_traveled:.3f}m (target: {self.final_drive_distance:.2f}m)")
+            self.stop_robot()
+            self.finish_sequence()
+            return
+        
+        # Continue driving forward
+        twist = Twist()
+        twist.linear.x = self.final_drive_speed
+        twist.angular.z = 0.0
+        self.cmd_vel_pub.publish(twist)
+        
+    def finish_sequence(self):
+        """Complete the sequence and return to manual mode."""
+        self.get_logger().info('Full sequence complete! Returning to manual mode.')
+        self.stop_robot()
+        autonomous_msg = Bool()
+        autonomous_msg.data = False
+        self.autonomous_mode_pub.publish(autonomous_msg)
+        self.reset_sequence()
                 
     def stop_robot(self):
         """Send zero velocity command to stop the robot"""
@@ -355,7 +429,7 @@ class AlignAndRepairNode(Node):
         self.wait_start_time = None
         self.pause_start_time = None
         self.next_state_after_pause = None
-        self.target_destination = None
+        self.drive_start_x = None
         self.current_pose = None
 
         # Reset logging flags
@@ -368,6 +442,8 @@ class AlignAndRepairNode(Node):
             delattr(self, 'dispense_started')
         if hasattr(self, 'dispense_stopped'):
             delattr(self, 'dispense_stopped')
+        if hasattr(self, 'final_drive_logged'):
+            delattr(self, 'final_drive_logged')
 
     def quat_to_yaw(self, q: Quaternion):
         """Convert a geometry_msgs/Quaternion to a yaw angle in radians."""

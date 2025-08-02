@@ -35,6 +35,7 @@ class DivotDetectorNode(Node):
         # --- Model Initialization ---
         package_path = get_package_share_directory('differential_drive')
         model_path = os.path.join(package_path, '1600s_aug_100ep.pt')
+        #model_path = os.path.join(package_path, '1656_divot_only_150e.pt')
         self.get_logger().info(f"Loading YOLO model from: {model_path}")
         try:
             self.model = YOLO(model_path)
@@ -255,9 +256,9 @@ class DivotDetectorNode(Node):
                                     cv2.putText(annotated_frame, v_offset_text, (x1, y1 - 10), 
                                                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
                                     
-                                    # Display the full driving distance calculation for clarity
-                                    total_drive_dist = depth_m + 0.90
-                                    drive_dist_text = f"Drive Dist: {depth_m:.2f}m + 0.90m = {total_drive_dist:.2f}m"
+                                    # Display the full driving distance calculation using V-offset + dispenser offset
+                                    total_drive_dist = abs(v_offset_m) + 0.90
+                                    drive_dist_text = f"Drive Dist: {abs(v_offset_m):.2f}m + 0.90m = {total_drive_dist:.2f}m"
                                     
                                     # Position text at the bottom of the bounding box
                                     text_size, _ = cv2.getTextSize(drive_dist_text, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
