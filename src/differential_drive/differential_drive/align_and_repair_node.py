@@ -50,27 +50,27 @@ class AlignAndRepairNode(Node):
         self.alignment_threshold_cm = 3  # Real-world distance threshold for alignment (cm) - increased for testing
         
         # Physical measurements (in meters)
-        self.dispenser_offset = 0.80  # Dispenser is 90cm behind camera
+        self.dispenser_offset = 0.90  # Dispenser is 90cm behind camera
         
         # --- Two-Speed Alignment Control Parameters ---
         # Coarse positioning speeds (when offset > 5cm)
-        self.coarse_turn_speed = 250.0   # Fast turning speed for large corrections
-        self.coarse_drive_speed = 350.0  # Fast driving speed for large corrections
+        self.coarse_turn_speed = 550.0   # Fast turning speed for large corrections
+        self.coarse_drive_speed = 550.0  # Fast driving speed for large corrections
         
         # Fine positioning speeds (when 1.5cm < offset <= 5cm)  
-        self.fine_turn_speed = 250.0     # Gentle turning speed for fine alignment
-        self.fine_drive_speed = 350.0    # Gentle driving speed for fine alignment
+        self.fine_turn_speed = 450.0     # Gentle turning speed for fine alignment
+        self.fine_drive_speed = 450.0    # Gentle driving speed for fine alignment
         
         # Speed transition threshold
         self.speed_transition_threshold_cm = 5.0  # Switch from coarse to fine at 5cm
 
         # --- Driving State Parameters ---
-        self.drive_speed_max = 550.0     # Fast speed for initial drive phase
-        self.drive_speed_min = 450.0     # Slow speed when approaching target
+        self.drive_speed_max = 750.0     # Fast speed for initial drive phase
+        self.drive_speed_min = 700.0     # Slow speed when approaching target
         self.drive_slowdown_distance = 0.10  # Start slowing down 10cm before target (0.80m - 0.10m = 0.70m)
         
         # --- Final Drive Parameters ---
-        self.final_drive_speed = 550.0   # Speed that definitely works in auto mode
+        self.final_drive_speed = 750.0   # Speed that definitely works in auto mode
         
         # Detection data
         self.latest_detection_info = None

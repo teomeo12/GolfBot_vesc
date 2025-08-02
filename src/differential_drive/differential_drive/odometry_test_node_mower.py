@@ -15,8 +15,8 @@ class OdometryTestNodeMower(Node):
 
         # --- Parameters ---
         # Using the same reliable ERPM values from the path follower
-        self.drive_speed = 450.0
-        self.turn_speed = 400.0
+        self.drive_speed = 550.0
+        self.turn_speed = 550.0
         self.is_running_sequence = False
         
         # Heading correction parameters
