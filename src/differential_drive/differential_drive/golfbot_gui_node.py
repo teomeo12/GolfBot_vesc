@@ -73,7 +73,7 @@ class GolfBotGUI(Node):
         # GUI setup
         self.root = tk.Tk()
         self.root.title("GolfBot Control Panel")
-        self.root.geometry("1000x700")
+        self.root.geometry("1400x900")
         
         self.setup_gui()
         
@@ -91,22 +91,26 @@ class GolfBotGUI(Node):
         # Configure grid weights for resizing
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
-        main_frame.columnconfigure(0, weight=1)
+        main_frame.columnconfigure(1, weight=1)  # Center column gets weight
         main_frame.rowconfigure(0, weight=1)
         
-        # Left side - Camera view
+        # Left side - Data and controls (part 1)
+        left_control_frame = ttk.Frame(main_frame)
+        left_control_frame.grid(row=0, column=0, padx=(0, 10), sticky=(tk.W, tk.E, tk.N, tk.S))
+        
+        # Center - Camera view
         camera_frame = ttk.LabelFrame(main_frame, text="Camera View", padding="10")
-        camera_frame.grid(row=0, column=0, padx=(0, 10), sticky=(tk.W, tk.E, tk.N, tk.S))
+        camera_frame.grid(row=0, column=1, padx=10, sticky=(tk.W, tk.E, tk.N, tk.S))
         
         self.camera_label = ttk.Label(camera_frame, text="No camera feed")
-        self.camera_label.pack(expand=True, fill='both')
+        self.camera_label.place(relx=0.5, rely=0.5, anchor='center')
         
-        # Right side - Data and controls
-        control_frame = ttk.Frame(main_frame)
-        control_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S))
+        # Right side - Data and controls (part 2)
+        right_control_frame = ttk.Frame(main_frame)
+        right_control_frame.grid(row=0, column=2, padx=(10, 0), sticky=(tk.W, tk.E, tk.N, tk.S))
         
-        # Autonomous mode control
-        auto_frame = ttk.LabelFrame(control_frame, text="Autonomous Control", padding="10")
+        # Left side controls - Autonomous mode and GPS
+        auto_frame = ttk.LabelFrame(left_control_frame, text="Autonomous Control", padding="10")
         auto_frame.pack(fill='x', pady=(0, 10))
         
         self.auto_status_label = ttk.Label(auto_frame, text="Status: Manual Mode", font=("Arial", 12, "bold"))
@@ -116,7 +120,7 @@ class GolfBotGUI(Node):
         self.auto_button.pack()
         
         # GPS Data
-        gps_frame = ttk.LabelFrame(control_frame, text="GPS Status", padding="10")
+        gps_frame = ttk.LabelFrame(left_control_frame, text="GPS Status", padding="10")
         gps_frame.pack(fill='x', pady=(0, 10))
         
         self.gps_lat_label = ttk.Label(gps_frame, text="Latitude: --")
@@ -131,8 +135,9 @@ class GolfBotGUI(Node):
         self.gps_status_label = ttk.Label(gps_frame, text="Fix Status: --")
         self.gps_status_label.pack(anchor='w')
         
+        # Right side controls - Robot data and detection
         # Odometry Data  
-        odom_frame = ttk.LabelFrame(control_frame, text="Robot Position", padding="10")
+        odom_frame = ttk.LabelFrame(right_control_frame, text="Robot Position", padding="10")
         odom_frame.pack(fill='x', pady=(0, 10))
         
         self.odom_x_label = ttk.Label(odom_frame, text="X: --")
@@ -145,7 +150,7 @@ class GolfBotGUI(Node):
         self.odom_theta_label.pack(anchor='w')
         
         # Detection Data
-        detection_frame = ttk.LabelFrame(control_frame, text="Divot Detection", padding="10")
+        detection_frame = ttk.LabelFrame(right_control_frame, text="Divot Detection", padding="10")
         detection_frame.pack(fill='x', pady=(0, 10))
         
         self.detection_status_label = ttk.Label(detection_frame, text="Status: No detection")
@@ -167,7 +172,7 @@ class GolfBotGUI(Node):
         self.detection_dimensions_label.pack(anchor='w')
         
         # System Status
-        status_frame = ttk.LabelFrame(control_frame, text="System Status", padding="10")
+        status_frame = ttk.LabelFrame(right_control_frame, text="System Status", padding="10")
         status_frame.pack(fill='x')
         
         self.camera_status_label = ttk.Label(status_frame, text="Camera: Disconnected", foreground="red")
@@ -347,8 +352,8 @@ class GolfBotGUI(Node):
         try:
             # Resize image to fit display (maintain aspect ratio)
             height, width = cv_image.shape[:2]
-            max_width = 640
-            max_height = 480
+            max_width = 1280
+            max_height = 960
             
             # Calculate scaling factor
             scale = min(max_width/width, max_height/height)
