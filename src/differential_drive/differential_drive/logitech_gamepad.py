@@ -16,8 +16,8 @@ class LogitechGamepadNode(Node):
             10)
 
         # Single speed setting (no gears needed)
-        self.lin_speed = 450  # Linear speed setting
-        self.ang_speed = 450  # Angular speed setting
+        self.lin_speed = 550  # Linear speed setting
+        self.ang_speed = 550  # Angular speed setting
 
         # Track button states to handle bouncing
         self.prev_y_state = False   # Y button (button 3)
@@ -61,7 +61,7 @@ class LogitechGamepadNode(Node):
         raw_angular = self.apply_deadzone(msg.axes[3])  # Changed back to axes[3] for left/right
         
         self.linear_velocity = raw_linear * self.lin_speed
-        self.angular_velocity = (-1) * raw_angular * self.ang_speed  # Invert for intuitive turning
+        self.angular_velocity = raw_angular * self.ang_speed  # Removed inversion for correct turning
 
         # Check Y button (button 3) for autonomous mode activation
         y_pressed = msg.buttons[3] == 1

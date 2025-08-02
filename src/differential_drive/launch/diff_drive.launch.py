@@ -129,12 +129,19 @@ def generate_launch_description():
         ),
         
         # # --- NEW: Launch the Odometry Test Node ---
+        # Node(
+        #     package='differential_drive',
+        #     executable='odometry_test_node_square',
+        #     name='odometry_test_node_square',
+        #     output='screen'
+        #  ),
         Node(
             package='differential_drive',
-            executable='odometry_test_node_square',
-            name='odometry_test_node_square',
+            executable='odometry_test_node_mower',
+            name='odometry_test_node_mower',
             output='screen'
-         ),
+        ),
+
         # #--- OLD: Launch the Odometry Test Node ---
         # Node(
         #     package='differential_drive',
