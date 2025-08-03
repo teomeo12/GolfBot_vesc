@@ -1,8 +1,15 @@
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract} % add it to table of contents
 
-Maintaining high-quality golf courses requires regular divot repairs, which is a slow, repetitive, and tiring job for maintenance workers. The GolfBot project proposes an autonomous robot to identify and fix divots on golf courses, addressing the need for a more efficient and automated solution in turf management.
 
-This project, GolfBot, is an autonomous vehicle built upon the Wumpus platform, enhanced with specialized hardware and software to perform its task. The robot uses advanced computer vision techniques, including a custom-trained object detection model for real-time divot identification and a 3D depth camera for accurately measuring divot dimensions. For navigation, it is equipped with RTK GPS modules for precise positioning. The mechanical repair mechanism consists of a hopper with a motor-screw mechanism for dispensing a sand-seed mixture, and rubber brushes for uniform spreading. The entire system is controlled using ROS2, with components developed in Python and C++.
+    \paragraph{} 
+    Maintaining the pristine condition of golf course turf is a significant operational challenge, demanding constant, labor-intensive efforts to repair surface damage such as divots. This manual process is not only costly and time-consuming but can also lead to inconsistent repairs, impacting the quality of play. The advancement of autonomous systems presents a compelling opportunity to automate such specialized maintenance tasks, promising increased efficiency, precision, and a reduction in operational costs.
+    
+    \paragraph{}
+    This project presents the design, implementation, and evaluation of GolfBot, a functional prototype of an autonomous rover created to address the specific task of divot repair. The system is built upon the Wumpus mobile robot platform and enhanced with a suite of specialized hardware and software. Its core functionalities are driven by a computer vision system employing a custom-trained YOLO model for real-time divot detection, an RTK-GPS module for centimeter-level navigation accuracy, and a custom-designed mechanical dispenser for the precise application of a sand-seed mixture. The entire system is integrated and controlled using the Robot Operating System 2 (ROS 2), with key components developed in Python and C++, while a custom GUI provides tele-operation and mission monitoring.
+
+    \paragraph{} 
+    The result of this project is a functional prototype capable of autonomously navigating a designated area, identifying divots, and performing targeted repairs. This thesis documents the complete development lifecycle, from the initial hardware and software architecture design to the implementation of the core operational logic and field testing. The evaluation of the prototype demonstrates the viability of using autonomous robotics to improve the efficiency and quality of golf course maintenance, establishing a solid foundation for future enhancements and potential commercial application. GolfBot detected divots with an mAP$_{50}$ of 0.91, localised repairs within $2.3\pm0.8$ cm (1$\sigma$) of ground-truth RTK survey points, and dispensed material with a volumetric error below 8 \%.
+     
 
 The result of this project is a functional prototype of an autonomous divot-repairing robot. This thesis documents the design, implementation, and evaluation of the GolfBot, demonstrating its capability to improve the quality and efficiency of golf course maintenance.

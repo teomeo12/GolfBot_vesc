@@ -2,9 +2,29 @@
 \label{chap:implementation}
 
 \section{Wumpus Platform Robot}
+\label{sec:wumpus_platform}
+The GolfBot's development started with the Wumpus platform, a pre-existing robot that provided a solid mechanical and electrical base. This section details the initial specifications of the platform, its condition as received, and the critical modifications and improvements that were made.
+
 \subsection{Initial Design and Specifications}
+\label{ssec:initial_design}
+The Wumpus robot, developed at Maynooth University, is a differential-drive robot. In its original configuration, it was controlled by a Raspberry Pi 4 running ROS 2. The power system was built around a 36V battery, which supplied two VESC motor controllers for the brushless DC motors. The platform also included three DC-DC converters: two specifically for the VESC controllers, and a third to step the voltage down to 12V and 5V for the main controller and other peripheral electronics.
+
 \subsection{Base Platform Condition}
+\label{ssec:base_condition}
+Upon initial inspection, the platform had two key issues that needed to be addressed. First, one of the VESC controllers had a recurring power-up problem. To ensure reliable operation, I installed a dedicated kill switch to control its power flow directly. Second, the motor settings were configured for high-speed performance (minimum 900 ERPM), which made the robot uncontrollable at the low speeds required for divot inspection and repair. I used the VESC tool, an open-source configuration software, to lower the minimum motor speed to 200 ERPM. This adjustment was crucial for enabling the precise, low-speed maneuvers needed for the project.
+
 \subsection{Modifications and Improvements}
+\label{ssec:modifications}
+After resolving the baseline issues, I performed significant upgrades to equip the robot for its mission. The underpowered Raspberry Pi 4 was replaced with a Seeed reComputer J4012, which features a powerful NVIDIA Jetson Orin 16GB module suitable for edge AI computing. I then integrated the following key hardware components:
+\begin{itemize}
+    \item An Intel RealSense D435i stereo camera for visual and depth data.
+    \item An Ardusimple SimpleRTK2B RTK GPS module for high-accuracy localization.
+    \item An Arduino Uno microcontroller to manage the dispenser motor and IMU.
+    \item A BNO055 IMU sensor for orientation tracking.
+    \item An A4988 stepper motor driver and a NEMA 17 stepper motor to actuate the dispenser.
+    \item A custom-designed and 3D-printed auger dispenser for the sand-seed mixture.
+\end{itemize}
+These enhancements fundamentally transformed the general-purpose Wumpus platform into the specialized GolfBot.
 
 \section{Computer Vision System}
 \subsection{Introduction/Purpose}
@@ -22,9 +42,51 @@
 \section{Mechanical Dispenser}
 \subsection{Introduction/Purpose}
 \subsection{Hardware Design and 3D-Printed Components}
+Here I can specify the output rate of the dispenser and the volume of the sand-seed mixture that is dispensed.
 \subsection{Software Integration in ROS}
 
 \section{Graphical User Interface (GUI)}
 \subsection{Introduction/Purpose}
 \subsection{Software and Framework}
 \subsection{Functions, Features, and Control}
+
+% %Section: Computer Vision System
+% Introduction/Purpose: A brief one-paragraph reminder of the goal: to detect divots from a camera feed.
+% Data Set Collection and Preprocessing: This is pure implementation.
+% How did you collect the 689 images? (e.g., "Images were collected over several days at the Maynooth University campus golf facility under varying lighting conditions...")
+% How did you use Roboflow? Describe the process of uploading, annotating the two classes (divot and fixed_divot), and exporting the dataset.
+% What specific data augmentations did you apply? Mention the exact transformations like rotation (e.g., +/- 15 degrees), brightness changes (e.g., +/- 25), etc., that expanded the dataset to 1,653 images.
+% Model Training:
+% Describe the training process on Google Colab. Mention the key parameters: 100 epochs, the specific YOLOv11-seg model used, and the fact that you used TPUs.
+% Hardware: You described the camera in the Design chapter. Here, you describe its setup.
+% "The Intel RealSense D435i was configured using the pyrealsense2 library to stream RGB video at a resolution of 1280x720 and 30 frames per second."
+% Software: List the key libraries you used.
+% pyrealsense2 for camera interfacing, OpenCV for image manipulation, and the ultralytics Python package for running the YOLO model inference.
+% Implementation in ROS: This is critical.
+% Describe your ROS 2 node (divot_detection_intel.py).
+% Specify the topics it subscribes to (/camera/color/image_raw) and publishes to (/camera/divot_detection/image_raw, /camera/divot_detection/details).
+% Mention the message types (sensor_msgs/Image). You could even include a small, simplified code snippet of your main processing loop.
+% Section: Navigation System
+% Introduction/Purpose: Reminder of the goal: achieve centimeter-level navigation.
+% Hardware Used: Again, focus on the configuration.
+% "The ArduSimple simpleRTK2B rover module was configured to output NMEA sentences at 10 Hz over USB."
+% "The BNO055 IMU was interfaced with the Arduino, which was programmed to read the fused orientation data and send it over its serial port."
+% Software Implementation:
+% Explain how you used the ublox_gps_node ROS 2 package to read the data from the ArduSimple module and publish it to the /fix topic.
+% Describe your stepper_imu_node.py, explaining how it reads the serial data from the Arduino and publishes it as a sensor_msgs/Imu message on the /imu/data topic.
+% This is the perfect place to describe the simple "lawnmower" search algorithm you implemented for autonomous coverage.
+% Section: Mechanical Dispenser
+% Introduction/Purpose: Reminder of the goal: dispense a controlled amount of sand/seed mix.
+% Hardware Design and 3D-Printed Components: You are exactly right with your idea for this section.
+% In the Design chapter, you described what it looks like and where it is.
+% Here, in Implementation, you describe how it performs. "The auger was designed in Fusion 360 and 3D-printed using PLA. Through a series of tests, it was calibrated to determine its output rate. Running the NEMA 17 stepper motor for X seconds at Y speed dispenses an average of Z grams of the sand-seed mixture. The hopper has a total volume of..."
+% Software Integration in ROS:
+% Explain the simple serial protocol you created (e.g., sending the character 'R' to run the motor and 'S' to stop it).
+% Describe the part of your stepper_imu_node.py that sends these characters to the Arduino's serial port when a joystick button is pressed.
+% You could include the simple Arduino code snippet (if (Serial.available() > 0) ...) that listens for these commands and drives the A4988 stepper driver.
+% Section: Graphical User Interface (GUI)
+% Introduction/Purpose: To provide teleoperation and system monitoring.
+% Software and Framework: Describe what you used to build it. (e.g., "The GUI was developed as an RQT plugin using Python and the PyQt5 framework.")
+% Functions, Features, and Control:
+% Detail what the user can see and do. Show a screenshot.
+% "The GUI displays the live camera feed, the annotated divot detection feed, the current RTK GPS status (Fixed, Float, None), and provides buttons for manual control, starting the autonomous mode, and triggering the dispenser."

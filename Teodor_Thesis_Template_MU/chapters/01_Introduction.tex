@@ -1,20 +1,56 @@
 \chapter{Introduction}
 \label{chap:introduction}
+Maintaining the immaculate turf of a golf course is a relentless and costly endeavor. Among the most repetitive tasks is the repair of divots—patches of turf displaced by golf swings—which, if left unattended, disrupt the playing surface and detract from the course's quality. This thesis introduces the GolfBot project, an autonomous robotic solution designed to automate the detection, localization, and repair of these divots. This chapter introduces the motivation and problem statement that drive the project. It then details the core components of the GolfBot system and provides an outline of the subsequent chapters, serving as a roadmap for the reader.
 
-You can cite like this~\citep{DiCarlo_2018_DynamicLocomotion} for number only or you can cite like this for the author:~\citet{DiCarlo_2018_DynamicLocomotion}.
-
+% Example of how to cite: 
+% You can cite like this~\citep{DiCarlo_2018_DynamicLocomotion} for a numbered reference, 
+% or like this for an author-year reference:~\citet{DiCarlo_2018_DynamicLocomotion}.
 
 \section{Motivation}
-% The motivation for the project.
+\label{sec:motivation}
+The primary motivation for this project arises from a distinct gap in the market for automated golf course maintenance. 
+Divots are inevitable on any busy golf course.  An average 18-hole course needs a tons of sand-seed mixture to fill the divots during peak season. Current practice relies on green-keeping staff walking the fairways and manually filling cavities with a sand–seed mixture — a task that is repetitive, physically demanding, and subject to human inconsistency.  Meanwhile, the robotics industry has delivered commercial mowing and fertilizer-spreading robots, but no solution that identifies and repairs individual divots.  
+Advances in edge AI (e.g.\ Nvidia Jetson-class GPUs), low-cost RTK-GPS, and open-source mobile-robot frameworks (ROS 2) running on a Linux based system have made it feasible to develop a specialized, cost-effective prototype to automate this precise task.  
 
 \section{Problem Statement}
-% The problem statement of the project.
+The project addresses the following core problem: \emph{Create a mobile system that can: (1) automatically identify turf divots in real time on an outlined section of a golf course fairway; (2) navigate to each detected divot with centimeter accuracy; and (3) dispense an appropriate amount of sand-seed mix to fill the divot and restore the playing surface — all without the need for human intervention.}
+Key technical challenges include:
+\begin{itemize}
+  \item Visual detection of irregular, depressions under variable outdoor lighting.
+  \item Robust localisation across tens of hectares with minimal GNSS occlusion.
+  \item Precise metering of a sand–seed mixture.
+  \item Real-time coordination of perception, planning, and actuation on a battery-powered embedded computer.
+\end{itemize}
 
+
+\section{Objectives and Project Scope}
+\label{sec:objectives_scope}
+The main objective of this project is to design, implement, and evaluate a working prototype a proof-of-concept, autonomous robot, capable of divot repair.
+
+The scope of the project encompasses the following key activities:
+\begin{itemize}
+    \item A review of the current state-of-the-art in autonomous turf maintenance, computer vision techniques for object detection in natural environments, and automated dispensing mechanisms.
+    \item Collect and annotate a minimum 1 500-image dataset of divots for model training.
+    \item Achieve real-time inference ($\le\!40$ ms per frame) on embedded GPU hardware.
+    \item The design and integration of the complete hardware and software architecture required for the robot's operation.
+    \item The implementation and testing of the system's principal components: the computer vision pipeline, the high-precision navigation system, and the mechanical repair dispenser.
+    \item A thorough validation of the prototype's performance in both controlled and real-world scenarios to assess its effectiveness.
+    \item A critical discussion of the prototype's current limitations and the identification of potential avenues for future research and development.
+\end{itemize}
 
 \section{The GolfBot System}
-% Explain what the golf bot's purpose is that is built on the Wumpus platform (describe the hardware). 
-% Then explain how Wumpus is enhanced with the additional hardware (camera, Jetson, NEMA motor, Arduino, etc.) that you can see in Figure 1. 
-% Describe the software part ROS2 , python , Arduino, YOLO.
+\label{sec:golfbot_system}
+
+The GolfBot is a custom-built autonomous robot designed to meet the specific demands of divot repair. The system is built upon the Wumpus robot platform, which was developed at Maynooth University and served as the project's foundation. This base platform was significantly modified and enhanced with a suite of specialized hardware to achieve the project's goals.
+
+The final system integrates three primary subsystems working in parallel:
+\begin{itemize}
+    \item A \textbf{computer vision system} for detecting and localizing divots in real-time.
+    \item A \textbf{high-precision navigation system}, using RTK-GPS, to guide the robot to target locations with centimeter-level accuracy.
+    \item A \textbf{mechanical dispensing system} to deliver a controlled amount of repair material into the divot.
+\end{itemize}
+These capabilities are powered by an NVIDIA Jetson Orin Nano, an Intel RealSense depth camera, and a custom-designed dispenser, all managed within the Robot Operating System 2 (ROS 2) framework. The detailed account of the platform's initial condition and the full scope of modifications and hardware integrations are presented in Chapter \ref{chap:implementation}.
+
 
 \section{Thesis Outline}
 % In chapter one I'm going to talk about this. 
@@ -25,7 +61,7 @@ The following chapters will detail the project.
 \begin{itemize}
     \item \textbf{Chapter 2: Literature Review} will survey existing work on autonomous robots in agriculture and turf maintenance, divot detection techniques, and automated repair systems.
     \item \textbf{Chapter 3: Design} will present the overall design of the GolfBot, covering both the hardware and software architectures.
-    \item \textbf{Chapter 4: Implementation} will provide a detailed account of the implementation of the GolfBot's main components: the computer vision system, the navigation system, the mechanical dispenser, and the graphical user interface.
+    \item \textbf{Chapter 4: Implementation} will provide a detailed description of the implementation of the GolfBot's main components: the computer vision system, the navigation system, the mechanical dispenser, and the graphical user interface.
     \item \textbf{Chapter 5: Experimental Results} will describe the experiments conducted to validate the performance of the GolfBot and present the results.
     \item \textbf{Chapter 6: Future Work} will discuss potential enhancements and future research directions for the GolfBot project.
     \item \textbf{Chapter 7: Conclusion} will summarize the project, highlighting its contributions and concluding remarks.
