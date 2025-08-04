@@ -166,3 +166,31 @@ parent={},%
 %
 }%
 
+\glsdefs@newdocentry{rqt_graph}%
+{%
+name={\acronymfont {\glsentryshort {rqt_graph}}},%
+sort={rqt\_graph},%
+type={acronym},%
+first={rqt\protect \_graph},%
+firstplural={rqt\protect \_graphs},%
+text={rqt\protect \_graph},%
+plural={rqt\protect \_graphs},%
+description={ROS 2 Graph},%
+descriptionplural={ROS 2 Graph},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={ROS 2 Graph},%
+longplural={ROS 2 Graphs},%
+short={rqt\protect \_graph},%
+shortplural={rqt\protect \_graphs},%
+counter={page},%
+parent={},%
+%
+}%
+
