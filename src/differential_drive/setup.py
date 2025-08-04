@@ -42,9 +42,10 @@ setup(
             'camera_node = differential_drive.camera_node:main',
             # Aliases for launch file compatibility
             'divot_detector = differential_drive.divot_detection_intel:main',
-            'square_test_publisher = differential_drive.square_test_publisher:main',
-            'odometry_test_node_square = differential_drive.odometry_test_node_square:main',
+            #'square_test_publisher = differential_drive.square_test_publisher:main',
+            #'odometry_test_node_square = differential_drive.odometry_test_node_square:main',
             'odometry_test_node_mower = differential_drive.odometry_test_node_mower:main',
+            'rtk_test_node = differential_drive.rtk_test_node:main',
         ],
     },
 )
