@@ -35,15 +35,6 @@ def generate_launch_description():
         description='Type of gamepad to use: sony or logitech'
     )
 
-    # --- RViz Configuration ---
-    # rviz_config_file = os.path.join(get_package_share_directory('differential_drive'), 'config', 'path_following.rviz')
-    # rviz_node = Node(
-    #     package='rviz2',
-    #     executable='rviz2',
-    #     name='rviz2',
-    #     arguments=['-d', rviz_config_file],
-    #     output='screen'
-    # )
 
     return LaunchDescription([
         gamepad_type_arg,
@@ -135,6 +126,7 @@ def generate_launch_description():
         #     name='odometry_test_node_square',
         #     output='screen'
         #  ),
+        # odoemtry test node mower pattern with IMU
         Node(
             package='differential_drive',
             executable='odometry_test_node_mower',
@@ -143,35 +135,20 @@ def generate_launch_description():
         ),
 
         # #--- OLD: Launch the Odometry Test Node ---
-        # Node(
-        #     package='differential_drive',
-        #     executable='odometry_test_node',
-        #     name='odometry_test_node',
-        #     output='screen'
-        # ),
+        Node(
+            package='differential_drive',
+            executable='odometry_test_node',
+            name='odometry_test_node',
+            output='screen'
+        ),
 
         # Original Camera Node - This provides the image stream
         Node(
             package='differential_drive',
             executable='camera_node', # Make sure this executable is in your setup.py
             name='camera_node'
-    ),
-
-        
-        # -----------------------------------------------------------------
-        # --- STEPPER NODE SELECTION ---
-        # --- Make sure only ONE of the following is uncommented! ---
-        # -----------------------------------------------------------------
-
-        # Option 1: Original enhanced Stepper Controller (Legacy - Do not use with IMU sketch)
-        # Node(
-        #     package='differential_drive',
-        #     executable='stepper_controller_node',
-        #     name='stepper_controller_node',
-        #     parameters=[os.path.join(get_package_share_directory('differential_drive'), 'config', 'stepper_config.yaml')],
-        #     output='screen'
-        # ),
-        
+         ),
+  
         # Option 2: New unified Stepper + IMU node (CORRECT ONE for stepper_controller_with_imu.ino)
         Node(
             package='differential_drive',
@@ -205,14 +182,6 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # Path Follower Node
-        Node(
-            package='differential_drive',
-            executable='path_follower_node',
-            name='path_follower_node',
-            output='screen'
-        ),
-
         # GolfBot GUI Node
         Node(
             package='differential_drive',
@@ -220,7 +189,42 @@ def generate_launch_description():
             name='golfbot_gui_node',
             output='screen'
         ),
-
+        # RTK Test Node
+        Node(
+            package='differential_drive',
+            executable='rtk_test_node',
+            name='rtk_test_node',
+            output='screen'
+        ),
+            # --- RViz Configuration ---
+        # rviz_config_file = os.path.join(get_package_share_directory('differential_drive'), 'config', 'path_following.rviz')
+        # rviz_node = Node(
+        #     package='rviz2',
+        #     executable='rviz2',
+        #     name='rviz2',
+        #     arguments=['-d', rviz_config_file],
+        #     output='screen'
+        # )
         # Add RViz to the launch description
         # rviz_node
+        # -----------------------------------------------------------------
+        # --- STEPPER NODE SELECTION ---
+        # --- Make sure only ONE of the following is uncommented! ---
+        # -----------------------------------------------------------------
+
+        # Option 1: Original enhanced Stepper Controller (Legacy - Do not use with IMU sketch)
+        # Node(
+        #     package='differential_drive',
+        #     executable='stepper_controller_node',
+        #     name='stepper_controller_node',
+        #     parameters=[os.path.join(get_package_share_directory('differential_drive'), 'config', 'stepper_config.yaml')],
+        #     output='screen'
+        # ),
+        # Path Follower Node
+        # Node(
+        #     package='differential_drive',
+        #     executable='path_follower_node',
+        #     name='path_follower_node',
+        #     output='screen'
+        # ),
     ])
