@@ -31,6 +31,7 @@
 \usepackage{enumitem}           % enumerate numbering
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{float}              % Better figure placement control
 \usepackage{textcomp, gensymb}
 \usepackage{wrapfig}
 \usepackage{todonotes}
