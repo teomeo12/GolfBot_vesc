@@ -44,6 +44,62 @@ The hardware architecture describes the electronic components and the flow of da
 
 The Arduino Uno plays a critical role as a dedicated low-level controller. It is responsible for managing the NEMA 17 stepper motor (via the A4988 driver) for the dispensing mechanism and reading orientation data from the BNO055 IMU sensor. The Arduino communicates with the main Jetson Orin controller over a serial-over-USB connection. The Rover RTK-GPS module is also connected directly to the main controller via USB, providing it with high-precision location data. This separation of concerns allows the main controller to focus on high-level processing while the Arduino handles real-time actuator control and sensor reading.
 
+% The software architecture of the GolfBot, detailing the ROS 2 nodes, topics, and overall data flow. This section will explain how the different software components (vision, navigation, control) interact.```
+
 \section{Software Architecture}
 \label{sec:software_architecture}
-% The software architecture of the GolfBot, detailing the ROS 2 nodes, topics, and overall data flow. This section will explain how the different software components (vision, navigation, control) interact.```
+The software architecture is designed using the Robot Operating System 2 (ROS 2), which provides a modular framework for concurrent processes. The system's structure is best represented by its ROS 2 computation graph, which shows the active nodes and the topics that connect them.
+
+Figure \ref{fig:ros2_computation_graph} shows the \texttt{rqt\_graph} output from the running GolfBot system. The ellipses represent ROS 2 nodes (the processes), while the rectangular boxes represent topics (the data streams). The arrows indicate the direction of data flow, showing which nodes are publishing and which are subscribing. The following subsections describe the roles of these key components as shown in the graph.
+
+\begin{figure}[h!]
+    \centering
+    % The user has placed the image in figures/ros2_nodes.png
+    \includegraphics[width=\linewidth]{figures/ros2_nodes.png}
+    \caption{ROS 2 computation graph (\texttt{rqt\_graph}) of the running GolfBot system, showing the primary nodes and topics.}
+    \label{fig:ros2_computation_graph}
+\end{figure}
+
+\subsection{Drivetrain Interface and Odometry}
+The core of the robot's mobility and low-level state tracking is handled by a set of dedicated nodes.
+\begin{description}
+    \item[VESC Driver Nodes (\texttt{/left\_vesc\_driver\_node}, \texttt{/right\_vesc\_driver\_node})] These nodes provide the direct interface to the VESC motor controllers. They are responsible for sending velocity commands to the motors and reading back sensor data, such as motor RPM. They publish their data to the \texttt{/left\_vesc/sensors/core} and \texttt{/right\_vesc/sensors/core} topics respectively.
+    \item[Odometry Node (\texttt{/odometry\_node})] This node subscribes to the sensor data from both VESC driver nodes. It uses the wheel speed information to calculate the robot's movement over time. It then publishes this wheel odometry as a \texttt{nav\_msgs/Odometry} message on the \texttt{/odom} topic, providing a basic estimate of the robot's position and orientation.
+\end{description}
+
+\subsection{Computer Vision Pipeline}
+The vision system is responsible for acquiring images and identifying divots within them.
+\begin{description}
+    \item[Camera Node (\texttt{/camera\_node})] This node interfaces with the Intel RealSense camera. As shown in the graph, it publishes the raw color and depth image streams to the \texttt{/camera/color/image\_raw} and \texttt{/camera/depth/image\_raw} topics.
+    \item[Divot Detector Node (\texttt{/divot\_detector})] This is the primary AI processing node. It subscribes to the \texttt{/camera/color/image\_raw} topic to get live images. It runs the custom-trained YOLO model on these images and publishes its findings to several topics for consumption by other parts of the system:
+    \begin{itemize}
+        \item \texttt{/camera/divot\_detection/image\_raw}: An annotated video stream with bounding boxes drawn around detected divots, useful for visualization.
+        \item \texttt{/camera/divot\_detection/details}: Structured data about the detections (e.g., pixel coordinates, size).
+        \item \texttt{/camera/divot\_detection/metrics}: Performance metrics of the detection model.
+    \end{itemize}
+\end{description}
+
+\subsection{User Interface and Control Logic}
+This part of the system provides user control and bridges the gap between perception and action.
+\begin{description}
+    \item[Joystick Node (\texttt{/joy\_node})] This standard ROS 2 node reads input from the connected Logitech joystick and publishes it to the \texttt{/joy} topic (not shown connected in this graph, but it provides input to the VESC driver nodes for manual control).
+    \item[GUI Node (\texttt{/golfbot\_gui\_node})] This node provides a graphical user interface for the operator. It subscribes to the various divot detection topics to display the system's status and the annotated video feed. As seen in the graph, it also interacts with the \texttt{/is\_autonomous\_mode} topic, allowing the operator to switch the robot between manual and autonomous modes.
+    \item[Autonomous Node (\texttt{/is\_autonomous\_mode})] This topic (represented as a node in this graph style) acts as a state holder, broadcasting whether the robot should be operating autonomously or under manual control. The GUI node can change this state, and a future mission control node would subscribe to it to know when to begin its work.
+\end{description}
+
+\subsection{Navigation and Localization}
+This subsystem provides the robot with an accurate sense of its position in the world.
+\begin{description}
+    \item[GPS Node (\texttt{ublox\_gps\_node})] This is an external ROS 2 package used to interface with the ArduSimple RTK-GPS module. It parses the NMEA data coming from the USB port and publishes it as \texttt{sensor\_msgs/NavSatFix} messages on the \texttt{/fix} topic.
+    \item[State Estimation Node (Designed)] In a full implementation, a node like \texttt{robot\_localization} would be used. It would fuse the RTK-GPS data from \texttt{/fix} and the IMU data from \texttt{/imu/data} using an Extended Kalman Filter (EKF) to produce a robust, continuous odometry estimate of the robot's position and orientation.
+\end{description}
+
+\subsection{Mechanical and Low-Level Interface}
+This component acts as the bridge between the high-level software and the low-level hardware like the dispenser motor and IMU.
+\begin{description}
+    \item[Arduino Interface Node (\texttt{stepper\_imu\_node.py})] This multi-purpose node handles communication with the Arduino Uno via a serial-over-USB connection. It has two primary functions:
+    \begin{enumerate}
+        \item It listens for dispenser commands (e.g., from the manual control node or the mission control node) and sends the corresponding serial characters ('R' for Run, 'S' for Stop) to the Arduino.
+        \item It continuously reads serial data sent *from* the Arduino, which contains the BNO055 IMU sensor readings, and publishes this data as \texttt{sensor\_msgs/Imu} messages on the \texttt{/imu/data} topic.
+    \end{enumerate}
+\end{description}
