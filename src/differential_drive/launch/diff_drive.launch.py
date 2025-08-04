@@ -74,7 +74,7 @@ def generate_launch_description():
         Node(
             package='differential_drive',
             executable='velocity_control_node',
-            name='differential_drive_node', # This name is often used by other tools like teleop
+            name='velocity_control_node', 
             output='screen',
             parameters=[
                 {"wheel_base": 0.57},
