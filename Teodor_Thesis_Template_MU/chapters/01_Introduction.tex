@@ -10,7 +10,7 @@ Maintaining the immaculate turf of a golf course is a relentless and costly ende
 \label{sec:motivation}
 The primary motivation for this project arises from a distinct gap in the market for automated golf course maintenance. 
 Divots are inevitable on any busy golf course.  An average 18-hole course needs a tons of sand-seed mixture to fill the divots during peak season. Current practice relies on green-keeping staff walking the fairways and manually filling cavities with a sand–seed mixture — a task that is repetitive, physically demanding, and subject to human inconsistency.  Meanwhile, the robotics industry has delivered commercial mowing and fertilizer-spreading robots, but no solution that identifies and repairs individual divots.  
-Advances in edge AI (e.g.\ Nvidia Jetson-class GPUs), low-cost RTK-GPS, and open-source mobile-robot frameworks (ROS 2) running on a Linux based system have made it feasible to develop a specialized, cost-effective prototype to automate this precise task.  
+Advances in edge AI (e.g.\ Nvidia Jetson-class GPUs), low-cost \gls{rtk}, and open-source mobile-robot frameworks (\gls{ros}) running on a Linux based system have made it feasible to develop a specialized, cost-effective prototype to automate this precise task.  
 
 \section{Problem Statement}
 The project addresses the following core problem: \emph{Create a mobile system that can: (1) automatically identify turf divots in real time on an outlined section of a golf course fairway; (2) navigate to each detected divot with centimeter accuracy; and (3) dispense an appropriate amount of sand-seed mix to fill the divot and restore the playing surface — all without the need for human intervention.}
@@ -49,7 +49,7 @@ The final system integrates three primary subsystems working in parallel:
     \item A \textbf{high-precision navigation system}, using RTK-GPS, to guide the robot to target locations with centimeter-level accuracy.
     \item A \textbf{mechanical dispensing system} to deliver a controlled amount of repair material into the divot.
 \end{itemize}
-These capabilities are powered by an NVIDIA Jetson Orin Nano, an Intel RealSense depth camera, and a custom-designed dispenser, all managed within the Robot Operating System 2 (ROS 2) framework. The detailed account of the platform's initial condition and the full scope of modifications and hardware integrations are presented in Chapter \ref{chap:implementation}.
+These capabilities are powered by an NVIDIA Jetson Orin Nano, an Intel RealSense depth camera, and a custom-designed dispenser, all managed within the \gls{ros} framework. The detailed account of the platform's initial condition and the full scope of modifications and hardware integrations are presented in Chapter \ref{chap:implementation}.
 
 
 \section{Thesis Outline}
@@ -61,7 +61,7 @@ The following chapters will detail the project.
 \begin{itemize}
     \item \textbf{Chapter 2: Literature Review} will survey existing work on autonomous robots in agriculture and turf maintenance, divot detection techniques, and automated repair systems.
     \item \textbf{Chapter 3: Design} will present the overall design of the GolfBot, covering both the hardware and software architectures.
-    \item \textbf{Chapter 4: Implementation} will provide a detailed description of the implementation of the GolfBot's main components: the computer vision system, the navigation system, the mechanical dispenser, and the graphical user interface.
+    \item \textbf{Chapter 4: Implementation} will provide a detailed description of the implementation of the GolfBot's main components: the computer vision system, the navigation system, the mechanical dispenser, and the \gls{gui}.
     \item \textbf{Chapter 5: Experimental Results} will describe the experiments conducted to validate the performance of the GolfBot and present the results.
     \item \textbf{Chapter 6: Future Work} will discuss potential enhancements and future research directions for the GolfBot project.
     \item \textbf{Chapter 7: Conclusion} will summarize the project, highlighting its contributions and concluding remarks.
