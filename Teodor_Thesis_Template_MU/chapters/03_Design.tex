@@ -3,7 +3,7 @@
 
 \section{Overall Design}
 \label{sec:overall_design}
-The design of the GolfBot is centered around creating a robust and functional platform capable of navigating semi-structured outdoor environments while performing its specialized repair task. The system's design can be broken down into three core areas: the physical mechanical structure, the electronic hardware architecture, and the software architecture that governs its behavior. This chapter details the design decisions made in each of these areas. Figure \ref{fig:golfbot_system_diagram} provides a visual overview of the completed robot.
+The system's design can be broken down into three core areas: the physical mechanical structure, the electronic hardware architecture, and the software architecture. This chapter details the design decisions made in each of these areas. Figure \ref{fig:golfbot_system_diagram} provides a visual overview of the completed robot.
 
 \begin{figure}[h!]
     \centering
@@ -14,42 +14,82 @@ The design of the GolfBot is centered around creating a robust and functional pl
 
 \section{Mechanical Design}
 \label{sec:mechanical_design}
-The mechanical design focuses on the robot's physical construction, ensuring stability, durability, and the proper placement of all sensors and actuators.
+The mechanical design focuses on the robot's physical construction, ensuring stability, and the proper placement of all sensors and actuators.
 
 \subsection{Chassis and Drivetrain}
 \label{ssec:chassis_drivetrain}
-The robot's structure is based on a lightweight aluminum chassis with main body dimensions of 500 mm x 360 mm x 115 mm. It uses a differential drive architecture, powered by two wheel hub motors with a wheel diameter of 165 mm and a track width (distance between the motors) of 570 mm. For stability, the drivetrain is supported by rubber caster wheels.
+The robot's structure is based on a lightweight aluminum chassis with main body dimensions of 500 mm x 360 mm x 115 mm. It uses a differential drive architecture, powered by two wheel hub motors with a wheel diameter of 165 mm and a distance between the motors of 570 mm. For stability, the drivetrain is supported by rubber caster wheels.
 
 The motor hubs and casters are mounted on two swing arms, which function as a simple suspension system. This allows the robot's main body to remain relatively horizontal while the swing arms absorb minor bumps from uneven terrain. The wheels provide a ground clearance of 100 mm, sufficient for overcoming common obstacles on a golf course fairway. To protect the electronics, all internal components are housed within the main body frame, secured in custom 3D-printed holders and attached with strong, double-sided Velcro to prevent movement during operation.
 
-\subsection{Sensor and Component Mounting}
-\label{ssec:sensor_mounting}
+\subsection{Component Mounting}
+\label{ssec:component_mounting}
 To ensure optimal data collection, custom mounts were designed for the primary sensors. An L-shaped 25 mm aluminum box section is mounted on top of the robot's aluminum plate. This structure holds the camera 300 mm in front of the robot and 600 mm above the ground, providing a clear and effective field of view. To protect the camera from direct sunlight and physical impacts, it is housed in a 3D-printed holder featuring a 90-degree hinge, which ensures the camera is positioned orthogonally to the ground.
 
-The same aluminum arm also supports a 2 mm thick stainless steel circular plate that serves as a ground plane for the RTK-GPS rover antenna. Additionally, a stand for the LCD screen, used for the graphical user interface, is mounted on the top frame.
+The same aluminum arm also supports a 2 mm thick stainless steel circular plate that serves as a ground plane for the RTK-GPS rover antenna. Additionally, a stand for the LCD screen, used for the graphical user interface, is mounted on the top of the aluminum plate.
 
 \subsection{Dispensing and Repair Mechanism}
 \label{ssec:dispenser_mechanism}
-The repair system is mounted at the rear of the robot. A 90-degree folded stainless steel bracket, which was laser-cut for precision, holds the sand dispenser 100 mm above the ground and approximately 900 mm behind the camera's center point. The dispenser itself is 3D-printed from PLA plastic. Its core is a screw auger mechanism, powered by a NEMA 17 stepper motor, which pushes the sand-seed mixture from a hopper out through a nozzle.
+The repair system is mounted at the rear of the robot. A laser-cuted and folded stainless steel bracket holds the sand dispenser 100 mm above the ground and approximately 900 mm behind the camera's center point. The dispenser itself is 3D-printed from \gls{PLA}. Its core is a screw auger mechanism, powered by a NEMA 17 stepper motor, which pushes the sand-seed mixture from a hopper out through a nozzle.
 
 Mounted directly behind the dispenser nozzle is a rubber-mounted brush. This brush extends 60 mm from the nozzle and serves to evenly spread the dispensed material, ensuring the divot is filled smoothly. It is attached to the same stainless steel bracket using custom 3D-printed mounts.
 
 \subsection{RTK Base Station Design}
 \label{ssec:rtk_base_design}
-The ArduSimple RTK system necessitates a stationary base station to deliver correction data to the rover. To achieve this, the base module is enclosed within a waterproof plastic box and mounted on a metal pipe. A circular, laser-cut metal plate is affixed to the top of the pipe to support the RTK base antenna. This entire setup is meticulously designed to remain stationary, ensuring signal integrity by positioning it at the highest feasible point within the robot's operational area. The base station is powered through a standard USB cable, which can be connected to a laptop or a simple USB wall adapter. As shown in Figure \ref{fig:base_antenna}, the base antenna setup is depicted here.
+The ArduSimple RTK system necessitates a stationary base station to deliver correction data to the rover. To achieve this, the base module is securely enclosed within a waterproof plastic box, as shown in Figure~\ref{fig:base_box}, and mounted on a metal pipe. A circular, laser-cut metal plate is affixed to the top of the pipe to support the RTK base antenna. This entire setup is designed to remain stationary, ensuring signal integrity by positioning it at the highest point within the robot's operational area. The base station is powered through a standard \gls{USB} cable, which can be connected to a laptop or a simple USB wall adapter. As shown in Figure~\ref{fig:base_antenna}, the base antenna setup is depicted here.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\linewidth]{figures/base_antenna.png}
-    \caption{RTK Base Antenna Setup}
-    \label{fig:base_antenna}
+    \begin{subfigure}{0.35\linewidth}
+        \centering
+        \includegraphics[height=0.35\textheight]{figures/base_box.png}
+        \caption{RTK Base Box}
+        \label{fig:base_box}
+    \end{subfigure}
+    \begin{subfigure}{0.35\linewidth}
+        \centering
+        \includegraphics[height=0.35\textheight]{figures/base_antenna.png}
+        \caption{RTK Base Antenna Setup}
+        \label{fig:base_antenna}
+    \end{subfigure}
 \end{figure}
 
 \section{Hardware Architecture}
 \label{sec:hardware_architecture}
-The hardware architecture describes the electronic components and the flow of data between them. It is designed around a central, powerful controller that processes sensor data and sends commands to the various actuators.
+The hardware architecture of the GolfBot is designed as a centralized system, with the Seeed reComputer J4102 (carrying the NVIDIA Jetson Orin Nano module) serving as the primary processing unit or "brain." This central controller is responsible for running the high-level software, including the AI model, navigation logic, and the ROS 2 framework. All other electronic components are connected to this central hub, creating a clear data and power distribution network.
 
-The Arduino Uno plays a critical role as a dedicated low-level controller. It is responsible for managing the NEMA 17 stepper motor (via the A4988 driver) for the dispensing mechanism and reading orientation data from the BNO055 IMU sensor. The Arduino communicates with the main Jetson Orin controller over a serial-over-USB connection. The Rover RTK-GPS module is also connected directly to the main controller via USB, providing it with high-precision location data. This separation of concerns allows the main controller to focus on high-level processing while the Arduino handles real-time actuator control and sensor reading.
+The overall electronic layout and data pathways are illustrated in Figure \ref{fig:hardware_diagram}. The primary communication interface is USB, which provides a robust and standardized way to connect most of the high-bandwidth sensors and controllers.
+
+\begin{figure}[h!]
+    \centering
+    % The user will create and add this figure
+    \includegraphics[width=1\linewidth]{figures/hardware_diagram.png}
+    \caption{The centralized hardware architecture of the GolfBot, showing the primary data connections to the Jetson Orin controller.}
+    \label{fig:hardware_diagram}
+\end{figure}
+
+\subsection{Component Connectivity}
+The electronic components are organized around the Jetson controller as follows:
+\begin{description}
+    \item[Drivetrain Controllers] The two VESC motor controllers, one for each drive wheel, are connected to the Jetson via USB. They receive high-level velocity commands from the main controller and are responsible for the precise, low-level control of the brushless DC motors.
+    \item[Vision System] The Intel RealSense D435i camera, the robot's primary sensor, is connected directly to a high-speed USB 3.0 port on the Jetson to ensure sufficient bandwidth for streaming both color and depth data.
+    \item[Localization System] The ArduSimple simpleRTK2B RTK-GPS module is connected via USB. It streams positioning data to the Jetson, which is used for global navigation.
+    \item[Low-Level Microcontroller Bridge] An Arduino Uno acts as a dedicated sub-controller for real-time tasks. It is connected to the Jetson via a single USB port and manages a group of its own peripherals:
+    \begin{itemize}
+        \item The \textbf{BNO055 IMU sensor} is connected to the Arduino, which reads the orientation data.
+        \item The \textbf{A4988 stepper motor driver} receives step and direction signals from the Arduino to control the \textbf{NEMA 17 stepper motor} for the dispensing mechanism.
+    \end{itemize}
+    This design offloads the hard real-time motor control and sensor reading from the main Jetson processor, allowing it to focus on higher-level computation. The Arduino sends all its collected data (e.g., from the IMU) to the Jetson over the USB serial connection.
+\end{description}
+
+\subsection{Power Distribution}
+The entire system is powered by a central 36V e-bike battery. This high-voltage supply is distributed to the components that require it, primarily the two VESC motor controllers. For the lower-voltage electronics, a set of DC-DC converters steps the 36V supply down to 12V and 5V. These regulated voltages power the Jetson controller, the Arduino, and all other peripheral sensors and devices, providing a stable and reliable power source for the entire robot.
+
+% \section{Hardware Architecture}
+% \label{sec:hardware_architecture}
+% The hardware architecture describes the electronic components and the flow of data between them. It is designed around a central, powerful controller that processes sensor data and sends commands to the various actuators.
+
+% The Arduino Uno plays a critical role as a dedicated low-level controller. It is responsible for managing the NEMA 17 stepper motor (via the A4988 driver) for the dispensing mechanism and reading orientation data from the BNO055 IMU sensor. The Arduino communicates with the main Jetson Orin controller over a serial-over-USB connection. The Rover RTK-GPS module is also connected directly to the main controller via USB, providing it with high-precision location data. This separation of concerns allows the main controller to focus on high-level processing while the Arduino handles real-time actuator control and sensor reading.
 
 % The software architecture of the GolfBot, detailing the ROS 2 nodes, topics, and overall data flow. This section will explain how the different software components (vision, navigation, control) interact.```
 \section{Software Architecture}
@@ -60,7 +100,7 @@ This is illustrated in the conceptual diagram in Figure \ref{fig:conceptual_flow
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.9\linewidth]{figures/data_flow_diagram.png}
+    \includegraphics[width=1\linewidth]{figures/data_flow_diagram.png}
     \caption{Conceptual data flow of the GolfBot system.}
     \label{fig:conceptual_flow}
 \end{figure}
@@ -70,8 +110,7 @@ Figure \ref{fig:ros2_computation_graph} shows the \gls{rqt_graph} output from th
 The following subsections describe the roles of these key components as shown in the graph.
 
 \begin{figure}[h!]
-    \centering
-    \includegraphics[width=\linewidth]{figures/ros2_nodes.png}
+    \makebox[\linewidth][c]{\includegraphics[width=1.0\paperwidth]{figures/ros2_nodes.png}}
     \caption{The ROS 2 computation graph (\texttt{rqt\_graph}) of the running system.}
     \label{fig:ros2_computation_graph}
 \end{figure}
@@ -81,15 +120,15 @@ These nodes provide the direct interface to the robot's hardware sensors, conver
 \begin{description}
     \item[Camera Node (\texttt{/camera\_node})] The driver for the Intel RealSense camera. It publishes the raw color and depth image streams to the \texttt{/camera/color/image\_raw} and \texttt{/camera/depth/image\_raw} topics.
     \item[GPS Driver Node (\texttt{/ublox\_gps\_node})] Interfaces with the U-blox RTK-GPS receiver, publishing standard \texttt{NavSatFix} messages containing latitude, longitude, and accuracy information to the \texttt{/ublox\_gps\_node/fix} topic.
-    \item[IMU Interface Node (\texttt{/stepper\_imu\_node})] This node has a dual role. In its sensing capacity, it reads orientation data from the BNO055 sensor (via an Arduino) and publishes it to the \texttt{/imu/data} topic. The other role is to act as an actuator, receiving commands from the \texttt{/dispense\_sand} topic and sending them to the Arduino to activate the stepper motor and dispense the sand-seed mixture.
+    \item[IMU Interface Node (\texttt{/stepper\_imu\_node})] This node has a dual role. The first one is to read orientation data from the BNO055 sensor (via an Arduino) and publish it to the \texttt{/imu/data} topic. The second role is to act as an actuator, receiving commands from the \texttt{/dispense\_sand} topic and sending them to the Arduino to activate the stepper motor and dispense the sand-seed mixture.
     \item[Joystick Driver (\texttt{/joy\_node})] A standard ROS 2 node that reads the raw axis and button states from the connected gamepad and publishes them to the \texttt{/joy} topic.
 \end{description}
 
 \subsection{Perception and Localization}
 This subsystem is responsible for processing raw sensor data to build an understanding of the environment and the robot's position within it.
 \begin{description}
-    \item[Divot Detector Node (\texttt{/divot\_detector})] The primary perception processing node. It subscribes to \texttt{/camera/color/image\_raw} and uses an AI model to identify divots. It publishes its findings to several key topics: \texttt{/camera/divot\_detection/image\_raw} for a visualized feed, and \texttt{/camera/divot\_detection/details} containing structured data on divot locations and sizes.
-    \item[Odometry Node (\texttt{/odometry\_node})] This node calculates the robot's movement based on wheel speeds. It subscribes to sensor data from the VESC driver nodes and publishes an estimate of the robot's pose and velocity to the \texttt{/odom} topic.
+    \item[Divot Detector Node (\texttt{/divot\_detector})] The primary perception processing node. It subscribes to \texttt{/camera/color/image\_raw} and uses the \gls{yolo} model to identify divots. It publishes its findings to several key topics: \texttt{/camera/divot\_detection/image\_raw} for a visualized feed, and \texttt{/camera/divot\_detection/details} containing structured data on divot locations and sizes.
+    \item[Odometry Node (\texttt{/odometry\_node})] This node calculates the robot's movement based on wheel speeds. It subscribes to sensor data from the \gls{VESC} driver nodes and publishes an estimate of the robot's pose and velocity to the \texttt{/odom} topic.
 \end{description}
 
 \subsection{Control and Navigation}
@@ -104,7 +143,7 @@ These nodes constitute the robot's "brain," making decisions for both manual and
 This final group includes the nodes that execute physical actions and provide a window into the system for the operator.
 \begin{description}
     \item[Motor Driver Nodes (\texttt{/left\_vesc\_driver\_node}, \texttt{/right\_vesc\_driver\_node})] These nodes are the final link to the drive motors. They receive speed commands from the \texttt{/velocity\_control\_node} and send the appropriate signals to the VESC motor controllers. They also publish sensor feedback used by the \texttt{/odometry\_node}.
-    \item[Dispenser Actuator Node (\texttt{/stepper\_imu\_node})] In its actuator capacity, this node subscribes to the \texttt{/dispense\_sand} topic. When it receives a command, it sends a signal to the Arduino to activate the stepper motor and dispense the repair mixture.
+    \item[Dispenser Actuator Node (\texttt{/stepper\_imu\_node})] This node subscribes to the \texttt{/dispense\_sand} topic. When it receives a command "R" for run or "S" for stop, it sends a signal to the Arduino to activate the stepper motor and dispense the repair mixture.
     \item[GUI Node (\texttt{/golfbot\_gui\_node})] Provides the main graphical user interface. It subscribes to numerous topics (e.g., camera feeds, odometry, GPS status) to give the operator a complete overview of the robot's state. It can also publish commands, such as setting the \texttt{/is\_autonomous\_mode} flag to start an autonomous run.
 \end{description}
 

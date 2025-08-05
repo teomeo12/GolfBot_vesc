@@ -1,31 +1,3 @@
-\glsdefs@newdocentry{dof}%
-{%
-name={\acronymfont {\glsentryshort {dof}}},%
-sort={DoF},%
-type={acronym},%
-first={DoF},%
-firstplural={DoFs},%
-text={DoF},%
-plural={DoFs},%
-description={Degree(s) of Freedom},%
-descriptionplural={Degree(s) of Freedom},%
-symbol={\relax },%
-symbolplural={\relax },%
-user1={},%
-user2={},%
-user3={},%
-user4={},%
-user5={},%
-user6={},%
-long={Degree(s) of Freedom},%
-longplural={Degree(s) of Freedoms},%
-short={DoF},%
-shortplural={DoFs},%
-counter={page},%
-parent={},%
-%
-}%
-
 \glsdefs@newdocentry{rtk}%
 {%
 name={\acronymfont {\glsentryshort {rtk}}},%
@@ -119,8 +91,8 @@ first={YOLO},%
 firstplural={YOLOs},%
 text={YOLO},%
 plural={YOLOs},%
-description={You Only Look Once},%
-descriptionplural={You Only Look Once},%
+description={You Only Look Once - An Object Detection Model},%
+descriptionplural={You Only Look Once - An Object Detection Model},%
 symbol={\relax },%
 symbolplural={\relax },%
 user1={},%
@@ -129,8 +101,8 @@ user3={},%
 user4={},%
 user5={},%
 user6={},%
-long={You Only Look Once},%
-longplural={You Only Look Onces},%
+long={You Only Look Once - An Object Detection Model},%
+longplural={You Only Look Once - An Object Detection Models},%
 short={YOLO},%
 shortplural={YOLOs},%
 counter={page},%
@@ -147,8 +119,8 @@ first={YOLOv11-Seg},%
 firstplural={YOLOv11-Segs},%
 text={YOLOv11-Seg},%
 plural={YOLOv11-Segs},%
-description={You Only Look Once v11-Seg},%
-descriptionplural={You Only Look Once v11-Seg},%
+description={You Only Look Once Segmentation v11},%
+descriptionplural={You Only Look Once Segmentation v11},%
 symbol={\relax },%
 symbolplural={\relax },%
 user1={},%
@@ -157,8 +129,8 @@ user3={},%
 user4={},%
 user5={},%
 user6={},%
-long={You Only Look Once v11-Seg},%
-longplural={You Only Look Once v11-Segs},%
+long={You Only Look Once Segmentation v11},%
+longplural={You Only Look Once Segmentation v11s},%
 short={YOLOv11-Seg},%
 shortplural={YOLOv11-Segs},%
 counter={page},%
@@ -189,6 +161,174 @@ long={ROS 2 Graph},%
 longplural={ROS 2 Graphs},%
 short={rqt\protect \_graph},%
 shortplural={rqt\protect \_graphs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{VESC}%
+{%
+name={\acronymfont {\glsentryshort {VESC}}},%
+sort={VESC},%
+type={acronym},%
+first={VESC},%
+firstplural={VESCs},%
+text={VESC},%
+plural={VESCs},%
+description={Vedder Electronic Speed Controller},%
+descriptionplural={Vedder Electronic Speed Controller},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Vedder Electronic Speed Controller},%
+longplural={Vedder Electronic Speed Controllers},%
+short={VESC},%
+shortplural={VESCs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{GNSS}%
+{%
+name={\acronymfont {\glsentryshort {GNSS}}},%
+sort={GNSS},%
+type={acronym},%
+first={GNSS},%
+firstplural={GNSSs},%
+text={GNSS},%
+plural={GNSSs},%
+description={Global Navigation Satellite System},%
+descriptionplural={Global Navigation Satellite System},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Global Navigation Satellite System},%
+longplural={Global Navigation Satellite Systems},%
+short={GNSS},%
+shortplural={GNSSs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{GPU}%
+{%
+name={\acronymfont {\glsentryshort {GPU}}},%
+sort={GPU},%
+type={acronym},%
+first={GPU},%
+firstplural={GPUs},%
+text={GPU},%
+plural={GPUs},%
+description={Graphics Processing Unit},%
+descriptionplural={Graphics Processing Unit},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Graphics Processing Unit},%
+longplural={Graphics Processing Units},%
+short={GPU},%
+shortplural={GPUs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{PLA}%
+{%
+name={\acronymfont {\glsentryshort {PLA}}},%
+sort={PLA},%
+type={acronym},%
+first={PLA},%
+firstplural={PLAs},%
+text={PLA},%
+plural={PLAs},%
+description={Polylactic Acid Polymer},%
+descriptionplural={Polylactic Acid Polymer},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Polylactic Acid Polymer},%
+longplural={Polylactic Acid Polymers},%
+short={PLA},%
+shortplural={PLAs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{USB}%
+{%
+name={\acronymfont {\glsentryshort {USB}}},%
+sort={USB},%
+type={acronym},%
+first={USB},%
+firstplural={USBs},%
+text={USB},%
+plural={USBs},%
+description={Universal Serial Bus},%
+descriptionplural={Universal Serial Bus},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Universal Serial Bus},%
+longplural={Universal Serial Buss},%
+short={USB},%
+shortplural={USBs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{DC}%
+{%
+name={\acronymfont {\glsentryshort {DC}}},%
+sort={DC},%
+type={acronym},%
+first={DC},%
+firstplural={DCs},%
+text={DC},%
+plural={DCs},%
+description={Direct Current},%
+descriptionplural={Direct Current},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Direct Current},%
+longplural={Direct Currents},%
+short={DC},%
+shortplural={DCs},%
 counter={page},%
 parent={},%
 %
