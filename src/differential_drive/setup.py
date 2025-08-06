@@ -46,6 +46,7 @@ setup(
             #'odometry_test_node_square = differential_drive.odometry_test_node_square:main',
             'odometry_test_node_mower = differential_drive.odometry_test_node_mower:main',
             'rtk_test_node = differential_drive.rtk_test_node:main',
+            'rtk_test_node_return = differential_drive.rtk_test_node_return:main',
         ],
     },
 )
