@@ -105,7 +105,7 @@ This is illustrated in the conceptual diagram in Figure \ref{fig:conceptual_flow
     \label{fig:conceptual_flow}
 \end{figure}
 
-Figure \ref{fig:ros2_computation_graph} shows the \gls{rqt_graph} output from the running GolfBot system. The ellipses represent ROS 2 nodes (the processes), while the rectangular boxes represent topics (the data streams). The arrows indicate the direction of data flow, showing which nodes are publishing and which are subscribing. 
+Figure \ref{fig:ros2_computation_graph} shows the \gls{rqtgraph} output from the running GolfBot system. The ellipses represent ROS 2 nodes (the processes), while the rectangular boxes represent topics (the data streams). The arrows indicate the direction of data flow, showing which nodes are publishing and which are subscribing. 
 
 The following subsections describe the roles of these key components as shown in the graph.
 
@@ -226,88 +226,36 @@ This final group includes the nodes that execute physical actions and provide a 
 %     \caption{The ROS 2 computation graph (\texttt{rqt\_graph}) showing the implemented nodes and topics of the running system.}
 %     \label{fig:ros2_computation_graph}
 % \end{figure}
-% 
-% \subsection{Sensing and Perception}
-% This group of nodes serves as the robot's senses, providing raw data about the environment and the robot's state.
-% \begin{description}
-%     \item[\texttt{/camera\_node}] Interfaces with the Intel RealSense camera to publish color and depth image streams.
-%     \item[Divot Detector Node (\texttt{/divot\_detector})] This is the primary AI processing node. It subscribes to the \texttt{/camera/color/image\_raw} topic to get live images. It runs the custom-trained YOLO model on these images and publishes its findings to several topics for consumption by other parts of the system:
-%     \begin{itemize}
-%         \item \texttt{/camera/divot\_detection/image\_raw}: An annotated video stream with bounding boxes drawn around detected divots, useful for visualization.
-%         \item \texttt{/camera/divot\_detection/details}: Structured data about the detections (e.g., pixel coordinates, size).
-%         \item \texttt{/camera/divot\_detection/metrics}: Performance metrics of the detection model.
-%     \end{itemize}
-%     \item[\texttt{/divot\_detector}] The core perception node. It subscribes to the raw images, performs AI-based divot detection, and publishes the results, including an annotated video stream and structured data about each detection.
-%     \item[\texttt{/ublox\_gps\_node}] The driver for the RTK-GPS module, responsible for publishing the robot's global position.
-%     \item[\texttt{/stepper\_imu\_node}] Reads data from the BNO055 IMU via the Arduino and publishes it as a standard ROS 2 IMU message, providing the system with orientation data.
-% \end{description}
-% 
-% \subsection{Localization and State Estimation}
-% These nodes process raw sensor data to produce a coherent estimate of the robot's position.
-% \begin{description}
-%     \item[\texttt{/left\_vesc\_driver\_node} \& \texttt{/right\_vesc\_driver\_node}] These nodes interface with the motor controllers. In addition to driving the motors, they publish sensor feedback (wheel speeds).
-%     \item[\texttt{/odometry\_node}] Subscribes to the wheel speed data from the VESC drivers and calculates a wheel odometry estimate, publishing the result to the \texttt{/odom} topic.
-%     \item[\texttt{/gps\_monitor\_node}] A utility node that subscribes to the GPS data to monitor the status and quality of the RTK fix.
-% \end{description}
-% 
-% \subsection{Control and Actuation}
-% This group includes nodes responsible for robot motion and executing the repair task, supporting both manual and autonomous control.
-% \begin{description}
-%     \item[\texttt{/logitech\_gamepad\_node}] Translates joystick inputs into velocity commands (\texttt{/cmd\_vel}) for manual teleoperation.
-%     \item[\texttt{/align\_and\_repair\_node}] The primary logic node for the autonomous "search-and-repair" test. It is designed to use odometry and divot detection data to navigate to a target and trigger the dispensing mechanism.
-% ...
-% \section{Software Architecture}
-% \label{sec:software_architecture}
-% The Robot Operating System 2 (ROS 2) is used to build the GolfBot's software because it is flexible and has a strong communication system. The system is based on the idea of "separating concerns," which means that different functions are handled by separate processes (nodes) that talk to each other through clear channels (topics).
-% 
-% The overall data flow follows a standard robotics pattern of perception, processing, and actuation, as illustrated in the conceptual diagram in Figure \ref{fig:conceptual_flow}.
-% 
-% \begin{figure}[h!]
-%     \centering
-%     \includegraphics[width=0.9\linewidth]{figures/data_flow_diagram.png}
-%     \caption{Conceptual data flow of the GolfBot system.}
-%     \label{fig:conceptual_flow}
-% \end{figure}
-% 
-% This conceptual model is implemented as a network of ROS 2 nodes and topics, shown in Figure \ref{fig:ros2_computation_graph}. The following subsections provide a guided description of the primary nodes within this architecture, categorized by their function.
-% 
-% \begin{figure}[h!]
-%     \centering
-%     \includegraphics[width=\linewidth]{figures/ros2_nodes.png}
-%     \caption{The ROS 2 computation graph (\texttt{rqt\_graph}) showing the implemented nodes and topics of the running system.}
-%     \label{fig:ros2_computation_graph}
-% \end{figure}
-% 
-% \subsection{Sensing and Perception}
-% This group of nodes serves as the robot's senses, providing raw data about the environment and the robot's state.
-% \begin{description}
-%     \item[\texttt{/camera\_node}] Interfaces with the Intel RealSense camera to publish color and depth image streams.
-%     \item[Divot Detector Node (\texttt{/divot\_detector})] This is the primary AI processing node. It subscribes to the \texttt{/camera/color/image\_raw} topic to get live images. It runs the custom-trained YOLO model on these images and publishes its findings to several topics for consumption by other parts of the system:
-%     \begin{itemize}
-%         \item \texttt{/camera/divot\_detection/image\_raw}: An annotated video stream with bounding boxes drawn around detected divots, useful for visualization.
-%         \item \texttt{/camera/divot\_detection/details}: Structured data about the detections (e.g., pixel coordinates, size).
-%         \item \texttt{/camera/divot\_detection/metrics}: Performance metrics of the detection model.
-%     \end{itemize}
-%     \item[\texttt{/divot\_detector}] The core perception node. It subscribes to the raw images, performs AI-based divot detection, and publishes the results, including an annotated video stream and structured data about each detection.
-%     \item[\texttt{/ublox\_gps\_node}] The driver for the RTK-GPS module, responsible for publishing the robot's global position.
-%     \item[\texttt{/stepper\_imu\_node}] Reads data from the BNO055 IMU via the Arduino and publishes it as a standard ROS 2 IMU message, providing the system with orientation data.
-% \end{description}
-% 
-% \subsection{Localization and State Estimation}
-% These nodes process raw sensor data to produce a coherent estimate of the robot's position.
-% \begin{description}
-%     \item[\texttt{/left\_vesc\_driver\_node} \& \texttt{/right\_vesc\_driver\_node}] These nodes interface with the motor controllers. In addition to driving the motors, they publish sensor feedback (wheel speeds).
-%     \item[\texttt{/odometry\_node}] Subscribes to the wheel speed data from the VESC drivers and calculates a wheel odometry estimate, publishing the result to the \texttt{/odom} topic.
-%     \item[\texttt{/gps\_monitor\_node}] A utility node that subscribes to the GPS data to monitor the status and quality of the RTK fix.
-% \end{description}
-% 
-% \subsection{Control and Actuation}
-% This group includes nodes responsible for robot motion and executing the repair task, supporting both manual and autonomous control.
-% \begin{description}
-%     \item[\texttt{/logitech\_gamepad\_node}] Translates joystick inputs into velocity commands (\texttt{/cmd\_vel}) for manual teleoperation.
-%     \item[\texttt{/align\_and\_repair\_node}] The primary logic node for the autonomous "search-and-repair" test. It is designed to use odometry and divot detection data to navigate to a target and trigger the dispensing mechanism.
-% ...
 
+% \subsection{Sensing and Perception}
+% This group of nodes serves as the robot's senses, providing raw data about the environment and the robot's state.
+% \begin{description}
+%     \item[\texttt{/camera\_node}] Interfaces with the Intel RealSense camera to publish color and depth image streams.
+%     \item[Divot Detector Node (\texttt{/divot\_detector})] This is the primary AI processing node. It subscribes to the \texttt{/camera/color/image\_raw} topic to get live images. It runs the custom-trained YOLO model on these images and publishes its findings to several topics for consumption by other parts of the system:
+%     \begin{itemize}
+%         \item \texttt{/camera/divot\_detection/image\_raw}: An annotated video stream with bounding boxes drawn around detected divots, useful for visualization.
+%         \item \texttt{/camera/divot\_detection/details}: Structured data about the detections (e.g., pixel coordinates, size).
+%         \item \texttt{/camera/divot\_detection/metrics}: Performance metrics of the detection model.
+%     \end{itemize}
+%     \item[\texttt{/divot\_detector}] The core perception node. It subscribes to the raw images, performs AI-based divot detection, and publishes the results, including an annotated video stream and structured data about each detection.
+%     \item[\texttt{/ublox\_gps\_node}] The driver for the RTK-GPS module, responsible for publishing the robot's global position.
+%     \item[\texttt{/stepper\_imu\_node}] Reads data from the BNO055 IMU via the Arduino and publishes it as a standard ROS 2 IMU message, providing the system with orientation data.
+% \end{description}
+% 
+% \subsection{Localization and State Estimation}
+% These nodes process raw sensor data to produce a coherent estimate of the robot's position.
+% \begin{description}
+%     \item[\texttt{/left\_vesc\_driver\_node} \& \texttt{/right\_vesc\_driver\_node}] These nodes interface with the motor controllers. In addition to driving the motors, they publish sensor feedback (wheel speeds).
+%     \item[\texttt{/odometry\_node}] Subscribes to the wheel speed data from the VESC drivers and calculates a wheel odometry estimate, publishing the result to the \texttt{/odom} topic.
+%     \item[\texttt{/gps\_monitor\_node}] A utility node that subscribes to the GPS data to monitor the status and quality of the RTK fix.
+% \end{description}
+% 
+% \subsection{Control and Actuation}
+% This group includes nodes responsible for robot motion and executing the repair task, supporting both manual and autonomous control.
+% \begin{description}
+%     \item[\texttt{/logitech\_gamepad\_node}] Translates joystick inputs into velocity commands (\texttt{/cmd\_vel}) for manual teleoperation.
+%     \item[\texttt{/align\_and\_repair\_node}] The primary logic node for the autonomous "search-and-repair" test. It is designed to use odometry and divot detection data to navigate to a target and trigger the dispensing mechanism.
+% ...
 % \section{Software Architecture}
 % \label{sec:software_architecture}
 % The Robot Operating System 2 (ROS 2) is used to build the GolfBot's software because it is flexible and has a strong communication system. The system is based on the idea of "separating concerns," which means that different functions are handled by separate processes (nodes) that talk to each other through clear channels (topics).
