@@ -17,6 +17,8 @@
 \RequirePackage{fancyhdr}        % Custom headers and footers
 \RequirePackage{emptypage}       % Suppress headers/footers on blank pages     
 
+\RequirePackage{listings}        % For code listings
+
 \RequirePackage{graphicx}        % Include images
 \RequirePackage{booktabs}        % High-quality table rules
 

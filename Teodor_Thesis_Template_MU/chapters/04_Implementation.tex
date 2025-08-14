@@ -11,11 +11,9 @@ The Wumpus robot, developed at Maynooth University, is a differential-drive robo
 
 \subsection{Base Platform Condition}
 \label{ssec:base_condition}
-Upon initial inspection, the platform had two key issues that needed to be addressed. First, one of the VESC controllers had a recurring power-up problem. To ensure reliable operation, I installed a dedicated kill switch to control its power flow directly. Second, the motor settings were configured for high-speed performance (minimum 900 ERPM), which made the robot uncontrollable at the low speeds required for divot inspection and repair. I used the VESC tool, an open-source configuration software, to lower the minimum motor speed to 200 ERPM. This adjustment was crucial for enabling the precise, low-speed maneuvers needed for the project.
+Upon initial inspection, the platform had two key issues that needed to be addressed. First, one of the VESC controllers had a recurring power-up problem. To ensure reliable operation, I installed a dedicated kill switch to control its power flow directly (shown in Figure \ref{fig:appendix_killswitch} in the Appendix). Second, the motor settings were configured for high-speed performance (minimum 900 ERPM), which made the robot uncontrollable at the low speeds required for divot inspection and repair. Using the VESC tool, an open-source configuration software, I lowered the minimum motor speed to 100 ERPM (see Figure \ref{fig:appendix_vesc_tool} in the Appendix). This adjustment was crucial for enabling the precise, low-speed maneuvers needed for the project.
 
-\subsection{Modifications and Improvements}
-\label{ssec:modifications}
-After resolving the baseline issues, I performed significant upgrades to equip the robot for its mission. The underpowered Raspberry Pi 4 was replaced with a Seeed reComputer J4012, which features a powerful NVIDIA Jetson Orin 16GB module suitable for edge AI computing. I then integrated the following key hardware components:
+\subsection{Modifications and Improvements} ter J4012, which features a powerful NVIDIA Jetson Orin 16GB module suitable for edge AI computing. I then integrated the following key hardware components:
 \begin{itemize}
     \item An Intel RealSense D435i stereo camera for visual and depth data.
     \item An Ardusimple SimpleRTK2B RTK GPS module for high-accuracy localization.
@@ -28,11 +26,109 @@ These enhancements fundamentally transformed the general-purpose Wumpus platform
 
 \section{Computer Vision System}
 \subsection{Introduction/Purpose}
+\label{ssec:cv_intro}
+The \gls{CV} system is a critical component of the GolfBot, serving as its primary perception system for identifying targets for repair. Its main purpose is to process a live video feed from the onboard camera and use a custom-trained deep learning model to detect and segment divots in real-time.
+
+By leveraging both color (\gls{RGB}) and depth data from the Intel RealSense camera, the system is designed to provide the necessary information for the robot's navigation and control modules to accurately approach and service a detected divot. This section details the entire implementation of the CV system, covering the creation of the dataset, the model training process, the specific hardware and software used, and its final integration into the ROS 2 framework.
+
 \subsection{Data Set Collection and Preprocessing}
+\label{ssec:cv_dataset}
+The foundation of any effective computer vision model is a high-quality, relevant dataset. The entire workflow, from data collection and annotation to model training and deployment, is illustrated in Figure \ref{fig:cv_workflow}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\linewidth]{figures/datasetworkflow.png}
+    \caption{The end-to-end computer vision workflow, from data acquisition to a trained model ready for deployment on the GolfBot.}
+    \label{fig:cv_workflow}
+\end{figure}
+
+\textbf{Data Collection.}
+The initial dataset was created by capturing images at a local golf course to ensure the data was representative of real-world conditions. Using a Nikon D5200 DSLR camera, I collected over 1,000 high-resolution images (2992x2000 pixels at 300dpi). These images captured divots in various states, lighting conditions, and turf textures. \textbf{Example images for both the \texttt{divot} and \texttt{fixed\_divots} classes are provided in Appendix \ref{chap:appendix_a} (Figures \ref{fig:appendix_divot_sample} and \ref{fig:appendix_fixed_divot_sample}).}
+
+\textbf{Annotation.}
+The collected images were uploaded to the Roboflow online data management platform for annotation. I used Roboflow's "smart polygon" feature to precisely outline the boundaries of each divot, which is essential for instance segmentation. Each annotation was categorized into one of two classes:
+\begin{itemize}
+    \item \textbf{divot:} An un-repaired patch of displaced turf.
+    \item \textbf{fixed\_divot:} A divot that has been filled with a sand-seed mixture.
+\end{itemize}
+After cleaning and annotating, the dataset consisted of 766 images containing \texttt{divot} instances and 533 images with \texttt{fixed\_divot} instances. This dataset was then split into training (70\%), validation (20\%), and testing (10\%) sets, resulting in 931, 277, and 174 images in each set, respectively.
+
+\textbf{Preprocessing and Augmentation.}
+To prepare the images for the model and to increase the dataset's robustness, several steps were applied in Roboflow. First, all images were resized to 640x640 pixels to match the model's expected input dimensions. A contrast-boosting histogram equalization was also applied to normalize the images against varying lighting.
+
+Next, a series of data augmentation techniques were applied to synthetically increase the size and variability of the training set. These included:
+\begin{itemize}
+    \item \textbf{Crop:} Random cropping up to 20\% to make the model more resilient to objects being partially out of frame.
+    \item \textbf{Rotation:} Random rotation of +/- 15 degrees to simulate variations in camera angle.
+    \item \textbf{Shear:} Horizontal and vertical shearing of +/- 10\% to account for different viewing perspectives.
+    \item \textbf{Exposure:} Random adjustments to image brightness (-10\% to +10\%) to simulate different lighting conditions.
+\end{itemize}
+These augmentation steps tripled the size of the training dataset, resulting in a final count of 3,244 images for training the model.
+
 \subsection{Model Training}
+\label{ssec:cv_training}
+The model was trained using the Ultralytics framework, the official maintainer of the YOLO (You Only Look Once) family of models. The training process was executed on the Google Colab platform, which provides access to powerful cloud-based GPUs/TPUs suitable for deep learning tasks.
+
+The training workflow involved the following key steps:
+\begin{enumerate}
+    \item \textbf{Environment Setup:} The Ultralytics and Roboflow Python libraries were installed in the Google Colab environment.
+    \item \textbf{Dataset Download:} The prepared dataset was downloaded directly from Roboflow into the Colab notebook using the Roboflow API. This ensures a direct and reproducible link between the annotated data and the training script.
+    \item \textbf{Training Execution:} The training was initiated using the Ultralytics command-line interface. I selected the \textbf{YOLOv11s-seg} model, a small, fast instance segmentation model ideal for edge computing applications like the GolfBot. The model was trained for \textbf{150 epochs} with a \textbf{batch size of 50}.
+\end{enumerate}
+Upon completion of the training, the resulting model weights file (`best.pt`) was downloaded. This file, which contains the learned parameters of the trained model, was then integrated into the divot detection Python script running on the GolfBot. The quantitative performance of this model is evaluated in Chapter \ref{chap:validation}.
+
 \subsection{Hardware}
+The primary sensor for the computer vision system is the Intel RealSense D435i stereo camera, shown in Figure \ref{fig:realsense_camera}. This camera was chosen for its ability to provide high-resolution color images for AI detection, as well as depth data for future 3D localization tasks. It connects directly to a USB 3.0 port on the Jetson controller to ensure maximum data throughput.
+
+\begin{figure}[h!]
+    \centering
+    % Put your realsense camera image here
+    \includegraphics[width=0.6\linewidth]{figures/camera.png}
+    \caption{The Intel RealSense D435i camera used for vision.}
+    \label{fig:realsense_camera}
+\end{figure}
+
 \subsection{Software}
+\label{ssec:cv_software}
+The computer vision system is implemented in Python and relies on a curated set of powerful, open-source libraries to create a robust data pipeline. These libraries handle everything from low-level camera interfacing to high-level model inference and data visualization. Key code listings illustrating the use of these libraries can be found in Appendix \ref{chap:appendix_a}, Section \ref{sec:appendix_code}
+
+\begin{description}
+    \item[Ultralytics YOLO] This is the core library for the AI-based detection. As seen in the \texttt{divot\_detector\_node}, this package is used to load the custom-trained \texttt{.pt} model file and run inference on the incoming video stream. It provides a high-level, efficient interface to the state-of-the-art YOLOv11 model architecture.
+
+    \item[Supervision] The \texttt{supervision} library is used extensively for post-processing the output from the YOLO model. Its utilities simplify common computer vision tasks. In this project, it is used to convert the raw model output into an easily accessible detections object, and to annotate the video frames with segmentation masks, bounding boxes, and labels for visualization.
+
+    \item[PyRealSense2] This is the official Python wrapper for the Intel RealSense SDK. It is the fundamental library used in the \texttt{camera\_node} to directly interface with the D435i camera. It handles the configuration of the camera streams (color and depth), frame alignment, and retrieval of the image data.
+
+    \item[OpenCV] The Open Source Computer Vision Library (OpenCV) is a foundational component used throughout the pipeline. It is primarily used for image data manipulation. For instance, it is used by the \texttt{CvBridge} library to handle image format conversions and by the \texttt{divot\_detector\_node} to draw diagnostic visualizations, such as circles and text, onto the final annotated image.
+
+    \item[CvBridge] This is a critical ROS 2 utility library that acts as the "bridge" between ROS \texttt{sensor\_msgs/Image} messages and the OpenCV image format. It is used in both the \texttt{camera\_node} (to convert captured frames into ROS messages) and the \texttt{divot\_detector\_node} (to convert received ROS messages back into a format that OpenCV and the YOLO model can process).
+
+    \item[NumPy] As the fundamental package for scientific computing with Python, NumPy is used implicitly by most other libraries. It is explicitly used in the \texttt{divot\_detector\_node} for all numerical operations, such as calculating the center coordinates of a segmentation mask from pixel arrays and performing the geometric calculations for area and distance estimation.
+\end{description}
+Together, these libraries form a complete and efficient pipeline, enabling the GolfBot to process visual information from the physical world into actionable data within the ROS 2 ecosystem.
+
 \subsection{Implementation in ROS}
+\label{ssec:cv_ros_implementation}
+With a trained model ready, the final implementation step was to integrate it into a ROS 2 node that could run on the GolfBot. The \texttt{/divot\_detector} node was created for this purpose. Its operational logic follows a clear, multi-stage pipeline for each incoming image, as illustrated in Figure \ref{fig:cv_processing_pipeline}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/cv_pipeline_grid.png}
+    \caption{The real-time computer vision processing pipeline. The top row shows an original captured image being processed to create a segmentation mask. The bottom row illustrates the subsequent classification and depth analysis steps.}
+    \label{fig:cv_processing_pipeline}
+\end{figure}
+
+The node subscribes to the \texttt{/camera/color/image\_raw} topic. For each image received, it executes the following sequence:
+
+\begin{enumerate}
+    \item \textbf{Instance Segmentation:} The raw image is first passed to the YOLOv11-seg model. The model identifies and generates a precise pixel-level segmentation mask for any object it recognizes as a divot or a fixed divot.
+
+    \item \textbf{Divot Classification:} For each segmented instance, the model provides a classification (either \texttt{divot} or \texttt{fixed\_divot}) along with a confidence score (e.g., \texttt{divot 0.92}). This allows the system to distinguish between areas that need repair and those that have already been serviced.
+
+    \item \textbf{Depth Estimation:} Once a divot is positively identified and segmented, its pixel mask is used to query the corresponding depth data from the RealSense camera's aligned depth stream. While calculating the full volume was deferred as future work, this step confirms that the necessary 3D data can be extracted for a specific, non-rectangular target.
+\end{enumerate}
+
+After this pipeline is complete, the results—including the annotated image with segmentation masks, structured details about the detections, and performance metrics—are published to their respective ROS 2 topics for use by the GUI and navigation systems.
 
 \section{Navigation System}
 \subsection{Introduction/Purpose}

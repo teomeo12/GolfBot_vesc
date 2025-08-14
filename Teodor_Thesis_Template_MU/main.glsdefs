@@ -110,9 +110,9 @@ parent={},%
 %
 }%
 
-\glsdefs@newdocentry{yolov11-se}%
+\glsdefs@newdocentry{yolov11se}%
 {%
-name={\acronymfont {\glsentryshort {yolov11-se}}},%
+name={\acronymfont {\glsentryshort {yolov11se}}},%
 sort={YOLOv11-Seg},%
 type={acronym},%
 first={YOLOv11-Seg},%
@@ -138,9 +138,9 @@ parent={},%
 %
 }%
 
-\glsdefs@newdocentry{rqt_graph}%
+\glsdefs@newdocentry{rqtgraph}%
 {%
-name={\acronymfont {\glsentryshort {rqt_graph}}},%
+name={\acronymfont {\glsentryshort {rqtgraph}}},%
 sort={rqt\_graph},%
 type={acronym},%
 first={rqt\protect \_graph},%
@@ -329,6 +329,62 @@ long={Direct Current},%
 longplural={Direct Currents},%
 short={DC},%
 shortplural={DCs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{CV}%
+{%
+name={\acronymfont {\glsentryshort {CV}}},%
+sort={CV},%
+type={acronym},%
+first={CV},%
+firstplural={CVs},%
+text={CV},%
+plural={CVs},%
+description={Computer Vision},%
+descriptionplural={Computer Vision},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Computer Vision},%
+longplural={Computer Visions},%
+short={CV},%
+shortplural={CVs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{RGB}%
+{%
+name={\acronymfont {\glsentryshort {RGB}}},%
+sort={RGB},%
+type={acronym},%
+first={RGB},%
+firstplural={RGBs},%
+text={RGB},%
+plural={RGBs},%
+description={Red Green Blue},%
+descriptionplural={Red Green Blue},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Red Green Blue},%
+longplural={Red Green Blues},%
+short={RGB},%
+shortplural={RGBs},%
 counter={page},%
 parent={},%
 %
