@@ -10,6 +10,10 @@ from ament_index_python.packages import get_package_share_directory
 import os
 import numpy as np # Import numpy
 
+# Smaller, consistent overlay text sizing
+FONT_SCALE = 0.45
+FONT_THICKNESS = 1 # Keep this at 1 for crispness
+
 class DivotDetectorNode(Node):
     def __init__(self):
         super().__init__('divot_detector_node')
@@ -35,6 +39,7 @@ class DivotDetectorNode(Node):
         # --- Model Initialization ---
         package_path = get_package_share_directory('differential_drive')
         model_path = os.path.join(package_path, '1600s_aug_100ep.pt')
+        #model_path = os.path.join(package_path, '3318s_aug_150ep.pt')
         #model_path = os.path.join(package_path, '1656_divot_only_150e.pt')
         self.get_logger().info(f"Loading YOLO model from: {model_path}")
         try:
@@ -47,7 +52,8 @@ class DivotDetectorNode(Node):
         # --- Supervision Annotators ---
         self.box_annotator = sv.BoxAnnotator()
         self.mask_annotator = sv.MaskAnnotator(color_lookup=sv.ColorLookup.CLASS, opacity=0.5)
-        self.label_annotator = sv.LabelAnnotator(text_position=sv.Position.TOP_LEFT, text_padding=3)
+        self.label_annotator = sv.LabelAnnotator(text_position=sv.Position.TOP_LEFT, text_padding=3,
+                                                 text_scale=FONT_SCALE, text_thickness=FONT_THICKNESS)
 
         # --- ROS2 Subscribers and Publishers ---
         self.image_subscriber = self.create_subscription(
@@ -219,55 +225,59 @@ class DivotDetectorNode(Node):
                                     metrics_msg.data = f"area:{total_area_cm2:.1f},volume:{volume_cm3:.1f},bbox_area:{bbox_area_cm2:.1f},width:{width_cm:.1f},height:{height_cm:.1f}"
                                     self.metrics_publisher.publish(metrics_msg)
 
-                                    # Display all calculated information, with adjusted positions for the new Volume text
+                                    # Build compact label list to draw at the side of the box
                                     dim_text = f"Dims: {width_cm:.1f}x{height_cm:.1f} cm"
-                                    cv2.putText(annotated_frame, dim_text, (x1, y1 - 130), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
-                                    bbox_area_text = f"Bbox Area: {bbox_area_cm2:.1f} cm^2"
-                                    cv2.putText(annotated_frame, bbox_area_text, (x1, y1 - 110), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
                                     area_text = f"Area: {total_area_cm2:.1f} cm^2"
-                                    cv2.putText(annotated_frame, area_text, (x1, y1 - 90), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
                                     volume_text = f"Volume: {volume_cm3:.1f} cm^3"
-                                    cv2.putText(annotated_frame, volume_text, (x1, y1 - 70), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
-
+                                    # ... existing code ...
                                 # Get depth at the center of the divot, using ground level as a fallback
                                 depth_mm = self.latest_depth_image[center_y, center_x]
                                 if depth_mm == 0 and ground_level_mm > 0:
                                     depth_mm = ground_level_mm
 
                                 if depth_mm > 0:
-                                    # Calculate and display depth distance
+                                    # Calculate and display depth-based offsets and drive distance
                                     depth_cm = depth_mm / 10.0
-                                    distance_text = f"Dist: {depth_cm:.1f} cm"
-                                    cv2.putText(annotated_frame, distance_text, (x1, y1 - 50), 
-                                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+                                    # distance_text (optional) was removed per user request
                                     
-                                    # Calculate and display horizontal offset
+                                    # Calculate offsets
                                     depth_m = depth_mm / 1000.0
                                     h_offset_m = ((center_x - self.camera_cx) * depth_m) / self.camera_fx
                                     h_offset_cm = h_offset_m * 100
                                     h_offset_text = f"H-Offset: {h_offset_cm:+.1f} cm"
-                                    cv2.putText(annotated_frame, h_offset_text, (x1, y1 - 30), 
-                                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
-                                    # Calculate and display vertical offset
                                     v_offset_m = ((center_y - self.camera_cy) * depth_m) / self.camera_fy
                                     v_offset_cm = v_offset_m * 100
                                     v_offset_text = f"V-Offset: {v_offset_cm:+.1f} cm"
-                                    cv2.putText(annotated_frame, v_offset_text, (x1, y1 - 10), 
-                                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
                                     
-                                    # Display the full driving distance calculation using V-offset + dispenser offset
                                     total_drive_dist = abs(v_offset_m) + 0.90
-                                    drive_dist_text = f"Drive Dist: {abs(v_offset_m):.2f}m + 0.90m = {total_drive_dist:.2f}m"
-                                    
-                                    # Position text at the bottom of the bounding box
-                                    text_size, _ = cv2.getTextSize(drive_dist_text, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
-                                    text_x = x1
-                                    text_y = y2 + 20 # y2 coordinate + padding
-                                    
-                                    cv2.putText(annotated_frame, drive_dist_text, (text_x, text_y), 
-                                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2) # Cyan color
+                                    drive_dist_text = f"Drive Dist: {total_drive_dist:.2f}m"
 
+                                    # -------- Compact bottom placement --------
+                                    # Stack labels vertically directly below the bounding box with tight spacing
+                                    labels = [dim_text, area_text, volume_text, h_offset_text, v_offset_text, drive_dist_text]
+                                    line_h = cv2.getTextSize("Ag", cv2.FONT_HERSHEY_SIMPLEX, FONT_SCALE, FONT_THICKNESS)[0][1] + 6
+                                    frame_h, frame_w = annotated_frame.shape[:2]
+                                    # Start X at left of box; keep within frame
+                                    x_text = max(5, min(x1, frame_w - 5))
+                                    # Compute total block height and clamp Y so the block stays in frame
+                                    block_h = line_h * len(labels)
+                                    y_start = min(y2 + 14, frame_h - block_h - 5)
+                                    y_start = max(12, y_start)
+                                    y_text = y_start
+                                    for t in labels:
+                                        # Red text with a black outline for maximum visibility
+                                        # Draw black outline first (thicker)
+                                        cv2.putText(annotated_frame, t, (x_text, y_text), cv2.FONT_HERSHEY_SIMPLEX,
+                                                    FONT_SCALE, (0, 0, 0), FONT_THICKNESS + 1, cv2.LINE_AA)
+                                        # Draw red text on top
+                                        cv2.putText(annotated_frame, t, (x_text, y_text), cv2.FONT_HERSHEY_SIMPLEX,
+                                                    FONT_SCALE, (0, 0, 255), FONT_THICKNESS, cv2.LINE_AA)
+                                        y_text += line_h
+                                    # ------------------------------------------
+
+                            # ... existing code ...
+                        
             except IndexError:
                 pass # 'divot' class not in model, do nothing.
         # --- End Visualization ---

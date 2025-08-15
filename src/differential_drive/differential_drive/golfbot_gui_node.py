@@ -108,6 +108,9 @@ class GolfBotGUI(Node):
         # Right side - Data and controls (part 2)
         right_control_frame = ttk.Frame(main_frame)
         right_control_frame.grid(row=0, column=2, padx=(10, 0), sticky=(tk.W, tk.E, tk.N, tk.S))
+        # Fix the width of the right column so the camera view doesn't shrink
+        right_control_frame.config(width=200)
+        right_control_frame.grid_propagate(False)
         
         # Left side controls - Autonomous mode and GPS
         auto_frame = ttk.LabelFrame(left_control_frame, text="Autonomous Control", padding="10")
@@ -152,6 +155,9 @@ class GolfBotGUI(Node):
         # Detection Data
         detection_frame = ttk.LabelFrame(right_control_frame, text="Divot Detection", padding="10")
         detection_frame.pack(fill='x', pady=(0, 10))
+        # Fix the Divot Detection frame size so it doesn't grow/shrink with text
+        detection_frame.config(width=240, height=200)
+        detection_frame.pack_propagate(False)
         
         self.detection_status_label = ttk.Label(detection_frame, text="Status: No detection")
         self.detection_status_label.pack(anchor='w')
@@ -296,7 +302,17 @@ class GolfBotGUI(Node):
                              4: "RTK Fixed", 5: "RTK Float", 6: "Dead Reckoning", 
                              7: "Manual", 8: "Simulation"}
                 status_text = status_map.get(self.gps_data.status.status, "Unknown")
-                self.gps_status_label.config(text=f"Fix Status: {status_text}")
+                
+                # Set color based on fix quality
+                status_val = self.gps_data.status.status
+                if status_val in [4, 5]: # RTK Fixed or Float
+                    status_color = "green"
+                elif status_val in [1, 2]: # Standard or DGPS
+                    status_color = "green"
+                else: # No fix or other states
+                    status_color = "red"
+                    
+                self.gps_status_label.config(text=f"Fix Status: {status_text}", foreground=status_color)
                 self.gps_conn_label.config(text="GPS: Connected", foreground="green")
             else:
                 self.gps_conn_label.config(text="GPS: Disconnected", foreground="red")
