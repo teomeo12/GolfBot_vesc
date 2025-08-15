@@ -78,13 +78,16 @@ The training workflow involved the following key steps:
 Upon completion of the training, the resulting model weights file (`best.pt`) was downloaded. This file, which contains the learned parameters of the trained model, was then integrated into the divot detection Python script running on the GolfBot. The quantitative performance of this model is evaluated in Chapter \ref{chap:validation}.
 
 \subsection{Hardware}
-The primary sensor for the computer vision system is the Intel RealSense D435i stereo camera, shown in Figure \ref{fig:realsense_camera}. This camera was chosen for its ability to provide high-resolution color images for AI detection, as well as depth data for future 3D localization tasks. It connects directly to a USB 3.0 port on the Jetson controller to ensure maximum data throughput.
+\label{ssec:cv_hardware}
+The primary sensor for the computer vision system is the Intel RealSense D435i stereo camera, shown in Figure \ref{fig:realsense_camera}. This model was specifically chosen for its dual capabilities, which are central to the project's design.
+
+It provides a high-resolution color (RGB) stream, which serves as the input for the YOLOv11-seg object detection model. In parallel, it features a pair of infrared (IR) stereo sensors. These sensors capture the scene from two slightly different perspectives, allowing the camera's internal vision processor to calculate a dense depth map based on stereo disparity. This depth data is crucial for estimating the real-world size and location of detected divots. The camera connects directly to a USB 3.0 port on the Jetson controller, ensuring sufficient bandwidth for real-time image and depth data streaming.
 
 \begin{figure}[h!]
     \centering
     % Put your realsense camera image here
     \includegraphics[width=0.6\linewidth]{figures/camera.png}
-    \caption{The Intel RealSense D435i camera used for vision.}
+    \caption{The Intel RealSense D435i camera used for the computer vision system.}
     \label{fig:realsense_camera}
 \end{figure}
 
@@ -128,7 +131,7 @@ The node subscribes to the \texttt{/camera/color/image\_raw} topic. For each ima
     \item \textbf{Depth Estimation:} Once a divot is positively identified and segmented, its pixel mask is used to query the corresponding depth data from the RealSense camera's aligned depth stream. While calculating the full volume was deferred as future work, this step confirms that the necessary 3D data can be extracted for a specific, non-rectangular target.
 \end{enumerate}
 
-After this pipeline is complete, the results—including the annotated image with segmentation masks, structured details about the detections, and performance metrics—are published to their respective ROS 2 topics for use by the GUI and navigation systems.
+After this pipeline is complete, the results — including the annotated image with segmentation masks, structured details about the detections, and performance metrics — are published to their respective ROS 2 topics for use by the GUI and navigation systems.
 
 \section{Navigation System}
 \subsection{Introduction/Purpose}
@@ -162,6 +165,7 @@ Here I can specify the output rate of the dispenser and the volume of the sand-s
 % Describe your ROS 2 node (divot_detection_intel.py).
 % Specify the topics it subscribes to (/camera/color/image_raw) and publishes to (/camera/divot_detection/image_raw, /camera/divot_detection/details).
 % Mention the message types (sensor_msgs/Image). You could even include a small, simplified code snippet of your main processing loop.
+
 % Section: Navigation System
 % Introduction/Purpose: Reminder of the goal: achieve centimeter-level navigation.
 % Hardware Used: Again, focus on the configuration.
@@ -171,6 +175,8 @@ Here I can specify the output rate of the dispenser and the volume of the sand-s
 % Explain how you used the ublox_gps_node ROS 2 package to read the data from the ArduSimple module and publish it to the /fix topic.
 % Describe your stepper_imu_node.py, explaining how it reads the serial data from the Arduino and publishes it as a sensor_msgs/Imu message on the /imu/data topic.
 % This is the perfect place to describe the simple "lawnmower" search algorithm you implemented for autonomous coverage.
+
+
 % Section: Mechanical Dispenser
 % Introduction/Purpose: Reminder of the goal: dispense a controlled amount of sand/seed mix.
 % Hardware Design and 3D-Printed Components: You are exactly right with your idea for this section.
