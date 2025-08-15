@@ -190,20 +190,20 @@ def generate_launch_description():
             output='screen'
         ),
         # RTK Test Node
-        # Node(
-        #     package='differential_drive',
-        #     executable='rtk_test_node',
-        #     name='rtk_test_node',
-        #     output='screen'
-        # ),
-
-        # # --- UNCOMMENT TO RUN THE RETURN TEST INSTEAD ---
         Node(
             package='differential_drive',
-            executable='rtk_test_node_return',
-            name='rtk_test_node_return',
+            executable='rtk_test_node',
+            name='rtk_test_node',
             output='screen'
         ),
+
+        # # --- UNCOMMENT TO RUN THE RETURN TEST INSTEAD ---
+        # Node(
+        #     package='differential_drive',
+        #     executable='rtk_test_node_return',
+        #     name='rtk_test_node_return',
+        #     output='screen'
+        # ),
 
         # --- RViz Configuration ---
         # rviz_config_file = os.path.join(get_package_share_directory('differential_drive'), 'config', 'path_following.rviz')
