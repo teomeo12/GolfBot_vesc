@@ -96,7 +96,7 @@ The entire system is powered by a central 36V e-bike battery. This high-voltage 
 \label{sec:software_architecture}
 The software architecture is designed using the \gls{ros} 2, a framework chosen for its modularity and robust communication system. The architecture's design follows a standard robotics pattern of perception, processing, and actuation, which means that different functions are handled by separate processes (nodes) that talk to each other through clear channels (topics). 
 
-This is illustrated in the conceptual diagram in Figure \ref{fig:conceptual_flow}.
+This is illustrated in the conceptual diagram in Figure \ref{fig:conceptual_flow}. The following subsections describe the roles of the key software components, which are organized into these logical blocks.
 
 \begin{figure}[h!]
     \centering
@@ -105,15 +105,15 @@ This is illustrated in the conceptual diagram in Figure \ref{fig:conceptual_flow
     \label{fig:conceptual_flow}
 \end{figure}
 
-Figure \ref{fig:ros2_computation_graph} shows the \gls{rqtgraph} output from the running GolfBot system. The ellipses represent ROS 2 nodes (the processes), while the rectangular boxes represent topics (the data streams). The arrows indicate the direction of data flow, showing which nodes are publishing and which are subscribing. 
+% Figure \ref{fig:ros2_computation_graph} shows the \gls{rqtgraph} output from the running GolfBot system. The ellipses represent ROS 2 nodes (the processes), while the rectangular boxes represent topics (the data streams). The arrows indicate the direction of data flow, showing which nodes are publishing and which are subscribing. 
 
-The following subsections describe the roles of these key components as shown in the graph.
+% The following subsections describe the roles of these key components as shown in the graph.
 
-\begin{figure}[h!]
-    \makebox[\linewidth][c]{\includegraphics[width=1.0\paperwidth]{figures/ros2_nodes.png}}
-    \caption{The ROS 2 computation graph (\texttt{rqt\_graph}) of the running system.}
-    \label{fig:ros2_computation_graph}
-\end{figure}
+% \begin{figure}[h!]
+%     \makebox[\linewidth][c]{\includegraphics[width=1.0\paperwidth]{figures/ros2_nodes.png}}
+%     \caption{The ROS 2 computation graph (\texttt{rqt\_graph}) of the running system.}
+%     \label{fig:ros2_computation_graph}
+% \end{figure}
 
 \subsection{Sensor Interface and Drivers}
 These nodes provide the direct interface to the robot's hardware sensors, converting physical signals into data streams for the rest of the system.
@@ -147,6 +147,7 @@ This final group includes the nodes that execute physical actions and provide a 
     \item[GUI Node (\texttt{/golfbot\_gui\_node})] Provides the main graphical user interface. It subscribes to numerous topics (e.g., camera feeds, odometry, GPS status) to give the operator a complete overview of the robot's state. It can also publish commands, such as setting the \texttt{/is\_autonomous\_mode} flag to start an autonomous run.
 \end{description}
 
+A detailed computation graph showing all implemented ROS 2 nodes, topics, and their connections is provided in Appendix \ref{chap:appendix_a}, Figure \ref{fig:appendix_rqt_graph}.
 % The following is the old software architecture, which is not used in the thesis.
 % \subsection{Sensing and Perception}
 % This group of nodes serves as the robot's senses, providing raw data about the environment and the robot's state.

@@ -1,28 +1,50 @@
 \chapter{Additional Data and Technical Specifications}
 \label{chap:appendix_a}
 
-This appendix contains supplementary material referenced in the main body of the thesis, including detailed images of initial hardware modifications and technical specifications for key components.
+This appendix contains supplementary material referenced in the main body of the thesis, including the detailed software computation graph, images of initial hardware modifications, sample dataset images, and key code listings.
 
+% SECTION 1: Referenced from Chapter 3
+\section{ROS 2 Computation Graph}
+\label{sec:appendix_rqt_graph}
+Figure \ref{fig:appendix_rqt_graph} shows the complete ROS 2 computation graph (\texttt{rqt\_graph}) of the GolfBot system during operation. This diagram provides a detailed, "as-built" view of the implemented software architecture. The ellipses represent the active ROS 2 nodes (processes), while the rectangular boxes represent the topics (data streams) they use to communicate.
+
+\begin{figure}[h!]
+    \makebox[\linewidth][c]{\includegraphics[width=1.0\paperwidth]{figures/ros2_nodes.png}}
+    \caption{The ROS 2 computation graph (\texttt{rqt\_graph}) of the running system.}
+    \label{fig:appendix_rqt_graph}
+\end{figure}
+
+% \begin{figure}[h!]
+%     \centering
+%     \includegraphics[width=\linewidth]{figures/ros2_nodes.png}
+%     \caption{The ROS 2 computation graph of the running GolfBot system.}
+%     \label{fig:appendix_rqt_graph}
+% \end{figure}
+
+\cleardoublepage % Start the next section on a fresh page
+
+% SECTION 2: Referenced from Section 4.1
 \section{Initial Platform Modifications}
 \label{sec:appendix_platform_mods}
 As mentioned in Chapter \ref{chap:implementation}, several modifications were required to prepare the Wumpus platform for this project. The following figures provide visual evidence of these changes.
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.6\linewidth]{figures/killswitch.PNG}
+    \includegraphics[width=0.4\linewidth]{figures/killswitch.PNG}
     \caption{The dedicated kill switch installed to control the power flow to one of the VESC motor controllers. This modification resolved a recurring power-up issue and improved system safety.}
     \label{fig:appendix_killswitch}
 \end{figure}
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.9\linewidth]{figures/vesctool.PNG}
-    \caption{A screenshot of the VESC Tool software interface. The highlighted field shows the minimum motor speed ("Min ERPM") being adjusted to 100. This was a critical step for enabling precise, low-speed maneuvers.}
+    \includegraphics[width=0.8\linewidth]{figures/vesctool.PNG}
+    \caption{A screenshot of the VESC Tool software interface. The highlighted field shows the minimum motor speed ("Min ERPM") being adjusted to 100.}
     \label{fig:appendix_vesc_tool}
 \end{figure}
 
 \cleardoublepage % this is to start the next section on a new page 
 
+% SECTION 3: Referenced from Section 4.2.2
 \section{Data Collection Sample Images}
 \label{sec:appendix_dataset_samples}
 The following figures show examples of the high-resolution images captured for the two main classes in the custom dataset: \texttt{divot} and \texttt{fixed\_divot}. These raw images formed the basis for the annotation and training process described in Section \ref{ssec:cv_dataset}.
@@ -47,6 +69,7 @@ The following figures show examples of the high-resolution images captured for t
 \label{sec:appendix_code}
 This section provides key code snippets from the core ROS 2 nodes to illustrate their implementation logic.
 
+% SECTION 4: Referenced from Section 4.2.5
 \subsection{Camera Node - Frame Processing}
 Listing \ref{lst:camera_node} shows the main processing loop from the \texttt{camera\_node}. This function is responsible for waiting for new frames from the RealSense camera, aligning the depth and color streams, and publishing the resulting images as ROS 2 topics.
 
