@@ -139,3 +139,40 @@ def image_callback(self, msg: Image):
     except Exception as e:
         self.get_logger().error(f"Could not publish annotated image: {e}")
 \end{lstlisting}
+
+
+% SECTION 5: Referenced from Section 4.3.1
+\section{RTK Navigation Hardware}
+\label{sec:appendix_rtk_hardware}
+Figure \ref{fig:appendix_ardusimple_kit} shows the components of the ArduSimple simpleRTK2B-LR starter kit used to provide high-precision positioning for the GolfBot.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.6\linewidth]{figures/ardusimple.png}
+    \caption{The ArduSimple simpleRTK2B starter kit components, including two ZED-F9P boards, long-range radio modules, and GNSS antennas.}
+    \label{fig:appendix_ardusimple_kit}
+\end{figure}
+
+% SECTION 6: Referenced from Section 4.3.2
+\section{ROS 2 Dispenser Node Parameter Configuration}
+\label{sec:appendix_yaml}
+This section provides an example of the YAML configuration file used to launch and configure the ROS 2 nodes. This parameter-driven approach allows for easy tuning of the robot's behavior without modifying the source code. Listing \ref{lst:stepper_yaml} shows the parameters for the \texttt{stepper\_imu\_node}, which define the serial port, communication speed, and map the gamepad buttons to specific actions.
+
+
+\begin{lstlisting}[language=bash, caption={YAML parameter file for the dispenser node (\texttt{stepper\_config.yaml}).}, label={lst:stepper_yaml}]
+stepper_controller_node:
+  ros__parameters:
+    # Serial Communication Settings
+    serial_port: '/dev/tty_arduino'
+    baud_rate: 9600
+    
+    # Gamepad Input Settings  
+    button_start: 0 # A button (green) - Start motor
+    button_stop: 1  # B button (red) - Stop motor
+    
+    # Stepper Motor Parameters
+    steps_per_command: 800
+    max_speed: 4000.0
+    acceleration: 2000.0
+    direction: 1
+\end{lstlisting}

@@ -390,3 +390,31 @@ parent={},%
 %
 }%
 
+\glsdefs@newdocentry{NMEA}%
+{%
+name={\acronymfont {\glsentryshort {NMEA}}},%
+sort={NMEA},%
+type={acronym},%
+first={NMEA},%
+firstplural={NMEAs},%
+text={NMEA},%
+plural={NMEAs},%
+description={National Marine Electronics Association},%
+descriptionplural={National Marine Electronics Association},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={National Marine Electronics Association},%
+longplural={National Marine Electronics Associations},%
+short={NMEA},%
+shortplural={NMEAs},%
+counter={page},%
+parent={},%
+%
+}%
+
