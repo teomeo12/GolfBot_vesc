@@ -1,5 +1,3 @@
-\chapter{Experimental Results}
-\label{chap:validation}
 
 \chapter{Experimental Results}
 \label{chap:validation}
@@ -42,14 +40,14 @@ In addition to these quantitative metrics, a qualitative comparison of the model
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/val_batch2_labels.png}
+        \includegraphics[width=\textwidth]{figures/val_batch1_labels.png}
         \caption{Ground truth labels}
         \label{fig:val_labels}
     \end{subfigure}
     \hfill % This creates a small, flexible space between the images
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/val_batch2_pred.png}
+        \includegraphics[width=\textwidth]{figures/val_batch1_pred.png}
         \caption{Model's predictions}
         \label{fig:val_preds}
     \end{subfigure}
@@ -73,15 +71,88 @@ These quantitative and qualitative results confirm that the model is well-traine
 %     \label{fig:real_world_examples}
 % \end{figure}
 
+\section{Depth and Volume Estimation Accuracy}
+\label{sec:volume_evaluation}
+A key objective of the computer vision system is not just to detect divots, but also to estimate their physical size to determine the required amount of repair material. To validate the accuracy of the depth-based measurement algorithm, a controlled experiment was conducted.
+
+\textbf{Experimental Setup.}
+As a real-world divot has an irregular shape and depth, a standardized target was used for this test. A shallow, rectangular box with ground-truth dimensions of 11 cm x 5 cm x 2 cm was placed on a flat surface. The Intel RealSense camera was mounted on a tripod at a fixed height, pointing directly down at the target, as shown in Figure \ref{fig:volume_test_setup}. A custom Python script (\texttt{divot\_depth\_seg\_mask\_est.py}) was developed to perform the measurement. This script uses HSV color thresholding to segment the dark interior of the box (simulating a divot) from the light-colored "ground" plane around it.
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \includegraphics[width=0.6\linewidth]{figures/volume_test_setup.png}
+        \caption{Experimental setup showing the camera positioned over a target of known dimensions.}
+        \label{fig:volume_test_setup_img}
+    \end{subfigure}
+    
+    \vspace{0.5cm} % Add some vertical space between the setup and the results
+
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/volume_test_result_5_fix.png}
+        \caption{Result from Trial 1.}
+        \label{fig:volume_test_result_1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/volume_test_result_11_fix.png}
+        \caption{Result from Trial 2.}
+        \label{fig:volume_test_result_2}
+    \end{subfigure}
+    \caption{The controlled experiment to validate the volume estimation algorithm. The setup (a) and two sample results (b, c) showing the system's calculated dimensions and volume.}
+    \label{fig:volume_test_setup}
+\end{figure}
+
+\textbf{Measurement Algorithm.}
+The script calculates the volume using a pixel-by-pixel integration method. It first determines the average depth of the surrounding ground plane. Then, for each pixel inside the segmented divot mask, it calculates the depth difference relative to this ground plane. The real-world area of each pixel is estimated using the camera's intrinsic parameters. The total volume is the sum of the volume of all these tiny pixel columns.
+
+\textbf{Results.}
+The system consistently produced measurements with a high degree of accuracy. Over multiple trials, the calculated dimensions were within ±2 mm of the 11 cm x 5 cm ground truth. The calculated volume averaged approximately 105 cm³, compared to the ground-truth volume of 110 cm³ (11 x 5 x 2), representing an error of less than 5\%. This result validates that the depth perception and measurement algorithm is fundamentally sound and capable of producing accurate volume estimates. The integration of this algorithm with the YOLO-based detector to measure irregular divot shapes is a key area for future work.
+
 \section{Navigation System Evaluation}
 \subsection{Positional Accuracy}
 \subsection{Path Following and Search Algorithm Performance}
 \subsection{Limitations}
 
 \section{Mechanical Dispenser Evaluation}
-\subsection{Dispensing Accuracy and Consistency}
+\label{sec:dispenser_evaluation}
+The final component to be evaluated was the mechanical dispenser, which is responsible for the physical act of repair. The evaluation focused on the consistency and controllability of its output.
 
-\section{GUI Evaluation}
-\subsection{Usability and User Feedback}
+\subsection{Dispensing Consistency and Flow Rate}
+To measure the dispenser's performance, a simple flow rate test was conducted. The hopper was filled with the sand-seed mixture, and the motor was run continuously for a fixed duration of 10 seconds. The dispensed material was collected and its volume was measured. Figure \ref{fig:dispenser_test} illustrates this experimental process and its results.
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/sand_dispensing.png}
+        \caption{Dispenser in operation.}
+        \label{fig:dispenser_action}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/sand_volume.png}
+        \caption{Measured volume after a 10-second run.}
+        \label{fig:dispensed_volume}
+    \end{subfigure}
+    \caption{The dispenser flow rate test. The dispenser in operation (a) and the resulting material collected in a measuring cup (b), showing a volume of approximately 200 ml.}
+    \label{fig:dispenser_test}
+\end{figure}
+
+\textbf{Configuration.}
+For this test, the stepper motor was configured using the simplified Arduino firmware, which uses hardcoded parameters for reliability. The motor's maximum speed was set to 2000 steps/second with an acceleration of 2000 steps/second².
+
+\textbf{Results.}
+The test was repeated multiple times, and the dispenser demonstrated a high level of consistency. In each 10-second run, it dispensed an average of 200 ml of the sand-seed mixture. This is equivalent to 200 cm³, as 1 milliliter is equal to 1 cubic centimeter. This result establishes a consistent flow rate of approximately 20 cm³/second.
+
+\textbf{Controllability.}
+This consistent flow rate proves that the amount of dispensed material can be controlled simply by varying the motor's run time. For example, to dispense the 110 cm³ required to fill the test box from the volume experiment, the motor would need to be run for approximately 5.5 seconds (110 cm³ / 20 cm³/s).
+
+While the full closed-loop system—where the robot measures a divot's volume and automatically calculates the required dispensing time—was not completed, this experiment successfully validates that the mechanical dispenser is both consistent and controllable, making it a viable mechanism for the final system.
+
 
 \section{Overall Performance of the GolfBot Prototype}
