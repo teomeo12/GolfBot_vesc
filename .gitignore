@@ -76,3 +76,9 @@ Thumbs.db
 *.nav
 *.snm
 *.vrb 
+
+# Ignore generated PDF
+Teodor_Thesis_Template_MU/*.pdf 
+
+# Ignore generated PDF in thesis directory
+Teodor_Thesis_Template_MU/*.pdf 
