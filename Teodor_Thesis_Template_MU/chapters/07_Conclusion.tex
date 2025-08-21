@@ -1,8 +1,38 @@
-\chapter{Conclusion}
+\chapter{Discussion and Conclusion}
 \label{chap:conclusion}
 
+This thesis has detailed the design, implementation, and evaluation of GolfBot, a proof-of-concept autonomous robot for the detection and repair of golf course divots. This final chapter provides a summary of the work, a critical discussion of its key findings and challenges, and a formal statement of the project's contributions.
+
 \section{Summary of Work}
-% Talk about this prototype.
+The manual repair of golf course divots is a persistent operational challenge, characterized by high labor costs, physical demands, and the potential for inconsistent repairs. This repetitive work detracts from the quality of the playing surface and places a significant burden on maintenance staff. To address this, this thesis presented a robotic solution designed to automate the 'detect and repair' workflow.
+
+The project resulted in the development of GolfBot, a functional prototype that integrates three core subsystems: a computer vision module for divot detection, a high-precision RTK-GPS for localization, and an automated mechanical dispenser for the repair. The evaluation of these subsystems successfully validated their individual performance in a controlled environment. The vision system achieved a high detection accuracy of 0.954 mAP, the low-cost RTK-GPS module was proven to be a viable solution for achieving centimeter-level accuracy, and the custom-designed dispenser demonstrated a highly consistent and controllable output. Together, these results establish a solid foundation for a new class of automated turf-care solutions.
+
+\section{Discussion}
+A critical analysis of the project's results, challenges, and broader significance is essential for contextualizing its achievements and informing future work.
+
+\subsection{Interpretation of Key Findings}
+The results from the evaluation of each subsystem have significant implications. The high detection accuracy of 0.954 mAP demonstrates that modern instance segmentation models are highly effective for this specific agricultural robotics task, proving that a vision-first approach is viable. The successful integration and validation of a low-cost RTK system challenges the notion that high-precision navigation must be prohibitively expensive, opening the door for more accessible autonomous solutions. Finally, the consistent performance of the 3D-printed dispenser proves that with careful design, even prototype-grade hardware can achieve the reliability needed for such tasks.
+
+\subsection{Unexpected Challenges and Insights}
+The development process revealed several critical insights that were not apparent at the project's outset.
+\begin{itemize}
+    \item \textbf{Environmental Sensitivity of AI:} A key insight was the critical sensitivity of the AI model to environmental variations. The initial assumption was that "grass" would be a consistent background, but real-world testing revealed that variations in turf health, type, and lighting conditions significantly impact model performance. This highlights the absolute necessity of a highly diverse and comprehensive training dataset for any robust, real-world agricultural robot.
+    \item \textbf{Physical and Environmental Factors:} It became clear that environmental conditions could affect more than just the vision system. The potential for the sand-seed mixture to become wet and heavy due to weather could impact the dispenser's performance. Furthermore, the limitations of the prototype's wheels underscored how fundamental mechanical design choices, such as weight distribution and traction, are critical prerequisites for the success of any advanced software system in a real-world environment.
+\end{itemize}
+
+\subsection{Broader Impact and Significance}
+Beyond its specific application, this project serves as a successful proof-of-concept with broader significance for engineering and robotics. It demonstrates that the integration of open-source software (ROS 2), consumer-grade AI hardware (NVIDIA Jetson), and low-cost precision sensors (ArduSimple RTK) can create effective and economically viable solutions for tasks that were previously manual. Given the use of "off-the-shelf" components and a limited budget, this work proves the feasibility of developing specialized agricultural robots. The modular, three-part system architecture (vision, navigation, actuation) is highly adaptable and could serve as a foundational design for other automated solutions in agriculture and turf management.
 
 \section{Contributions}
-% A summary of the contributions of the thesis.
+The primary contributions of this thesis are:
+\begin{itemize}
+    \item The design, implementation, and evaluation of a complete, end-to-end robotic system for the detection and repair of golf course divots.
+    \item The creation of a custom, annotated image dataset of \texttt{divot} and \texttt{fixed\_divot} classes, which serves as a valuable asset for future research in automated turf management.
+    \item The successful training and validation of a YOLOv11-based instance segmentation model for the specific task of divot recognition, achieving a high accuracy of 0.954 mAP.
+    \item The integration and validation of a low-cost RTK-GPS module within a ROS 2 environment, proving its viability for achieving centimeter-level accuracy in a turf-care robotics application.
+    \item The design and experimental validation of a 3D-printed auger dispenser, demonstrating its consistency and controllability for dispensing a sand-seed mixture.
+\end{itemize}
+
+\section{Conclusion}
+In conclusion, the GolfBot project has successfully met its primary objective of creating a functional prototype that validates the core concepts of autonomous divot detection and repair. While current hardware limitations prevent full on-course deployment, the project has rigorously proven the viability of each core subsystem and has laid a clear and comprehensive groundwork for future development. This work stands as a significant step towards a future where automated systems can handle the precise, demanding and tedious tasks of golf course maintenance, improving both efficiency and quality.

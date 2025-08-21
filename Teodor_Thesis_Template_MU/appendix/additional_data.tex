@@ -6,7 +6,7 @@ This appendix contains supplementary material referenced in the main body of the
 % SECTION 1: Referenced from Chapter 3
 \section{ROS 2 Computation Graph}
 \label{sec:appendix_rqt_graph}
-Figure \ref{fig:appendix_rqt_graph} shows the complete ROS 2 computation graph (\texttt{rqt\_graph}) of the GolfBot system during operation. This diagram provides a detailed, "as-built" view of the implemented software architecture. The ellipses represent the active ROS 2 nodes (processes), while the rectangular boxes represent the topics (data streams) they use to communicate.
+Figure \ref{fig:appendix_rqt_graph} shows the complete ROS 2 computation graph (\texttt{rqt\_graph}) of the GolfBot system during operation. This diagram provides a detailed, view of the implemented software architecture. The ellipses represent the active ROS 2 nodes (processes), while the rectangular boxes represent the topics (data streams) they use to communicate.
 
 \begin{figure}[h!]
     \makebox[\linewidth][c]{\includegraphics[width=1.0\paperwidth]{figures/ros2_nodes.png}}
@@ -21,7 +21,7 @@ Figure \ref{fig:appendix_rqt_graph} shows the complete ROS 2 computation graph (
 %     \label{fig:appendix_rqt_graph}
 % \end{figure}
 
-\cleardoublepage % Start the next section on a fresh page
+%\cleardoublepage % Start the next section on a fresh page
 
 % SECTION 2: Referenced from Section 4.1
 \section{Initial Platform Modifications}
@@ -31,18 +31,22 @@ As mentioned in Chapter \ref{chap:implementation}, several modifications were re
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.4\linewidth]{figures/killswitch.PNG}
-    \caption{The dedicated kill switch installed to control the power flow to one of the VESC motor controllers. This modification resolved a recurring power-up issue and improved system safety.}
+    % The short caption goes in the [], the long caption in the {}
+    \caption[VESC Motor Controller Kill Switch.]
+    {The dedicated kill switch installed to control the power flow to one of the VESC motor controllers. This modification resolved a recurring power-up issue and improved system safety.}
     \label{fig:appendix_killswitch}
 \end{figure}
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\linewidth]{figures/vesctool.PNG}
-    \caption{A screenshot of the VESC Tool software interface. The highlighted field shows the minimum motor speed ("Min ERPM") being adjusted to 100.}
+    % The short caption goes in the [], the long caption in the {}
+    \caption[VESC Tool Software Interface for Motor Configuration.]
+    {A screenshot of the VESC Tool software interface. The highlighted field shows the minimum motor speed ("Min ERPM") being adjusted to 100 for better low-speed control.}
     \label{fig:appendix_vesc_tool}
 \end{figure}
 
-\cleardoublepage % this is to start the next section on a new page 
+%\cleardoublepage % this is to start the next section on a new page 
 
 % SECTION 3: Referenced from Section 4.2.2
 \section{Data Collection Sample Images}
@@ -52,18 +56,22 @@ The following figures show examples of the high-resolution images captured for t
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\linewidth]{figures/divot.PNG}
-    \caption{An example image from the custom dataset showing the \texttt{divot} class. Note the exposed soil, displaced turf, and distinct textural difference from the surrounding grass.}
+    % The short caption goes in the [], the long caption in the {}
+    \caption[Sample Image of \texttt{divot} Class.]
+    {An example image from the custom dataset showing the \texttt{divot} class. Note the exposed soil, displaced turf, and distinct textural difference from the surrounding grass.}
     \label{fig:appendix_divot_sample}
 \end{figure}
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\linewidth]{figures/fixed_divots.PNG}
-    \caption{An example image from the custom dataset showing the \texttt{fixed\_divot} class. The area has been filled with a sand-seed mixture, presenting a different color and texture profile for the model to learn.}
+    % The short caption goes in the [], the long caption in the {}
+    \caption[Sample Image of \texttt{fixed\_divot} Class.]
+    {An example image from the custom dataset showing the \texttt{fixed\_divot} class. The area has been filled with a sand-seed mixture, presenting a different color and texture profile for the model to learn.}
     \label{fig:appendix_fixed_divot_sample}
 \end{figure}
 
-\cleardoublepage % Start this on a new page
+%\cleardoublepage % Start this on a new page
 
 \section{Key Code Snippets}
 \label{sec:appendix_code}
@@ -176,3 +184,39 @@ stepper_controller_node:
     acceleration: 2000.0
     direction: 1
 \end{lstlisting}
+
+% SECTION 7: Referenced from Section 5.1
+\section{Model Performance Evaluation Graphs}
+\label{sec:appendix_model_graphs}
+
+The following figures provide a detailed quantitative analysis of the trained YOLO model's performance, as referenced in the main validation section.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{figures/results.png} 
+    \caption[Complete Training and Validation History.] 
+    {Complete Training and Validation History. This figure shows the model's error (loss) and accuracy (metrics) over 150 training epochs. The top row shows performance on the training set, while the bottom row shows performance on the unseen validation set. The convergence of the loss curves and the stabilization of the metrics demonstrate a successful training process without overfitting.} 
+    \label{fig:training_history_appendix}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    % Subfigure for the Bounding Box F1 Curve
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/BoxF1_curve.png} 
+        \caption{Detection (Box).} % The caption for the subfigure itself
+        \label{fig:box_f1_appendix}
+    \end{subfigure}
+    \hfill 
+    % Subfigure for the Segmentation Mask F1 Curve
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/MaskF1_curve.png} 
+        \caption{Segmentation (Mask).}
+        \label{fig:mask_f1_appendix}
+    \end{subfigure}
+    \caption[F1-Confidence Curves for Detection and Segmentation.] 
+    {Comparison of F1-Confidence curves for both object detection (a) and instance segmentation (b). The peak of each curve indicates the optimal confidence threshold to achieve the best balance between precision and recall (F1-score) for that specific task.} 
+    \label{fig:f1_curves_appendix}
+\end{figure}

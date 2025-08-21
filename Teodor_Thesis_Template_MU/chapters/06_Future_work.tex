@@ -1,20 +1,73 @@
-\chapter{Future Work}
+\chapter{Limitations and Future Work}
 \label{chap:future_work}
 
-\section{Model Enhancements}
-\subsection{Expanding the Dataset} 
-% more data more acuurate
+This project successfully established a proof-of-concept for an autonomous divot detection and repair system. However, as a prototype, it has several limitations that provide a clear roadmap for future development. This chapter outlines these current limitations and details the planned enhancements to evolve the GolfBot into a robust, field-ready solution.
 
-\section{Hardware Enhancements}
-\subsection{Enhanced Visual System}
-% Second camera for more view
-\subsection{Improved Drivetrain}
-% One more differential control with better motors for precise positioning and better move on rugged terrain
-\subsection{Upgraded Dispenser}
-% Better stainless steel dispenser
-\subsection{Autonomous Recharging}
-% Batery recharge mechanism and station
-\subsection{Enhanced User Interface}
-% GUI enhansment – voice commands
-\subsection{Automated Refilling Stations}
-% Sand mixture base fill up stations 
+\section{Current Limitations}
+The limitations of the current prototype can be categorized into two main areas: the physical hardware platform and the software for perception and navigation.
+
+\subsection{Mechanical and Hardware Limitations}
+The most significant limitation preventing on-course testing is the current mechanical design of the robot.
+\begin{itemize}
+    \item \textbf{Drivetrain and Wheels:} The current wheels are designed for hard, flat surfaces and lack sufficient traction on grass. This "slippage" prevents the collection of reliable wheel odometry and degrades the accuracy of any fine-grained positioning, such as the final alignment over a divot. Furthermore, the four support casters introduce excessive friction on turf.
+    \item \textbf{Computational Hardware:} While the NVIDIA Jetson Orin Nano is a capable controller, it is not powerful enough to run the largest, most accurate YOLOv11 models (e.g., large or extra-large variants), which could further improve detection performance.
+\end{itemize}
+
+\subsection{Perception and Software Limitations}
+On the software side, several areas require further development to achieve full autonomy and reliability.
+\begin{itemize}
+    \item \textbf{Model Robustness:} The current AI model performs well in ideal conditions but can be prone to false detections when faced with challenging lighting (e.g., harsh shadows) or non-uniform turf conditions, as discussed in the evaluation.
+    \item \textbf{Depth and Volume Estimation:} The current depth estimation from the stereo camera has a relatively high error margin (9-14\%). While functional for a prototype, this level of accuracy is insufficient for precise, material-efficient repairs. A more accurate depth-sensing technology, such as a camera with Time-of-Flight (ToF) sensor, would be required.
+    \item \textbf{State Estimation and Navigation Logic:} The system currently lacks a sensor fusion algorithm, such as an Extended Kalman Filter (EKF), to combine data from the wheel encoders, IMU, and RTK-GPS. This limits the robot's ability to maintain an accurate and robust pose estimate. Furthermore, the high-level control logic would benefit from a more sophisticated framework, such as a state machine or a behavior tree, for managing complex autonomous tasks.
+\end{itemize}
+
+\section{Future Work and Enhancements}
+The identified limitations provide a clear and structured path for future development, which can be broken down into enhancements for the model, the hardware, and the overall system autonomy.
+
+\subsection{Model and Dataset Enhancements}
+The core intelligence of the robot can be significantly improved through data and model scaling.
+\begin{itemize}
+    \item \textbf{Expanding the Dataset:} The top priority is to expand the training dataset significantly. Future data collection will focus on capturing a wider variety of turf conditions (different grass types, soil colors), lighting scenarios (overcast, full sun, shadows), and potential distractors (e.g., fallen leaves, small branches). This will directly address the model's current robustness limitations.
+    \item \textbf{Experimenting with Larger Models:} As the computational hardware is upgraded, larger variants of the YOLO model (e.g., YOLOv11-L, YOLOv11-X) will be trained and deployed. These larger models have a greater capacity to learn complex features, which is expected to yield higher detection accuracy.
+\end{itemize}
+
+\subsection{Hardware and Mechanical Upgrades}
+To make the robot field-ready, a complete redesign of the mechanical platform is required.
+\begin{itemize}
+    \item \textbf{Improved Drivetrain:} The robot will be redesigned with larger, ruggedized wheels with deep treads suitable for turf. The new drive motors will incorporate high-resolution encoders to provide reliable odometry data, which is essential for sensor fusion with the EKF.
+    \item \textbf{Enhanced Visual System:} To improve depth accuracy, a dual-camera system is proposed. The current camera will be retained for long-range detection, while a second, high-precision depth camera (e.g., a Time-of-Flight sensor) will be mounted closer to the ground, specifically for accurate volume measurement immediately before a repair.
+    \item \textbf{Upgraded Dispenser:} The dispenser mechanism will be re-engineered using stainless steel for increased durability and a larger hopper to increase payload capacity. 
+\end{itemize}
+
+\subsection{Advanced Autonomy and User Interface}
+The long-term vision is to create a fully autonomous, easy-to-manage system.
+\begin{itemize}
+    \item \textbf{Advanced Navigation and Task Planning:} Future software development will focus on implementing a robust EKF for state estimation and two distinct path-planning strategies. For the primary task of searching the fairway, a simple and efficient \textbf{coverage path algorithm} (often called a "lawnmower pattern") will be used to ensure the entire area is scanned. For more complex tasks, such as navigating from the fairway to the nearest refilling station while avoiding obstacles, a more sophisticated path-planning algorithm like \texttt{A* (A-star)} will be implemented.
+    \item \textbf{Autonomous Recharging and Refilling:} To enable true, long-term autonomous operation, a system of docking stations for automatic battery recharging and material refilling will be designed. The robot will be programmed to autonomously return to a station when its resources are low.
+    \item \textbf{Enhanced User Interface:} The GUI will be extended into a comprehensive fleet management dashboard. It will feature a real-time map displaying the positions of all active robots, detailed statistics on divots repaired, and the ability to monitor the status of individual units. This centralized system will provide greenkeepers with a complete overview of course maintenance operations.
+\end{itemize}
+
+% \chapter{Limitations and Future Work}
+% \label{chap:future_work}
+
+% \section{Limitations}
+% \subsection{Hardware limitations }
+% %The current hardware limitation that prevents the current system from operating and being tested on a golf course is the drivetrain and overall design of the robot frame. The wheels are slippery on the grass, which prevents good odometry and precise positioning and repair functions. Also, the 4 support casters cause excessive friction on the grass. They have to be replaced with more robust and efficient support wheels. Another hardware limitation is the computing power of the controller, which currently cannot run the largest YOLO11 models. Because of the drive train, the robot is unable to perform effective mowing, as it must track back and forth to follow the path. And alos centimeter presigin in aligning of the detected divots. The camera also needs better depth accuracy to detect the divot's depth. The ToF (time of flight) technology of the camera is needed for better depth accuracy.
+% \subsection{Software limitations }
+% On the software side, the limitations are the model robustness, which sometimes makes false detections. The depth calculations require greater accuracy, as the current 9-14% error in depth and volume estimation is relatively high. The EKF filter is not introduced yet, and this limits the robot to fuse all the sensory data from the wheels encoders, IMU sensor, and the RTK module. A robust state-machine logic or even a behavior tree for better task decisions is needed and will help to make the robot more robust and reliable.
+% \section{Model Enhancements}
+% \subsection{Expanding the Dataset}
+% %More data leads to a more accurate model. The goal here is to collect more data over time to make the model more precise and robust. In the different golf courses, the soil is different, which makes the divot texture different. In some of the golf courses, there are trees and the leaves fall down so that it might be mistaken for a divot, so new classes might be introduced to avoid these obstacles. I plan to experiment with larger models. Currently, I am running the YOLO11s-seg model. In the future, when the controller is more powerful, I might switch to the large or XL model of YOLO.
+% \section{Hardware Enhancements}
+% \subsection{Enhanced Visual System}
+% The main camera will be used for detecting and aligning with the divots. It will have a bigger field of view for better visibility. Once the robot is aligned with the divot, the second camera, mounted close to the ground and orthogonal to the main camera, will be used for detecting the divot's depth only.
+% \subsection{Upgraded Dispenser}
+% % Better stainless steel dispenser. The dispenser has to be redesigned to be more precise and powerful. The new dispenser will have better stainless steel material, which will help the dispenser to be more precise and accurate. The hopper will be bigger and will be able to carry more sand-seed mixture.
+% \subsection{Improved Drivetrain}
+% % For better steering and positioning the robot drive train have to be redesigned more precise and powerfull and rugged wheels has to be added, hence the upgraded dispensing stainless steel mhanism will be heavier and will cary more sand-seed mixture The new motors will have better encoder data which will help the robot to be more precise and accurate in the positioning.
+% \subsection{Autonomous Recharging and Refilling}
+% % Battery recharge mechanism and station. A few charging stations will be installed on the golf course, and the robot will be able to charge itself when its battery is low. The robot will also be able to refill itself with the sand-seed mixture when it is low on material.
+% \subsection{Enhanced User Interface}
+% %GUI enhancement – give me more data on the found and repaired divots, including some statistics on the divots. It will also introduce a map showing the robotis location. Also, if a few golf bots are working on the same golf course, it can show proper management of the entire centralized system. If you select a particular robot, you will be able to zoom in and see the divots that the robot has found and repaired.
+% \subsection{Path Following and Search Algorithm Performance}
+% % The path following and search algorithm will be improved to be more precise and accurate. The robot will be able to navigate the golf course more efficiently and effectively. The robot will be able to avoid obstacles. A mower will be implemented to track back and forth to follow the path.
