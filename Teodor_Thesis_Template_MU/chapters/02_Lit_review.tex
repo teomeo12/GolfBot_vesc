@@ -1,8 +1,95 @@
 \chapter{Literature Review}
 \label{chap:lit_review}
 
+\section{Object Detection with Deep Learning}
+\label{sec:lit_object_detection}
+
+Object detection is a fundamental and long-standing problem in computer vision. Its primary goal is to answer the simple but complex question: "What objects are where?" \cite{zou2023object}. Unlike image classification, which assigns a single label to an entire image, object detection aims to identify and localize every instance of a target object by drawing a bounding box around it and assigning it a class label \cite{wu2019recent}. This capability to provide precise spatial information about objects makes it a foundational technology for countless real-world applications, including autonomous driving, video surveillance, and robotics.
+
+For decades, the field was dominated by traditional methods that relied on hand-crafted features like Histograms of Oriented Gradients (HOG) \cite{dalal2005histograms} and deformable part-based models (DPM). However, the revival of deep learning and Convolutional Neural Networks (CNNs) (AlexNet \cite{krizhevsky2012imagenet}) around 2012 and GPU-accelerated deep-learning frameworks marked a revolutionary turning point \cite{zou2023object}. The introduction of models like R-CNN (Regions with CNN features) \cite{girshick2014rich} in 2014 demonstrated that features learned automatically from data could vastly outperform the old, manually designed ones, leading to a rapid evolution in the field.
+
+Modern deep learning-based object detectors are primarily categorized into two families: two-stage and one-stage detectors \cite{wu2019recent}.
+\begin{itemize}
+    \item \textbf{Two-stage detectors}, such as the R-CNN family (R-CNN, Fast R-CNN, Faster R-CNN), follow a "propose-then-classify" methodology. In the first stage, they generate a sparse set of potential object locations (region proposals), and in the second stage, they classify each proposal. This approach often yields very high accuracy but can be computationally expensive and slow.
+    \item \textbf{One-stage detectors}, such as the YOLO (You Only Look Once) \cite{redmon2016you} family, reframe object detection as a single regression problem. They process the entire image at once, simultaneously predicting bounding boxes and class probabilities in a single pass. This unified architecture is extremely fast, making one-stage detectors the ideal choice for real-time applications where inference speed is a critical requirement.
+\end{itemize}
+
+For a real-time robotics application like GolfBot, where the system must process a live video feed to find divots, the speed and efficiency of a one-stage detector are paramount. This is the primary reason the YOLO architecture was selected over two-stage families like R-CNN. This critical trade-off between speed and accuracy is clearly demonstrated in recent literature from the agricultural robotics domain. For instance, a 2024 study by Sapkota et al. directly compared YOLOv8 with Mask R-CNN for instance segmentation in complex orchard environments \cite{sapkota2024comparing}. Their findings, summarized in Table \ref{tab:yolo_vs_maskrcnn}, are compelling. For a multi-class segmentation task, YOLOv8 achieved an inference speed of 92 frames per second (FPS), whereas the two-stage Mask R-CNN was significantly slower at only 64 FPS. Crucially, this speed advantage did not come at the cost of accuracy; the study found that YOLOv8 also outperformed Mask R-CNN in mean Average Precision (0.845 vs 0.748 mAP), making it the superior choice for a real-time application.
+
+\begin{table}[h!]
+    \centering
+    \caption[Performance Comparison of YOLOv8 and Mask R-CNN.]
+    {A summary of key performance metrics for a multi-class segmentation task in an agricultural setting, demonstrating YOLOv8's advantage in both speed and accuracy. Data adapted from Sapkota et al. \cite{sapkota2024comparing}.}
+    \label{tab:yolo_vs_maskrcnn}
+    \begin{tabular}{l c c}
+        \hline
+        \textbf{Metric} & \textbf{YOLOv8 (One-Stage)} & \textbf{Mask R-CNN (Two-Stage)} \\
+        \hline
+        Inference Time (ms)     & 10.9                        & 15.6                            \\
+        Inference Speed (FPS)   & \textbf{91.7}               & 64.1                            \\
+        mAP@0.5                 & \textbf{0.845}              & 0.748                           \\
+        Precision               & \textbf{0.90}               & 0.81                            \\
+        Recall                  & \textbf{0.95}               & 0.81                            \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Having established the superiority of the YOLO family for this application, the specific choice of the latest iteration, YOLOv11, was motivated by its recent architectural enhancements that are particularly beneficial for this project. As detailed by Khanam and Hussain, YOLOv11 introduces improvements like the C2PSA (Cross Stage Partial with Spatial Attention) module, which enhances feature extraction for more nuanced detail capture \cite{khanam2024yolov11_overview}. Furthermore, the decision to focus on the smaller "nano" (n) and "small" (s) variants is directly supported by a comprehensive benchmark study from Jegham et al. \cite{jegham2024evaluating}. Their findings, presented in Table \ref{tab:yolov11_performance}, show that these smaller models provide an exceptional balance of speed and efficiency, making them ideally suited for deployment on resource-constrained edge devices like the one used in this project.
+
+\begin{table}[h!]
+    \centering
+    \caption[Performance of Selected YOLOv11 Variants for Edge Deployment.]
+    {Key performance metrics of the YOLOv11 nano and small variants, highlighting their suitability for real-time applications on edge devices. Data adapted from the traffic signs benchmark in Jegham et al. \cite{jegham2024evaluating}.}
+    \label{tab:yolov11_performance}
+    \begin{tabular}{l c c c c}
+        \hline
+        \textbf{Model Variant} & \textbf{mAP@.50-.95} & \textbf{Inference Time (ms)} & \textbf{GFLOPs} & \textbf{Model Size (MB)} \\
+        \hline
+        YOLOv11n & 0.668 & \textbf{0.6} & \textbf{5.35} & \textbf{6.4} \\
+        YOLOv11s & 0.742 & \textbf{1.0} & 18.4 & 21.4 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Finally, a critical requirement for this project was the capability for **instance segmentation**. The chosen `seg` variant of YOLOv11 provides this advanced function, which goes beyond a simple bounding box to predict a pixel-perfect mask for each detected object \cite{wu2019recent, sapkota2024comparing}. This pixel-level mask is crucial for the GolfBot project, as it enables the accurate estimation of a divot's area and, when combined with depth data, its volume, which is essential for the 'volume-matched' repair strategy.
+
+\section{Depth Sensing and Volume Estimation for Surface Anomalies}
+\label{sec:lit_depth_volume}
+
+A core requirement of the GolfBot project is the ability to perform metric 3D measurements of divots to estimate their volume. This necessitates a sensor capable of providing a real-time, per-pixel depth map of the scene. In recent years, the field of depth estimation has been dominated by two major paradigms: sophisticated software-based algorithms that infer depth from passive RGB images, and hardware-based active sensors that directly measure it.
+
+The state-of-the-art in software-based methods is represented by Vision Foundation Models (VFMs). Monocular depth estimators like \textbf{Depth Anything V2} have demonstrated a remarkable ability to generate plausible depth maps from a single RGB image \cite{yang2024depthanythingv2}. Concurrently, advanced passive stereo matching algorithms like \textbf{Stereo Anywhere} combine traditional geometric constraints with learned priors from these VFMs to achieve robust performance even in challenging conditions \cite{bartolomei2024stereoanywhere}. However, a common characteristic of these cutting-edge software methods is their computational expense, often requiring powerful GPUs for real-time performance. This was not feasible for the resource-constrained edge device used on the GolfBot.
+
+In contrast, a hardware-based approach using an \textbf{active stereo vision} camera offloads the complex depth calculation from the main processor to a dedicated, internal Vision Processor. This provides a direct, efficient, and "fit-for-purpose" solution for a real-time robotics project. For this reason, the Intel RealSense D435i was selected. The choice of this specific camera was informed by a review of its performance in relevant literature. A comprehensive metrological evaluation by Servi et al. confirmed the performance of the D435i and other RealSense models, providing a strong baseline for their use in 3D vision tasks \cite{servi2024comparative}. Furthermore, studies such as the one by Nascimento et al., which compared the D435i to other popular sensors for 3D mapping, demonstrated its suitability and precision for robotics applications \cite{nascimento2023kinect}. The successful use of the D435i for generating 3D occupancy maps in robotic systems, as shown by Tsykunov et al., further solidified its selection as a reliable and well-supported hardware component for this project \cite{tsykunov2020coupling}.
+
+While the camera provides the raw depth data, the core methodological challenge is to interpret this data in the context of a golf course. This project's approach is conceptually analogous to methods used in civil engineering for the detection and analysis of potholes. Much like the work of Bhavana et al., this project uses stereo disparity—the horizontal shift in an object's appearance between the camera's two viewpoints—to perceive the scene in three dimensions \cite{bhavana2023comprehensive}. The primary task is not just measuring absolute depth, but estimating the volume of a depression relative to its immediate, often uneven, surroundings. This is similar in principle to the volume estimation techniques discussed by Devi et al., who also used a stereo camera to reconstruct 3D meshes of potholes \cite{devi2019computer}.
+
+To solve this, the methodology developed in this thesis can be described as **"Volume Estimation via Relative Depth from a Local Ground Plane"**. It consists of two primary stages:
+\begin{enumerate}
+    \item \textbf{Local Ground Plane Estimation:} After a divot is segmented by the AI vision system, a reference plane is established by calculating the average depth of the turf in a small "ring" immediately surrounding the divot mask. This technique creates a dynamic, local reference that is robust to the variable terrain of a golf course.
+    \item \textbf{Relative Depth Calculation and Volume Integration:} The depth of each pixel inside the divot mask is then calculated relative to this local ground plane. The final volume is then derived by integrating the real-world area of the mask with this measured relative depth.
+\end{enumerate}
+
+This method of using disparity transformation and establishing a reference surface to isolate damaged areas is also explored by Anusree and Rahiman in their work on pothole detection \cite{anusree2021pothole}. By adopting and adapting these established principles from the analogous problem of pothole analysis, this thesis validates a practical and effective method for the specific domain of golf course turf maintenance.
+
+
 \section{Autonomous Robots in Turf Maintenance}
-% A section on golf robots, and even though they're not directly related to what I am doing. I will have a section on golf robots.
+\label{sec:lit_turf_robots}
+
+The automation of turf maintenance, particularly in high-value environments like golf courses, has been a long-standing goal in field robotics. For a mobile robot to be effective, accurate knowledge about its localization is mandatory \cite{ferreira2020realtime}. While various sensors are used, the Global Navigation Satellite System (GNSS) is a cornerstone technology for outdoor applications. However, standard GNSS provides only meter-level accuracy, which is insufficient for the precise, repeatable patterns required for tasks like greens mowing, where an accuracy of a few centimeters is necessary \cite{smith2012outdoor}.
+
+To achieve this level of precision, the field has converged on the use of Real-Time Kinematic (RTK) positioning. RTK is a differential GNSS technique that uses a stationary base station to transmit real-time correction data to a moving receiver (the "rover"), enabling centimeter-level positioning accuracy \cite{ferreira2020realtime, blesing2023accuracy}. The primary challenge, as noted by Smith et al. in their work on an autonomous greens mower, has historically been the high cost of commercial RTK systems \cite{smith2012outdoor}.
+
+Recent advancements in low-cost, multi-frequency GNSS receivers, particularly modules like the u-blox ZED-F9P, have made this technology far more accessible. The viability of these low-cost systems has been rigorously validated. Blesing et al. conducted a detailed accuracy evaluation of a low-cost DGPS system based on the ZED-F9P, confirming its ability to provide centimeter-range accuracy for mobile robotics \cite{blesing2023accuracy}. This research provides a strong foundation for the hardware choices made in the GolfBot project.
+
+For the GolfBot's navigation system, a similar low-cost RTK setup was implemented, consisting of two primary components:
+\begin{itemize}
+    \item \textbf{A fixed Base Station}, established at a known, surveyed point, which continuously broadcasts correction data.
+    \item \textbf{A Rover Module} onboard the robot, which receives these corrections and calculates its precise global position.
+\end{itemize}
+This "own base station" approach provides a reliable and consistent source of high-accuracy positioning, a method also explored by Duenkwang et al. in their study of an autonomous golf cart \cite{duenkwang2023comparing}. They found that while using a public network RTK is more convenient, an own base station setup can offer slightly improved tracking accuracy and reliability, which is critical for a high-precision task like divot repair.
+
+Finally, to make this high-precision data useful within a modern robotics framework, it must be integrated into the Robot Operating System (ROS). The work by Ferreira et al. addresses this directly by creating `rtkrcv_ros`, an open-source package that brings the capabilities of the popular RTKLIB software into the ROS ecosystem \cite{ferreira2020realtime}. This allows the centimeter-accurate positioning data from the RTK rover to be published as standard ROS messages, making it directly accessible to higher-level navigation and control nodes, as was done in the GolfBot's software architecture. 
 
 \section{Divot Detection and Analysis}
 % Then I might have another section on divot detection or similar problems, like the potholes. So I will have a section on divot detection
@@ -10,5 +97,4 @@
 \section{Automated Repair Mechanisms}
 % and then I might have another section on sand spreaders or something similar
 
-\section{Summary}
-% A summary of the literature review.
+
