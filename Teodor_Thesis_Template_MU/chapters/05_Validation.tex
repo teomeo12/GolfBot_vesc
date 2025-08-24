@@ -16,8 +16,8 @@ The relationship between these two metrics is captured by the Precision-Recall (
 
 To better understand the model's classification performance, a normalized confusion matrix was also generated, as shown in Figure \ref{fig:accuracy_metrics}b. This matrix details the classification accuracy for each class, showing that the model is highly effective at its primary task:
 \begin{itemize}
-    \item It correctly identified true \texttt{divot} instances 98\% of the time.
-    \item It correctly identified true \texttt{fixed\_divot} instances 90\% of the time.
+    \item It correctly identified true \texttt{divot} instances 97.6\% of the time.
+    \item It correctly identified true \texttt{fixed\_divot} instances 93.2\% of the time.
     \item The most common error was misclassifying a \texttt{fixed\_divot} as background (10\% of the time), which is an acceptable failure mode as it avoids attempting to repair an already fixed divot.
 \end{itemize}
 
@@ -61,7 +61,8 @@ In addition to these quantitative metrics, a qualitative comparison of the model
         \caption{Model's predictions}
         \label{fig:val_preds}
     \end{subfigure}
-    \caption{Visual comparison of ground truth labels (a) and the model's predictions (b) on a sample batch of images from the unseen validation set.}
+    \caption[Visual comparison of ground truth labels and the model's predictions.]%
+    {Visual comparison of ground truth labels (a) and the model's predictions (b) on a sample batch of images from the unseen validation set.}
     \label{fig:validation_comparison}
 \end{figure}
 
@@ -132,19 +133,28 @@ Overall, this qualitative test confirms that the core computer vision pipeline i
 A key objective of the computer vision system is not just to detect divots, but also to estimate their physical size to determine the required amount of repair material. To validate the accuracy of the depth-based measurement algorithm, a controlled experiment was conducted.
 
 \textbf{Experimental Setup.}
-As a real-world divot has an irregular shape and depth, a standardized target was used for this test. A shallow, rectangular box with ground-truth dimensions of 11 cm x 5 cm x 2 cm was placed on a flat surface. The Intel RealSense camera was mounted on a tripod at a fixed height, pointing directly down at the target, as shown in Figure \ref{fig:volume_test_setup}. A custom Python script (\texttt{divot\_depth\_seg\_mask\_est.py}) was developed to perform the measurement. This script uses HSV color thresholding to segment the dark interior of the box (simulating a divot) from the light-colored "ground" plane around it.
+As a real-world divot has an irregular shape and depth, a standardized target was used for this test. A shallow, rectangular box with ground-truth dimensions of 11 cm x 5 cm x 2 cm was placed on a flat surface. The Intel RealSense camera was mounted on a tripod at a fixed height, pointing directly down at the target, as shown in Figure \ref{fig:volume_test_setup}. A custom Python script (\texttt{divot\_depth\_seg\_mask\_est.py}) was developed to perform the measurement. This script uses HSV (Hue, Saturation, Value) color thresholding to segment the dark interior of the box (simulating a divot) from the light-colored "ground" plane around it.
 
 \begin{figure}[h!]
     \centering
-    \begin{subfigure}[b]{\textwidth}
+    % --- TOP ROW: SETUP AND MASK ---
+    \begin{subfigure}[b]{0.49\textwidth}
         \centering
-        \includegraphics[width=0.6\linewidth]{figures/volume_test_setup.png}
-        \caption{Experimental setup showing the camera positioned over a target of known dimensions.}
+        \includegraphics[width=0.8\linewidth]{figures/volume_test_setup.png} % Your setup image
+        \caption{Experimental setup.}
         \label{fig:volume_test_setup_img}
     \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{figures/divot_mask.PNG} % Your new mask image
+        \caption{Generated segmentation mask.}
+        \label{fig:divot_mask_img}
+    \end{subfigure}
     
-    \vspace{0.5cm} % Add some vertical space between the setup and the results
+    \vspace{0.5cm} % Add some vertical space between the rows
 
+    % --- BOTTOM ROW: TWO SAMPLE RESULTS ---
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
         \includegraphics[width=\linewidth]{figures/volume_test_result_5_fix.png}
@@ -158,7 +168,10 @@ As a real-world divot has an irregular shape and depth, a standardized target wa
         \caption{Result from Trial 2.}
         \label{fig:volume_test_result_2}
     \end{subfigure}
-    \caption{The controlled experiment to validate the volume estimation algorithm. The setup (a) and two sample results (b, c) showing the system's calculated dimensions and volume.}
+    
+    % --- MAIN CAPTION FOR THE ENTIRE FIGURE ---
+    \caption[Controlled Experiment for Volume Estimation.] % Short caption for List of Figures
+    {The controlled experiment to validate the volume estimation algorithm. The physical setup (a) is used to capture an image, from which a binary segmentation mask is generated (b). The final output of the algorithm provides the calculated dimensions and volume, with two sample results shown (c, d).}
     \label{fig:volume_test_setup}
 \end{figure}
 

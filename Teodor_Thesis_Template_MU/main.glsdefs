@@ -110,17 +110,17 @@ parent={},%
 %
 }%
 
-\glsdefs@newdocentry{yolov11se}%
+\glsdefs@newdocentry{yolov11seg}%
 {%
-name={\acronymfont {\glsentryshort {yolov11se}}},%
-sort={YOLOv11-Seg},%
+name={\acronymfont {\glsentryshort {yolov11seg}}},%
+sort={YOLOv11Seg},%
 type={acronym},%
-first={YOLOv11-Seg},%
-firstplural={YOLOv11-Segs},%
-text={YOLOv11-Seg},%
-plural={YOLOv11-Segs},%
-description={You Only Look Once Segmentation v11},%
-descriptionplural={You Only Look Once Segmentation v11},%
+first={YOLOv11Seg},%
+firstplural={YOLOv11Segs},%
+text={YOLOv11Seg},%
+plural={YOLOv11Segs},%
+description={You Only Look Once Segmentation version 11},%
+descriptionplural={You Only Look Once Segmentation version 11},%
 symbol={\relax },%
 symbolplural={\relax },%
 user1={},%
@@ -129,10 +129,10 @@ user3={},%
 user4={},%
 user5={},%
 user6={},%
-long={You Only Look Once Segmentation v11},%
-longplural={You Only Look Once Segmentation v11s},%
-short={YOLOv11-Seg},%
-shortplural={YOLOv11-Segs},%
+long={You Only Look Once Segmentation version 11},%
+longplural={You Only Look Once Segmentation version 11s},%
+short={YOLOv11Seg},%
+shortplural={YOLOv11Segs},%
 counter={page},%
 parent={},%
 %
@@ -203,4 +203,246 @@ first={GNSS},%
 firstplural={GNSSs},%
 text={GNSS},%
 plural={GNSSs},%
-description={Global Navigation Satellite Syst
+description={Global Navigation Satellite System},%
+descriptionplural={Global Navigation Satellite System},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Global Navigation Satellite System},%
+longplural={Global Navigation Satellite Systems},%
+short={GNSS},%
+shortplural={GNSSs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{GPU}%
+{%
+name={\acronymfont {\glsentryshort {GPU}}},%
+sort={GPU},%
+type={acronym},%
+first={GPU},%
+firstplural={GPUs},%
+text={GPU},%
+plural={GPUs},%
+description={Graphics Processing Unit},%
+descriptionplural={Graphics Processing Unit},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Graphics Processing Unit},%
+longplural={Graphics Processing Units},%
+short={GPU},%
+shortplural={GPUs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{PLA}%
+{%
+name={\acronymfont {\glsentryshort {PLA}}},%
+sort={PLA},%
+type={acronym},%
+first={PLA},%
+firstplural={PLAs},%
+text={PLA},%
+plural={PLAs},%
+description={Polylactic Acid Polymer},%
+descriptionplural={Polylactic Acid Polymer},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Polylactic Acid Polymer},%
+longplural={Polylactic Acid Polymers},%
+short={PLA},%
+shortplural={PLAs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{USB}%
+{%
+name={\acronymfont {\glsentryshort {USB}}},%
+sort={USB},%
+type={acronym},%
+first={USB},%
+firstplural={USBs},%
+text={USB},%
+plural={USBs},%
+description={Universal Serial Bus},%
+descriptionplural={Universal Serial Bus},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Universal Serial Bus},%
+longplural={Universal Serial Buss},%
+short={USB},%
+shortplural={USBs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{DC}%
+{%
+name={\acronymfont {\glsentryshort {DC}}},%
+sort={DC},%
+type={acronym},%
+first={DC},%
+firstplural={DCs},%
+text={DC},%
+plural={DCs},%
+description={Direct Current},%
+descriptionplural={Direct Current},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Direct Current},%
+longplural={Direct Currents},%
+short={DC},%
+shortplural={DCs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{CV}%
+{%
+name={\acronymfont {\glsentryshort {CV}}},%
+sort={CV},%
+type={acronym},%
+first={CV},%
+firstplural={CVs},%
+text={CV},%
+plural={CVs},%
+description={Computer Vision},%
+descriptionplural={Computer Vision},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Computer Vision},%
+longplural={Computer Visions},%
+short={CV},%
+shortplural={CVs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{RGB}%
+{%
+name={\acronymfont {\glsentryshort {RGB}}},%
+sort={RGB},%
+type={acronym},%
+first={RGB},%
+firstplural={RGBs},%
+text={RGB},%
+plural={RGBs},%
+description={Red Green Blue},%
+descriptionplural={Red Green Blue},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Red Green Blue},%
+longplural={Red Green Blues},%
+short={RGB},%
+shortplural={RGBs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{NMEA}%
+{%
+name={\acronymfont {\glsentryshort {NMEA}}},%
+sort={NMEA},%
+type={acronym},%
+first={NMEA},%
+firstplural={NMEAs},%
+text={NMEA},%
+plural={NMEAs},%
+description={National Marine Electronics Association},%
+descriptionplural={National Marine Electronics Association},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={National Marine Electronics Association},%
+longplural={National Marine Electronics Associations},%
+short={NMEA},%
+shortplural={NMEAs},%
+counter={page},%
+parent={},%
+%
+}%
+
+\glsdefs@newdocentry{DGPS}%
+{%
+name={\acronymfont {\glsentryshort {DGPS}}},%
+sort={DGPS},%
+type={acronym},%
+first={DGPS},%
+firstplural={DGPSs},%
+text={DGPS},%
+plural={DGPSs},%
+description={Differential Global Positioning System},%
+descriptionplural={Differential Global Positioning System},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Differential Global Positioning System},%
+longplural={Differential Global Positioning Systems},%
+short={DGPS},%
+shortplural={DGPSs},%
+counter={page},%
+parent={},%
+%
+}%
+

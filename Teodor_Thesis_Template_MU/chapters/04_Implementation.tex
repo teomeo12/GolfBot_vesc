@@ -13,7 +13,7 @@ The Wumpus robot, developed at Maynooth University, is a differential-drive robo
 \label{ssec:base_condition}
 Upon initial inspection, the platform had two key issues that needed to be addressed. First, one of the VESC controllers had a recurring power-up problem. To ensure reliable operation, I installed a dedicated kill switch to control its power flow directly (shown in Figure \ref{fig:appendix_killswitch} in the Appendix). Second, the motor settings were configured for high-speed performance (minimum 900 ERPM), which made the robot uncontrollable at the low speeds required for divot inspection and repair. Using the VESC tool, an open-source configuration software, I lowered the minimum motor speed to 100 ERPM (see Figure \ref{fig:appendix_vesc_tool} in the Appendix). This adjustment was crucial for enabling the precise, low-speed maneuvers needed for the project.
 
-\subsection{Modifications and Improvements} ter J4012, which features a powerful NVIDIA Jetson Orin 16GB module suitable for edge AI computing. I then integrated the following key hardware components:
+\subsection{Modifications and Improvements} After resolving the baseline issues, I performed significant upgrades to equip the robot for its mission. The underpowered Raspberry Pi 4 was replaced with a Seeed reComputer J4012, which features a powerful NVIDIA Jetson Orin 16GB module suitable for edge AI computing. I then integrated the following key hardware components:
 \begin{itemize}
     \item An Intel RealSense D435i stereo camera for visual and depth data.
     \item An Ardusimple SimpleRTK2B RTK GPS module for high-accuracy localization.
@@ -67,7 +67,7 @@ These augmentation steps tripled the size of the training dataset, resulting in 
 
 \subsection{Model Training}
 \label{ssec:cv_training}
-The model was trained using the Ultralytics framework, the official maintainer of the YOLO (You Only Look Once) family of models. The training process was executed on the Google Colab platform, which provides access to powerful cloud-based GPUs/TPUs suitable for deep learning tasks.
+The model was trained using the Ultralytics framework, the official maintainer of the YOLO  family of models. The training process was executed on the Google Colab platform, which provides access to powerful cloud-based GPUs/TPUs suitable for deep learning tasks.
 
 The training workflow involved the following key steps:
 \begin{enumerate}
@@ -81,7 +81,7 @@ Upon completion of the training, the resulting model weights file (`best.pt`) wa
 \label{ssec:cv_hardware}
 The primary sensor for the computer vision system is the Intel RealSense D435i stereo camera, shown in Figure \ref{fig:realsense_camera}. This model was specifically chosen for its dual capabilities, which are central to the project's design.
 
-It provides a high-resolution color (RGB) stream, which serves as the input for the YOLOv11-seg object detection model. In parallel, it features a pair of infrared (IR) stereo sensors. These sensors capture the scene from two slightly different perspectives, allowing the camera's internal vision processor to calculate a dense depth map based on stereo disparity. This depth data is crucial for estimating the real-world size and location of detected divots. The camera connects directly to a USB 3.0 port on the Jetson controller, ensuring sufficient bandwidth for real-time image and depth data streaming.
+It provides a high-resolution color (RGB) stream, which serves as the input for the YOLOv11-seg object detection model. In parallel, it features a pair of infrared (IR) stereo sensors. These sensors capture the scene from two slightly different perspectives, allowing the camera's internal vision processor to calculate a dense depth map based on stereo disparity. This depth data is crucial for estimating the real-world size and location of detected divots. 
 
 \begin{figure}[h!]
     \centering
@@ -117,7 +117,8 @@ With a trained model ready, the final implementation step was to integrate it in
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.9\linewidth]{figures/cv_pipeline_grid.png}
-    \caption{The real-time computer vision processing pipeline. The top row shows an original captured image being processed to create a segmentation mask. The bottom row illustrates the subsequent classification and depth analysis steps.}
+    \caption[The real-time computer vision processing pipeline.]%
+    {The real-time computer vision processing pipeline. The top row shows an original captured image being processed to create a segmentation mask. The bottom row illustrates the subsequent classification and depth analysis steps.}
     \label{fig:cv_processing_pipeline}
 \end{figure}
 
@@ -146,7 +147,8 @@ The fundamental principle of RTK is to use a stationary base station to calculat
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\linewidth]{figures/rtk.PNG}
-    \caption{The operating principle of a Real-Time Kinematic (RTK) system, showing the data flow between the satellite, base station, and rover.}
+    \caption[The operating principle of a Real-Time Kinematic (RTK) system.]%
+    {The operating principle of a Real-Time Kinematic (RTK) system, showing the data flow between the satellite, base station, and rover.}
     \label{fig:rtk_concept}
 \end{figure}
 
@@ -197,7 +199,7 @@ The navigation hardware is integrated into the ROS 2 ecosystem through a combina
 The primary source of absolute global position data is the ArduSimple module, which is managed by two key nodes:
 
 \begin{description}
-    \item[\texttt{ublox\_gps\_node}] This standard ROS 2 package interfaces directly with the RTK-GPS module via its USB port. It is configured using a YAML file to parse the raw data from the u-blox ZED-F9P receiver. Its sole responsibility is to publish the robot's absolute position (latitude, longitude), altitude, and crucially, the position covariance which indicates the accuracy of the fix. This data is published as a \texttt{sensor\_msgs/NavSatFix} message to the \texttt{/ublox\_gps\_node/fix} topic.
+    \item[\texttt{ublox\_gps\_node}] This standard ROS 2 package interfaces directly with the RTK-GPS module. It is configured using a YAML file to parse the raw data from the u-blox ZED-F9P receiver. Its sole responsibility is to publish the robot's absolute position (latitude, longitude), altitude, and crucially, the position covariance which indicates the accuracy of the fix. This data is published as a \texttt{sensor\_msgs/NavSatFix} message to the \texttt{/ublox\_gps\_node/fix} topic.
 
     \item[\texttt{gps\_monitor\_node.py}] This custom utility node subscribes to the \texttt{/fix} topic to provide diagnostics and a human-readable status. It evaluates the horizontal accuracy derived from the covariance matrix to determine the quality of the GPS signal, classifying it as "RTK Fixed," "RTK Float," or standard GPS, and publishes this status for the GUI.
 \end{description}
@@ -228,14 +230,15 @@ The mechanical dispenser is the primary actuator for the GolfBot's repair task. 
 \label{ssec:dispenser_hardware}
 The dispenser hardware consists of a combination of custom 3D-printed parts and standard electronic components, all managed by the Arduino Uno acting as a dedicated low-level controller.
 
-The main physical component is the dispenser unit itself, which was designed in CAD software and 3D-printed. It consists of a main hopper to hold the sand-seed mixture and an internal auger screw. This auger is directly coupled to a \textbf{NEMA 17 stepper motor}. When the motor rotates, the auger pushes a measured amount of the mixture out through a nozzle at the bottom.
+The main physical component is the dispenser unit itself, which was 3D-printed. It consists of a main hopper to hold the sand-seed mixture and an internal auger screw. This auger is directly coupled to a \textbf{NEMA 17 stepper motor}. When the motor rotates, the auger pushes a measured amount of the mixture out through a nozzle at the bottom.
 
 The stepper motor is controlled by an \textbf{A4988 stepper motor driver}, which provides the necessary current and micro-stepping capabilities for smooth and precise motor rotation. The A4988 driver acts as the bridge between the high-level logic of the Arduino and the electrical coils of the stepper motor. The complete wiring for this control system is shown in Figure \ref{fig:stepper_wiring}.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\linewidth]{figures/stepper.png}
-    \caption{Wiring diagram for the dispenser's control electronics, showing the connections between the Arduino Uno, the A4988 driver, and the NEMA 17 stepper motor.}
+    \caption[Wiring diagram for the dispenser's control electronics.]%
+    {Wiring diagram for the dispenser's control electronics, showing the connections between the Arduino Uno, the A4988 driver, and the NEMA 17 stepper motor.}
     \label{fig:stepper_wiring}
 \end{figure}
 

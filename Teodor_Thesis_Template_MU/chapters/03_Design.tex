@@ -72,9 +72,9 @@ The overall electronic layout and data pathways are illustrated in Figure \ref{f
 The electronic components are organized around the Jetson controller as follows:
 \begin{description}
     \item[Drivetrain Controllers] The two VESC motor controllers, one for each drive wheel, are connected to the Jetson via USB. They receive high-level velocity commands from the main controller and are responsible for the precise, low-level control of the brushless DC motors.
-    \item[Vision System] The Intel RealSense D435i camera, the robot's primary sensor, is connected directly to a high-speed USB 3.0 port on the Jetson to ensure sufficient bandwidth for streaming both color and depth data.
-    \item[Localization System] The ArduSimple simpleRTK2B RTK-GPS module is connected via USB. It streams positioning data to the Jetson, which is used for global navigation.
-    \item[Low-Level Microcontroller Bridge] An Arduino Uno acts as a dedicated sub-controller for real-time tasks. It is connected to the Jetson via a single USB port and manages a group of its own peripherals:
+    \item[Vision System] The Intel RealSense D435i camera, the robot's primary sensor, ensure sufficient bandwidth for streaming both color and depth data.
+    \item[Localization System] The ArduSimple simpleRTK2B RTK-GPS module. It streams positioning data to the Jetson, which is used for global navigation.
+    \item[Low-Level Microcontroller Bridge] An Arduino Uno acts as a dedicated sub-controller for real-time tasks. It is connected to the Jetson and manages a group of its own peripherals:
     \begin{itemize}
         \item The \textbf{BNO055 IMU sensor} is connected to the Arduino, which reads the orientation data.
         \item The \textbf{A4988 stepper motor driver} receives step and direction signals from the Arduino to control the \textbf{NEMA 17 stepper motor} for the dispensing mechanism.
@@ -127,7 +127,7 @@ These nodes provide the direct interface to the robot's hardware sensors, conver
 \subsection{Perception and Localization}
 This subsystem is responsible for processing raw sensor data to build an understanding of the environment and the robot's position within it.
 \begin{description}
-    \item[Divot Detector Node (\texttt{/divot\_detector})] The primary perception processing node. It subscribes to \texttt{/camera/color/image\_raw} and uses the \gls{yolo} model to identify divots. It publishes its findings to several key topics: \texttt{/camera/divot\_detection/image\_raw} for a visualized feed, and \texttt{/camera/divot\_detection/details} containing structured data on divot locations and sizes.
+    \item[Divot Detector Node (\texttt{/divot\_detector})] The primary perception processing node. It subscribes to \texttt{/camera/color/image\_raw} and uses the YOLO model to identify divots. It publishes its findings to several key topics: \texttt{/camera/divot\_detection/image\_raw} for a visualized feed, and \texttt{/camera/divot\_detection/details} containing structured data on divot locations and sizes.
     \item[Odometry Node (\texttt{/odometry\_node})] This node calculates the robot's movement based on wheel speeds. It subscribes to sensor data from the \gls{VESC} driver nodes and publishes an estimate of the robot's pose and velocity to the \texttt{/odom} topic.
 \end{description}
 
